@@ -112,7 +112,6 @@ Quan-ly-nha-hang-master/
 │   ├── server.js                       # Backend REST API kết nối SQL Server qua driver mssql
 │   ├── package.json                    # Cấu hình dependency Node.js
 │   ├── .env.example                    # Mẫu cấu hình chuỗi kết nối SQL Server & bảo mật
-│   ├── .env                            # File biến môi trường thực tế (tạo từ .env.example)
 │   └── public/                         # Frontend Single Page Application (SPA)
 │       ├── index.html                  # Giao diện chính POS (Glassmorphism layout)
 │       ├── css/app.css                 # Hệ thống style responsive, anti-jiggle, hiệu ứng
@@ -397,7 +396,7 @@ sqlcmd -S localhost\SQLEXPRESS -E -d QuanLyNhaHang -i sql\02_InsertData_3000_202
 Mở SSMS, mở cửa sổ New Query và chạy:
 ```sql
 -- Tạo tài khoản kết nối riêng cho ứng dụng
-CREATE LOGIN nhahang_app WITH PASSWORD = 'NhaHang@123';
+CREATE LOGIN nhahang_app WITH PASSWORD = 'your password';
 USE QuanLyNhaHang;
 CREATE USER nhahang_app FOR LOGIN nhahang_app;
 ALTER ROLE db_owner ADD MEMBER nhahang_app;
