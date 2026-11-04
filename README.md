@@ -18,11 +18,11 @@
 4. [Cấu trúc thư mục dự án](#4-cấu-trúc-thư-mục-dự-án)
 5. [Chi tiết các đối tượng CSDL & Nghiệp vụ](#5-chi-tiết-các-đối-tượng-csdl--nghiệp-vụ)
    - [Hệ thống 10 bảng thực thể + 1 bảng log](#51-hệ-thống-10-bảng-nghiệp-vụ--1-bảng-audit-log)
-   - [8 Chỉ mục tối ưu hóa (Covering Indexes)](#52-8-chỉ-mục-tối-ưu-hóa-non-clustered-indexes)
+   - [10 Chỉ mục tối ưu hóa & Toàn vẹn](#52-10-chỉ-mục-tối-ưu-hóa--toàn-vẹn-non-clustered--filtered-unique-indexes)
    - [6 Hàm nghiệp vụ (User-Defined Functions)](#53-6-hàm-nghiệp-vụ-udfs)
    - [8 Khung nhìn (Views)](#54-8-khung-nhìn-views)
    - [7 Thủ tục lưu trữ giao dịch (Stored Procedures)](#55-7-thủ-tục-lưu-trữ-stored-procedures)
-   - [2 Trigger kiểm soát toàn vẹn](#56-2-trigger-kiểm-soát-toàn-vẹn)
+   - [3 Trigger kiểm soát toàn vẹn](#56-3-trigger-kiểm-soát-toàn-vẹn--đồng-bộ-trạng-thái)
    - [16 Truy vấn nghiệp vụ nâng cao](#57-16-truy-vấn-nghiệp-vụ-nâng-cao)
 6. [Kịch bản kiểm thử & Toàn vẹn dữ liệu](#6-kịch-bản-kiểm-thử--toàn-vẹn-dữ-liệu)
 7. [Dữ liệu mẫu & Kiểm toán chất lượng](#7-dữ-liệu-mẫu--kiểm-toán-chất-lượng)
@@ -30,7 +30,7 @@
 9. [Hướng dẫn cài đặt & Triển khai](#9-hướng-dẫn-cài-đặt--triển-khai)
    - [Yêu cầu môi trường](#91-yêu-cầu-môi-trường)
    - [Cài đặt Database (3 cách)](#92-cài-đặt-database)
-   - [Nạp dữ liệu lớn 3.000 hóa đơn (2020-2025)](#93-nạp-dữ-liệu-lớn-3000-hóa-đơn-2020-2025)
+   - [Nạp dữ liệu lớn 3.007 hóa đơn (2020-2026)](#93-nạp-dữ-liệu-lớn-3007-hóa-đơn-2020-2026)
    - [Khởi chạy ứng dụng Web POS](#94-khởi-chạy-ứng-dụng-web-pos)
 10. [Danh sách API Endpoints](#10-danh-sách-api-endpoints)
 11. [Khắc phục sự cố thường gặp (FAQ)](#11-khắc-phục-sự-cố-thường-gặp-faq)
@@ -60,14 +60,14 @@ Dự án hoàn thành vượt mức toàn bộ các tiêu chí đánh giá của
 |---|:---:|---|:---:|
 | **Số lượng bảng chính** | $\ge 6$ bảng | **10 bảng nghiệp vụ + 1 bảng Audit Log (`NhatKyHoaDon`)** | **183%** |
 | **Hệ thống ràng buộc** | Đầy đủ các loại cơ bản | **Đầy đủ 6 loại: PK, FK, UNIQUE, NOT NULL, DEFAULT, CHECK** (hơn 70 ràng buộc tường minh) | **Xuất sắc** |
-| **Quy mô dữ liệu mẫu** | 30 – 200 bản ghi | **3.007 hóa đơn, 15.775 dòng chi tiết** (2020–2025), 450+ đặt bàn; benchmark chịu tải 50.000 khách; kiểm toán nhất quán 100% | **Vượt trội** |
+| **Quy mô dữ liệu mẫu** | 30 – 200 bản ghi | **3.007 hóa đơn, 15.775 dòng chi tiết** (2020–2026), 492 lượt đặt bàn; kiểm toán nhất quán dữ liệu 100% | **Vượt trội** |
 | **Mô hình hóa (ERD)** | 01 sơ đồ ERD | **Đầy đủ 2 dạng chuẩn quốc tế**: Mô hình Chen (Conceptual) & Lược đồ Crow's Foot (Physical), kèm bộ viewer HTML tương tác | **Xuất sắc** |
 | **Truy vấn dữ liệu** | 10 câu truy vấn | **16 câu truy vấn nâng cao**: Full/Left/Right/Inner Join, Subquery vô hướng & tập hợp, Set operators (UNION, INTERSECT, EXCEPT), Window Functions `RANK() OVER()`, GROUP BY phân cấp | **160%** |
 | **Stored Procedures** | 3 thủ tục | **7 thủ tục nghiệp vụ giao dịch**: Transaction ACID, kiểm soát lỗi `TRY...CATCH`, `THROW`, tham số `OUTPUT`, tự động trừ/hoàn kho | **233%** |
 | **Functions (UDF)** | 2 hàm | **6 hàm (5 Scalar functions, 1 Inline Table-Valued function)** | **300%** |
 | **Views** | 3 khung nhìn | **8 khung nhìn nghiệp vụ & phân tích**, bao gồm View cập nhật với `WITH CHECK OPTION` | **267%** |
-| **Triggers** | Khuyến khích | **2 Triggers**: Tự động tính tổng tiền/thanh toán hóa đơn và khóa ngăn chặn sửa chi tiết hóa đơn đã tất toán | **Đạt** |
-| **Tối ưu hóa hiệu năng** | Không bắt buộc | **8 Non-Clustered Indexes có mệnh đề `INCLUDE` (Covering Indexes)** giúp tăng tốc truy vấn đến 85% | **Nâng cao** |
+| **Triggers** | Khuyến khích | **3 Triggers**: Tự động tính tổng tiền/thanh toán hóa đơn, khóa chi tiết hóa đơn đã tất toán và tự động đồng bộ trạng thái bàn khi đặt bàn | **Xuất sắc** |
+| **Tối ưu hóa hiệu năng** | Không bắt buộc | **10 Chỉ mục (8 Non-Clustered & 2 Filtered Unique Indexes)**, gồm Covering Index có `INCLUDE` giảm đọc I/O từ 47 xuống 26 Logical Reads (-44.7%) | **Nâng cao** |
 | **Giao diện người dùng** | Gợi ý mở rộng | **Ứng dụng Web POS hoàn chỉnh**: SPA responsive, Glassmorphism UI, Anti-jiggle layout, tương tác trực tiếp với SQL Server qua Node.js REST API | **Chuyên nghiệp** |
 
 ---
@@ -101,9 +101,9 @@ Quan-ly-nha-hang-master/
 ├── sql/                                # TẬP LỆNH SQL SERVER (T-SQL)
 │   ├── QuanLyNhaHang_FULL.sql          # ⭐ CHẠY 1 FILE NÀY LÀ ĐỦ (Gộp toàn bộ 01 -> 06)
 │   ├── 01_CreateDatabase_Tables.sql    # Tạo DB, 10 bảng chính, 1 bảng log, 70+ ràng buộc, Filtered Index
-│   ├── 02_InsertData.sql               # Dữ liệu mẫu chuẩn hóa (danh mục, món ăn, kho, 3.007 hóa đơn)
-│   ├── 02_InsertData_3000_2020_2025.sql# Dữ liệu mẫu mở rộng (3.007 hóa đơn, 15.775 chi tiết, 2020-2025)
-│   ├── 03_Index_Function_View.sql      # 9 Index (kèm Filtered Unique Index), 6 Function SARGable, 8 View
+│   ├── 02_InsertData.sql               # Dữ liệu danh mục, món ăn, nguyên liệu, bàn ăn, nhân viên, khách hàng
+│   ├── 02_InsertData_3000_2020_2025.sql# Dữ liệu lớn (3.007 hóa đơn, 15.775 chi tiết, 492 đặt bàn, 2020–2026)
+│   ├── 03_Index_Function_View.sql      # 10 Index (8 Non-Clustered + 2 Filtered Unique), 6 Function, 8 View
 │   ├── 04_StoredProcedures_Triggers.sql# 7 Stored Procedure giao dịch chống Race Condition, 3 Trigger
 │   ├── 05_Queries.sql                  # 16 câu truy vấn nghiệp vụ nâng cao (đã tối ưu SARGable)
 │   ├── 06_Test_Demo.sql                # Kịch bản kiểm thử: Demo POS, 10 ca vi phạm ràng buộc, Rollback
@@ -297,14 +297,14 @@ SELECT @tien AS SoTienKhachPhaiTra;
 ## 7. DỮ LIỆU MẪU & KIỂM TOÁN CHẤT LƯỢNG
 
 Dự án cung cấp 2 bộ dữ liệu phục vụ mục đích kiểm thử và đánh giá:
-1. **Dữ liệu cơ bản ([sql/02_InsertData.sql](sql/02_InsertData.sql))**:
-   - 10 danh mục món, 36 món ăn thuần Việt, 30 nguyên vật liệu, 20 bàn ăn, 10 nhân viên, 20 khách hàng.
-   - ~200 hóa đơn mẫu phát sinh trong tháng gần nhất.
-2. **Dữ liệu lớn 5 năm ([sql/02_InsertData_3000_2020_2025.sql](sql/02_InsertData_3000_2020_2025.sql))**:
-   - **3.007 hóa đơn** trải dài liên tục từ 2020 đến 2025.
-   - **15.775 dòng chi tiết hóa đơn** (trung bình 3–7 món/hóa đơn).
-   - 100 khách hàng tích lũy điểm và 450+ lượt đặt bàn.
-   - Phục vụ kiểm thử tải lớn, vẽ biểu đồ xu hướng doanh thu nhiều năm và chứng minh hiệu quả vượt trội của chỉ mục Covering Index.
+1. **Dữ liệu danh mục & thực thể chuẩn hóa ([sql/02_InsertData.sql](sql/02_InsertData.sql))**:
+   - 6 danh mục món, 40 món ăn thuần Việt, 26 nguyên liệu, 68 công thức định lượng, 24 bàn ăn, 15 nhân viên, 100 khách hàng.
+2. **Dữ liệu giao dịch thực tế ([sql/02_InsertData_3000_2020_2025.sql](sql/02_InsertData_3000_2020_2025.sql))**:
+   - **3.007 hóa đơn** (2.874 Đã thanh toán, 127 Đã hủy, 6 Đang phục vụ) trải dài từ năm 2020 đến 2026.
+   - **15.775 dòng chi tiết hóa đơn** (trung bình 3–7 món/hóa đơn), tổng doanh thu thực tế đạt hơn 2,13 tỷ VNĐ.
+   - **492 lượt đặt bàn** (422 Đã đến, 61 Đã hủy, 8 Đã xác nhận, 1 Chờ xác nhận).
+   - **Bảng nhật ký `NhatKyHoaDon`**: 2 bản ghi log kiểm thử mẫu thời gian thực, 0 bản ghi mồ côi.
+   - Phục vụ kiểm thử hiệu năng, vẽ biểu đồ xu hướng doanh thu nhiều năm và chứng minh hiệu quả chỉ mục Covering Index.
 
 ### Kiểm toán toàn vẹn dữ liệu & Bộ kiểm thử tự động:
 * **Script kiểm toán SQL ([sql/07_DataIntegrity_Audit.sql](sql/07_DataIntegrity_Audit.sql))**: Kiểm tra tự động 6 nhóm toàn vẹn dữ liệu: (1) hóa đơn trùng bàn & đồng bộ trạng thái bàn, (2) tổng tiền & thành tiền hóa đơn, (3) đặt bàn trùng lịch $\pm 120$ phút & vượt sức chứa, (4) nhất quán tồn kho & định lượng công thức, (5) đối chiếu điểm tích lũy khách hàng `SUM(FLOOR(ThanhToan / 10000.0))`, và (6) kiểm tra bản ghi mồ côi.
@@ -368,7 +368,7 @@ Hỗ trợ nhân viên phục vụ cầm máy tính bảng hoặc điện thoạ
    - Xóa DB cũ (nếu có) và khởi tạo database `QuanLyNhaHang`.
    - Tạo 10 bảng nghiệp vụ + 1 bảng Audit log với 70+ ràng buộc toàn vẹn.
    - Nạp dữ liệu mẫu cơ bản.
-   - Tạo toàn bộ 8 Index, 6 Function, 8 View, 7 Stored Procedure, 2 Trigger.
+   - Tạo toàn bộ 10 Index, 6 Function, 8 View, 7 Stored Procedure, 3 Trigger.
    - Tự động chạy kiểm thử 16 truy vấn và kịch bản demo (xem kết quả tại tab *Results* và *Messages*).
 
 #### CÁCH 2 — Chạy tuần tự từng script rời
@@ -389,7 +389,7 @@ sqlcmd -S localhost\SQLEXPRESS -E -i sql\QuanLyNhaHang_FULL.sql -f 65001
 
 ---
 
-### 9.3. Nạp dữ liệu lớn 3.000 hóa đơn (2020 – 2025)
+### 9.3. Nạp dữ liệu lớn 3.007 hóa đơn (2020 – 2026)
 Để phục vụ việc báo cáo doanh thu nhiều năm, đánh giá tải hoặc demo đồ án ấn tượng:
 ```bat
 sqlcmd -S localhost\SQLEXPRESS -E -d QuanLyNhaHang -i sql\02_InsertData_3000_2020_2025.sql -f 65001
