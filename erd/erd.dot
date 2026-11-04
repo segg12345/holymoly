@@ -1,0 +1,145 @@
+digraph ERD {
+  graph [rankdir=LR, splines=polyline, nodesep=0.7, ranksep=1.2, bgcolor="white", fontname="Arial", pad=0.4];
+  node  [shape=plaintext, fontname="Arial", fontsize=11];
+  edge  [fontname="Arial", fontsize=9, color="#555555", arrowhead=crow, arrowtail=tee, dir=both, penwidth=1.3];
+
+  /* 1. KHÁCH HÀNG & NHÂN VIÊN */
+  KhachHang [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" BGCOLOR="white">
+      <TR><TD BGCOLOR="#C93B2B" COLSPAN="2"><FONT COLOR="white"><B>KhachHang</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B></TD><TD ALIGN="LEFT"><U>MaKH</U> INT IDENTITY</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">HoTen NVARCHAR(100)</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>UQ</B></TD><TD ALIGN="LEFT">SoDienThoai VARCHAR(15)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">Email VARCHAR(100)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">GioiTinh, NgaySinh</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">DiemTichLuy INT (DF 0)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">NgayDangKy DATETIME</TD></TR>
+    </TABLE>>];
+
+  NhanVien [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" BGCOLOR="white">
+      <TR><TD BGCOLOR="#C93B2B" COLSPAN="2"><FONT COLOR="white"><B>NhanVien</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B></TD><TD ALIGN="LEFT"><U>MaNV</U> INT IDENTITY</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">HoTen NVARCHAR(100)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">NgaySinh DATE, GioiTinh</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">ChucVu NVARCHAR(30)</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>UQ</B></TD><TD ALIGN="LEFT">SoDienThoai, Email</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">LuongCoBan DECIMAL(12,0)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">NgayVaoLam, DangLamViec</TD></TR>
+    </TABLE>>];
+
+  /* 2. BÀN ĂN & ĐẶT BÀN */
+  BanAn [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" BGCOLOR="white">
+      <TR><TD BGCOLOR="#2E7D32" COLSPAN="2"><FONT COLOR="white"><B>BanAn</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B></TD><TD ALIGN="LEFT"><U>MaBan</U> INT IDENTITY</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>UQ</B></TD><TD ALIGN="LEFT">TenBan NVARCHAR(20)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">SoCho TINYINT (1..20)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">KhuVuc NVARCHAR(30)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">TrangThai NVARCHAR(20)</TD></TR>
+    </TABLE>>];
+
+  DatBan [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" BGCOLOR="white">
+      <TR><TD BGCOLOR="#2E7D32" COLSPAN="2"><FONT COLOR="white"><B>DatBan</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B></TD><TD ALIGN="LEFT"><U>MaDatBan</U> INT IDENTITY</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>FK</B></TD><TD ALIGN="LEFT">MaKH INT</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>FK</B></TD><TD ALIGN="LEFT">MaBan INT</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">ThoiGianDat DATETIME</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">SoNguoi TINYINT</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">TrangThai, GhiChu, NgayTao</TD></TR>
+    </TABLE>>];
+
+  /* 3. THỰC ĐƠN & KHO */
+  DanhMucMon [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" BGCOLOR="white">
+      <TR><TD BGCOLOR="#EF6C00" COLSPAN="2"><FONT COLOR="white"><B>DanhMucMon</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B></TD><TD ALIGN="LEFT"><U>MaDM</U> INT IDENTITY</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>UQ</B></TD><TD ALIGN="LEFT">TenDM NVARCHAR(50)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">MoTa NVARCHAR(255)</TD></TR>
+    </TABLE>>];
+
+  MonAn [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" BGCOLOR="white">
+      <TR><TD BGCOLOR="#EF6C00" COLSPAN="2"><FONT COLOR="white"><B>MonAn</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B></TD><TD ALIGN="LEFT"><U>MaMon</U> INT IDENTITY</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>UQ</B></TD><TD ALIGN="LEFT">TenMon NVARCHAR(100)</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>FK</B></TD><TD ALIGN="LEFT">MaDM INT</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">DonGia DECIMAL(12,0)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">DonViTinh, MoTa</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">ConKinhDoanh BIT</TD></TR>
+    </TABLE>>];
+
+  NguyenLieu [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" BGCOLOR="white">
+      <TR><TD BGCOLOR="#5E35B1" COLSPAN="2"><FONT COLOR="white"><B>NguyenLieu</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B></TD><TD ALIGN="LEFT"><U>MaNL</U> INT IDENTITY</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>UQ</B></TD><TD ALIGN="LEFT">TenNL NVARCHAR(100)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">DonViTinh NVARCHAR(20)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">SoLuongTon DECIMAL(10,2)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">MucToiThieu DECIMAL(10,2)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">DonGiaNhap DECIMAL(12,0)</TD></TR>
+    </TABLE>>];
+
+  CongThuc [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" BGCOLOR="white">
+      <TR><TD BGCOLOR="#5E35B1" COLSPAN="2"><FONT COLOR="white"><B>CongThuc</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK,FK</B></TD><TD ALIGN="LEFT"><U>MaMon</U> INT</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK,FK</B></TD><TD ALIGN="LEFT"><U>MaNL</U> INT</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">DinhLuong DECIMAL(10,3)</TD></TR>
+    </TABLE>>];
+
+  /* 4. HÓA ĐƠN & GỌI MÓN */
+  HoaDon [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" BGCOLOR="white">
+      <TR><TD BGCOLOR="#1565C0" COLSPAN="2"><FONT COLOR="white"><B>HoaDon</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B></TD><TD ALIGN="LEFT"><U>MaHD</U> INT IDENTITY</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>FK</B></TD><TD ALIGN="LEFT">MaBan INT</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>FK</B></TD><TD ALIGN="LEFT">MaKH INT (NULL)</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>FK</B></TD><TD ALIGN="LEFT">MaNV INT</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">ThoiGianLap, ThoiGianThanhToan</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">TongTien, GiamGia, ThanhToan</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">PhuongThucTT, TrangThai</TD></TR>
+    </TABLE>>];
+
+  ChiTietHoaDon [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" BGCOLOR="white">
+      <TR><TD BGCOLOR="#1565C0" COLSPAN="2"><FONT COLOR="white"><B>ChiTietHoaDon</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK,FK</B></TD><TD ALIGN="LEFT"><U>MaHD</U> INT</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK,FK</B></TD><TD ALIGN="LEFT"><U>MaMon</U> INT</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">SoLuong INT</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">DonGia DECIMAL(12,0)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">ThanhTien (Computed)</TD></TR>
+    </TABLE>>];
+
+  /* 5. NHẬT KÝ AUDIT */
+  NhatKyHoaDon [label=<
+    <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" BGCOLOR="white">
+      <TR><TD BGCOLOR="#546E7A" COLSPAN="2"><FONT COLOR="white"><B>NhatKyHoaDon</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><B>PK</B></TD><TD ALIGN="LEFT"><U>MaNK</U> INT IDENTITY</TD></TR>
+      <TR><TD ALIGN="LEFT"><B>FK</B></TD><TD ALIGN="LEFT">MaHD INT (Logic)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">HanhDong NVARCHAR(50)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">NoiDung NVARCHAR(500)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">NguoiThucHien NVARCHAR(100)</TD></TR>
+      <TR><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">ThoiGian DATETIME</TD></TR>
+    </TABLE>>];
+
+  /* Ranks */
+  { rank=same; KhachHang; NhanVien; DanhMucMon; }
+  { rank=same; DatBan; HoaDon; MonAn; NhatKyHoaDon; }
+  { rank=same; BanAn; ChiTietHoaDon; CongThuc; }
+  { rank=same; NguyenLieu; }
+
+  /* Mối quan hệ */
+  KhachHang    -> DatBan         [label="1..N"];
+  KhachHang    -> HoaDon         [style=dashed, label="0..1..N"];
+  NhanVien     -> HoaDon         [label="1..N"];
+  BanAn        -> DatBan         [label="1..N"];
+  BanAn        -> HoaDon         [label="1..N"];
+  HoaDon       -> ChiTietHoaDon  [label="1..N (CASCADE)"];
+  MonAn        -> ChiTietHoaDon  [label="1..N"];
+  DanhMucMon   -> MonAn          [label="1..N"];
+  MonAn        -> CongThuc       [label="1..N (CASCADE)"];
+  NguyenLieu   -> CongThuc       [label="1..N"];
+  HoaDon       -> NhatKyHoaDon   [style=dashed, label="Audit log"];
+}

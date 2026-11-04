@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sen Vàng — Quản lý nhà hàng</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#1E4D3B; --green-deep:#153A2C; --green-soft:#E3EEE7;
+  --turmeric:#D99A1E; --turmeric-soft:#FBF0D6;
+  --slate:#4A6FA5; --slate-soft:#E4EBF5;
+  --red:#B3372A; --red-soft:#F8E3DF;
+  --ink:#17201C; --muted:#66716B; --line:#DDE3DE; --panel:#F3F6F3; --white:#FFFFFF;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:"Be Vietnam Pro",system-ui,Segoe UI,Arial,sans-serif;color:var(--ink);background:var(--panel);font-size:14px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit}
+
+/* ---- layout ---- */
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+.side{background:var(--green);color:#E6F0EA;padding:22px 16px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+.brand{font-weight:700;font-size:22px;letter-spacing:-.3px;color:#fff;padding:4px 10px 18px}
+.brand small{display:block;font-weight:400;font-size:12px;color:#B9D2C4;margin-top:2px}
+.nav{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:none;border:0;text-align:left;cursor:pointer;color:#D6E6DC;width:100%}
+.nav:hover{background:rgba(255,255,255,.08)}
+.nav.active{background:#fff;color:var(--green);font-weight:600}
+.nav i{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.55;flex:none}
+.side .foot{margin-top:auto;font-size:12px;color:#9EBCAD;padding:0 10px}
+.main{padding:28px 36px 60px;max-width:1240px;width:100%}
+.head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px;gap:16px;flex-wrap:wrap}
+.head h1{margin:0;font-size:26px;font-weight:700;letter-spacing:-.4px}
+.head p{margin:4px 0 0;color:var(--muted)}
+.page{display:none}.page.active{display:block}
+
+/* ---- components ---- */
+.card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.grid{display:grid;gap:16px}
+.g4{grid-template-columns:repeat(4,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g2{grid-template-columns:repeat(2,1fr)}
+.kpi .l{color:var(--muted);font-size:13px}.kpi .v{font-size:28px;font-weight:700;margin-top:4px;letter-spacing:-.5px}
+.kpi .s{font-size:12px;color:var(--muted);margin-top:2px}
+h2{font-size:16px;font-weight:600;margin:0 0 12px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.btn{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:#B8C3BC}
+.btn.primary{background:var(--green);color:#fff;border-color:var(--green)}
+.btn.primary:hover{background:var(--green-deep)}
+.btn.accent{background:var(--turmeric);color:#fff;border-color:var(--turmeric)}
+.btn.danger{background:var(--red-soft);color:var(--red);border-color:transparent}
+.btn.sm{padding:5px 10px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+input,select,textarea{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff;width:100%}
+input:focus,select:focus,textarea:focus,.btn:focus-visible,.nav:focus-visible{outline:2px solid var(--turmeric);outline-offset:1px}
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+.field{margin-bottom:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:500;white-space:nowrap}
+.tag.ok{background:var(--green-soft);color:var(--green)} .tag.busy{background:var(--turmeric-soft);color:#8A5E07}
+.tag.book{background:var(--slate-soft);color:var(--slate)} .tag.bad{background:var(--red-soft);color:var(--red)}
+.tag.grey{background:#EDEFED;color:var(--muted)}
+.muted{color:var(--muted)} .empty{color:var(--muted);padding:24px;text-align:center}
+.toast{position:fixed;right:24px;bottom:24px;background:var(--ink);color:#fff;padding:12px 16px;border-radius:10px;max-width:420px;opacity:0;transform:translateY(8px);transition:.2s;z-index:60;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.toast.show{opacity:1;transform:none}.toast.err{background:var(--red)}
+
+/* ---- bar chart ---- */
+.bars{display:flex;align-items:flex-end;gap:6px;height:150px;padding-top:8px}
+.bar{flex:1;background:var(--green);border-radius:4px 4px 0 0;position:relative;min-height:2px}
+.bar:last-child{background:var(--turmeric)}
+.bar span{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--muted);white-space:nowrap}
+.bar:hover::after{content:attr(data-v);position:absolute;top:-24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:11px;padding:2px 6px;border-radius:4px;white-space:nowrap}
+
+/* ---- floor plan ---- */
+.zone{margin-bottom:22px}
+.zone h2{display:flex;justify-content:space-between;align-items:baseline}
+.zone h2 small{font-weight:400;color:var(--muted);font-size:12px}
+.tables{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.tbl{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;text-align:left;position:relative;min-height:112px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .12s}
+.tbl:hover{transform:translateY(-2px);border-color:#B8C3BC}
+.tbl .n{font-weight:700;font-size:17px}
+.tbl .seats{display:flex;gap:3px;flex-wrap:wrap;margin-top:6px}
+.tbl .seats b{width:7px;height:7px;border-radius:2px;background:#CBD5CE;display:block}
+.tbl .info{font-size:12px;color:var(--muted);margin-top:8px}
+.tbl.busy{background:var(--turmeric-soft);border-color:#EACB7C}.tbl.busy .seats b{background:var(--turmeric)}
+.tbl.book{background:var(--slate-soft);border-color:#B7C8E2}.tbl.book .seats b{background:var(--slate)}
+.tbl.ok .seats b{background:#8EB9A2}
+.legend{display:flex;gap:16px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+/* ---- drawer ---- */
+.overlay{position:fixed;inset:0;background:rgba(23,32,28,.35);display:none;z-index:40}
+.overlay.show{display:block}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:520px;max-width:100vw;background:#fff;z-index:50;transform:translateX(100%);transition:transform .22s;display:flex;flex-direction:column;box-shadow:-10px 0 40px rgba(0,0,0,.12)}
+.drawer.show{transform:none}
+.drawer .dh{padding:20px 24px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start}
+.drawer .dh h2{font-size:20px;margin:0}
+.drawer .db{padding:18px 24px;overflow:auto;flex:1}
+.drawer .df{padding:14px 24px;border-top:1px solid var(--line);background:var(--panel)}
+.total{display:flex;justify-content:space-between;font-size:16px;margin-top:4px}
+.total b{font-size:22px}
+.x{background:none;border:0;font-size:22px;cursor:pointer;color:var(--muted);line-height:1}
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:70;background:rgba(23,32,28,.35)}
+.modal.show{display:flex}
+.modal .box{background:#fff;border-radius:14px;padding:22px 24px;width:460px;max-width:94vw;max-height:90vh;overflow:auto}
+.modal h2{font-size:18px}
+@media (max-width:980px){.app{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap}.side .foot,.brand small{display:none}.g4,.g3,.g2{grid-template-columns:1fr 1fr}.main{padding:18px}}
+@media (max-width:640px){.g4,.g3,.g2{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">Sen Vàng<small>Hệ thống quản lý nhà hàng</small></div>
+    <button class="nav active" data-page="dashboard"><i></i>Tổng quan</button>
+    <button class="nav" data-page="ban"><i></i>Sơ đồ bàn &amp; gọi món</button>
+    <button class="nav" data-page="thucdon"><i></i>Thực đơn</button>
+    <button class="nav" data-page="datban"><i></i>Đặt bàn</button>
+    <button class="nav" data-page="hoadon"><i></i>Hóa đơn</button>
+    <button class="nav" data-page="khachhang"><i></i>Khách hàng</button>
+    <button class="nav" data-page="kho"><i></i>Kho nguyên liệu</button>
+    <button class="nav" data-page="baocao"><i></i>Báo cáo tháng</button>
+    <div class="foot">SQL Server · QuanLyNhaHang<br><span id="clock"></span></div>
+  </aside>
+
+  <main class="main">
+    <!-- ================= TỔNG QUAN ================= -->
+    <section class="page active" id="page-dashboard">
+      <div class="head"><div><h1>Tổng quan hôm nay</h1><p id="dash-date"></p></div><button class="btn" onclick="loadDashboard()">Làm mới</button></div>
+      <div class="grid g4" id="kpis"></div>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h2>Doanh thu 14 ngày gần nhất</h2><div class="bars" id="chart"></div><div style="height:22px"></div></div>
+        <div class="card"><h2>Món bán chạy 30 ngày</h2><table id="top-mon"></table></div>
+      </div>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card"><h2>Đặt bàn sắp tới</h2><table id="dash-datban"></table></div>
+        <div class="card"><h2>Nguyên liệu cần nhập</h2><table id="dash-kho"></table></div>
+      </div>
+    </section>
+
+    <!-- ================= SƠ ĐỒ BÀN ================= -->
+    <section class="page" id="page-ban">
+      <div class="head"><div><h1>Sơ đồ bàn</h1><p>Nhấn vào bàn để mở hóa đơn, gọi món hoặc thanh toán</p></div>
+        <div class="legend"><span><i style="background:#8EB9A2"></i>Trống</span><span><i style="background:var(--turmeric)"></i>Đang phục vụ</span><span><i style="background:var(--slate)"></i>Đã đặt</span></div></div>
+      <div id="floor"></div>
+    </section>
+
+    <!-- ================= THỰC ĐƠN ================= -->
+    <section class="page" id="page-thucdon">
+      <div class="head"><div><h1>Thực đơn</h1><p>Quản lý món ăn và giá bán</p></div><button class="btn primary" onclick="openMonForm()">Thêm món</button></div>
+      <div class="card"><div class="row" style="margin-bottom:12px"><select id="f-dm" style="width:200px" onchange="renderMenu()"></select><input id="f-mon" placeholder="Tìm tên món…" style="width:260px" oninput="renderMenu()"></div>
+      <table id="menu-table"></table></div>
+    </section>
+
+    <!-- ================= ĐẶT BÀN ================= -->
+    <section class="page" id="page-datban">
+      <div class="head"><div><h1>Đặt bàn</h1><p>Lịch đặt bàn và xác nhận</p></div><button class="btn primary" onclick="openDatBanForm()">Đặt bàn mới</button></div>
+      <div class="card"><table id="datban-table"></table></div>
+    </section>
+
+    <!-- ================= HÓA ĐƠN ================= -->
+    <section class="page" id="page-hoadon">
+      <div class="head"><div><h1>Hóa đơn</h1><p>Tra cứu lịch sử bán hàng</p></div></div>
+      <div class="card"><div class="row" style="margin-bottom:12px">
+        <select id="hd-nam" style="width:140px" onchange="locNam()"><option value="">Tất cả năm</option><option value="2025">Năm 2025</option><option value="2024">Năm 2024</option><option value="2023">Năm 2023</option><option value="2022">Năm 2022</option><option value="2021">Năm 2021</option><option value="2020">Năm 2020</option></select>
+        <select id="hd-tt" style="width:180px" onchange="loadHoaDon()"><option value="">Tất cả trạng thái</option><option>Đang phục vụ</option><option>Đã thanh toán</option><option>Đã hủy</option></select>
+        <input type="date" id="hd-tu" style="width:160px" onchange="loadHoaDon()"><span class="muted">đến</span><input type="date" id="hd-den" style="width:160px" onchange="loadHoaDon()"></div>
+      <table id="hoadon-table"></table></div>
+    </section>
+
+    <!-- ================= KHÁCH HÀNG ================= -->
+    <section class="page" id="page-khachhang">
+      <div class="head"><div><h1>Khách hàng</h1><p>Thành viên, điểm tích lũy và hạng</p></div><button class="btn primary" onclick="openKhForm()">Thêm khách</button></div>
+      <div class="card"><input id="kh-q" placeholder="Tìm theo tên hoặc số điện thoại…" style="width:320px;margin-bottom:12px" oninput="debounce(loadKhachHang)()"><table id="kh-table"></table></div>
+    </section>
+
+    <!-- ================= KHO ================= -->
+    <section class="page" id="page-kho">
+      <div class="head"><div><h1>Kho nguyên liệu</h1><p>Tồn kho tự trừ theo công thức khi gọi món</p></div></div>
+      <div class="card"><table id="kho-table"></table></div>
+    </section>
+
+    <!-- ================= BÁO CÁO ================= -->
+    <section class="page" id="page-baocao">
+      <div class="head"><div><h1>Báo cáo doanh thu theo tháng</h1><p>Dữ liệu từ stored procedure sp_BaoCaoDoanhThuTheoThang</p></div>
+        <div class="row"><input type="number" id="bc-nam" style="width:110px" value="2025"><button class="btn primary" onclick="loadBaoCao()">Xem</button></div></div>
+      <div class="card"><div id="bc-tong" class="kpi" style="margin-bottom:14px"></div><table id="bc-table"></table></div>
+    </section>
+  </main>
+</div>
+
+<!-- drawer hóa đơn -->
+<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer" aria-label="Chi tiết hóa đơn">
+  <div class="dh"><div><h2 id="d-title">Bàn</h2><div class="muted" id="d-sub"></div></div><button class="x" onclick="closeDrawer()" aria-label="Đóng">×</button></div>
+  <div class="db" id="d-body"></div>
+  <div class="df" id="d-foot"></div>
+</aside>
+
+<div class="modal" id="modal"><div class="box" id="modal-box"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= helpers ================= */
+const $ = (s, el=document) => el.querySelector(s);
+const fmt = n => new Intl.NumberFormat('vi-VN').format(Math.round(Number(n)||0)) + ' đ';
+const num = n => new Intl.NumberFormat('vi-VN').format(Number(n)||0);
+const dt = s => s ? new Date(s).toLocaleString('vi-VN',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit',year:'numeric'}) : '';
+const d = s => s ? new Date(s).toLocaleDateString('vi-VN') : '';
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let toastT; function toast(msg, err){ const t=$('#toast'); t.textContent=msg; t.className='toast show'+(err?' err':''); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'), err?5000:2800); }
+async function api(url, opt={}){ const r = await fetch('/api'+url, {headers:{'Content-Type':'application/json'}, ...opt, body: opt.body?JSON.stringify(opt.body):undefined}); const j = await r.json().catch(()=>({})); if(!r.ok) throw new Error(j.error||'Lỗi máy chủ'); return j; }
+function debounce(fn, ms=350){ return ()=>{ clearTimeout(fn._t); fn._t=setTimeout(fn, ms);} }
+const tagTT = tt => ({'Trống':'ok','Đang phục vụ':'busy','Đã đặt':'book','Đã thanh toán':'ok','Đã hủy':'bad','Chờ xác nhận':'grey','Đã xác nhận':'book','Đã đến':'ok'}[tt]||'grey');
+const tag = tt => `<span class="tag ${tagTT(tt)}">${esc(tt)}</span>`;
+function openModal(html){ $('#modal-box').innerHTML=html; $('#modal').classList.add('show'); }
+function closeModal(){ $('#modal').classList.remove('show'); }
+$('#modal').addEventListener('click', e=>{ if(e.target.id==='modal') closeModal(); });
+setInterval(()=>$('#clock').textContent=new Date().toLocaleTimeString('vi-VN'),1000);
+
+/* ================= navigation ================= */
+const loaders = {dashboard:loadDashboard, ban:loadBan, thucdon:loadMenu, datban:loadDatBan, hoadon:loadHoaDon, khachhang:loadKhachHang, kho:loadKho, baocao:loadBaoCao};
+document.querySelectorAll('.nav').forEach(b=>b.addEventListener('click',()=>go(b.dataset.page)));
+function go(p){ document.querySelectorAll('.nav').forEach(b=>b.classList.toggle('active',b.dataset.page===p)); document.querySelectorAll('.page').forEach(s=>s.classList.toggle('active',s.id==='page-'+p)); loaders[p]?.(); }
+
+/* ================= caches ================= */
+let MENU=[], DM=[], NV=[], BAN=[];
+async function ensureRefs(){ if(!DM.length) DM = await api('/danhmuc'); if(!NV.length) NV = await api('/nhanvien'); }
+
+/* ================= dashboard ================= */
+async function loadDashboard(){
+  $('#dash-date').textContent = new Date().toLocaleDateString('vi-VN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  try{
+    const r = await api('/dashboard'); const k=r.kpi;
+    $('#kpis').innerHTML = [
+      ['Doanh thu hôm nay', fmt(k.DoanhThuHomNay), k.HoaDonHomNay+' hóa đơn đã thanh toán'],
+      ['Bàn đang phục vụ', `${k.BanDangPhucVu} / ${k.TongBan}`, 'bàn có khách lúc này'],
+      ['Đặt bàn hôm nay', k.DatBanHomNay, 'lượt chờ / đã xác nhận'],
+      ['Nguyên liệu sắp hết', k.NguyenLieuSapHet, 'cần lên đơn nhập']
+    ].map(([l,v,s])=>`<div class="card kpi"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join('');
+    const max = Math.max(...r.doanhThu14Ngay.map(x=>Number(x.DoanhThu)),1);
+    $('#chart').innerHTML = r.doanhThu14Ngay.map(x=>`<div class="bar" style="height:${Math.max(2,Number(x.DoanhThu)/max*100)}%" data-v="${fmt(x.DoanhThu)} · ${x.SoHoaDon} HĐ"><span>${new Date(x.Ngay).getDate()}/${new Date(x.Ngay).getMonth()+1}</span></div>`).join('') || '<div class="empty">Chưa có dữ liệu</div>';
+    $('#top-mon').innerHTML = '<tr><th>Món</th><th>Danh mục</th><th class="num">SL</th><th class="num">Doanh thu</th></tr>' + r.monBanChay.map(m=>`<tr><td>${esc(m.TenMon)}</td><td class="muted">${esc(m.TenDM)}</td><td class="num">${m.TongSoLuong}</td><td class="num">${fmt(m.DoanhThu)}</td></tr>`).join('');
+    $('#dash-datban').innerHTML = r.datBanSapToi.length ? '<tr><th>Thời gian</th><th>Khách</th><th>Bàn</th><th class="num">Người</th><th></th></tr>' + r.datBanSapToi.map(x=>`<tr><td>${dt(x.ThoiGianDat)}</td><td>${esc(x.TenKhach)}<div class="muted" style="font-size:12px">${x.SoDienThoai}</div></td><td>${x.TenBan}</td><td class="num">${x.SoNguoi}</td><td>${tag(x.TrangThai)}</td></tr>`).join('') : '<tr><td class="empty">Không có lượt đặt nào sắp tới</td></tr>';
+    $('#dash-kho').innerHTML = r.nguyenLieuSapHet.length ? '<tr><th>Nguyên liệu</th><th class="num">Tồn</th><th class="num">Tối thiểu</th><th class="num">Cần nhập</th></tr>' + r.nguyenLieuSapHet.map(x=>`<tr><td>${esc(x.TenNL)}</td><td class="num" style="color:var(--red);font-weight:600">${num(x.SoLuongTon)} ${x.DonViTinh}</td><td class="num">${num(x.MucToiThieu)}</td><td class="num">${num(x.SoLuongCanNhap)}</td></tr>`).join('') : '<tr><td class="empty">Kho ổn, không có nguyên liệu dưới mức tối thiểu</td></tr>';
+  }catch(e){ toast(e.message,true); }
+}
+
+/* ================= floor plan ================= */
+async function loadBan(){
+  try{
+    BAN = await api('/ban'); await ensureRefs();
+    const zones = [...new Set(BAN.map(b=>b.KhuVuc))];
+    $('#floor').innerHTML = zones.map(z=>{ const rows=BAN.filter(b=>b.KhuVuc===z); const busy=rows.filter(b=>b.TrangThai==='Đang phục vụ').length;
+      return `<div class="zone"><h2>${esc(z)} <small>${busy}/${rows.length} bàn có khách</small></h2><div class="tables">${rows.map(b=>`
+        <button class="tbl ${tagTT(b.TrangThai)}" onclick="clickBan(${b.MaBan})">
+          <div><div class="n">${esc(b.TenBan)}</div><div class="seats">${'<b></b>'.repeat(b.SoCho)}</div></div>
+          <div class="info">${b.MaHD?`HĐ #${b.MaHD} · ${b.SoPhutDaNgoi} phút<br><b style="color:var(--ink)">${fmt(b.TongTien)}</b>`:(b.TrangThai==='Đã đặt'?'Có khách đặt hôm nay':b.SoCho+' chỗ · trống')}</div>
+        </button>`).join('')}</div></div>`; }).join('');
+  }catch(e){ toast(e.message,true); }
+}
+function clickBan(maBan){ const b=BAN.find(x=>x.MaBan===maBan); if(b.MaHD) openDrawer(b.MaHD); else openMoHoaDon(b); }
+function openMoHoaDon(b){
+  openModal(`<h2>Mở hóa đơn — ${esc(b.TenBan)}</h2>
+    <div class="field"><label>Nhân viên phục vụ</label><select id="m-nv">${NV.map(n=>`<option value="${n.MaNV}">${esc(n.HoTen)} — ${n.ChucVu}</option>`).join('')}</select></div>
+    <div class="field"><label>Khách hàng thành viên (tùy chọn)</label><input id="m-kh" placeholder="Nhập SĐT hoặc tên để tìm…" oninput="debounce(timKhach)()" autocomplete="off"><div id="m-kh-list"></div><input type="hidden" id="m-kh-id"></div>
+    <div class="row" style="justify-content:flex-end;margin-top:8px"><button class="btn" onclick="closeModal()">Hủy</button><button class="btn primary" onclick="moHoaDon(${b.MaBan})">Mở hóa đơn</button></div>`);
+}
+async function timKhach(){ const q=$('#m-kh').value.trim(); if(q.length<2){$('#m-kh-list').innerHTML='';return;} const l=await api('/khachhang?q='+encodeURIComponent(q));
+  $('#m-kh-list').innerHTML = l.slice(0,5).map(k=>`<button class="btn sm" style="margin:6px 6px 0 0" onclick="$('#m-kh').value='${esc(k.HoTen)} (${k.SoDienThoai})';$('#m-kh-id').value=${k.MaKH};$('#m-kh-list').innerHTML=''">${esc(k.HoTen)} · ${k.SoDienThoai} · ${k.HangThanhVien}</button>`).join('') || '<div class="muted" style="margin-top:6px">Không tìm thấy</div>'; }
+async function moHoaDon(maBan){ try{ const r=await api('/hoadon',{method:'POST',body:{maBan,maNV:Number($('#m-nv').value),maKH:$('#m-kh-id').value?Number($('#m-kh-id').value):null}}); closeModal(); toast('Đã mở hóa đơn #'+r.maHD); await loadBan(); openDrawer(r.maHD);}catch(e){toast(e.message,true);} }
+
+/* ================= drawer: chi tiết hóa đơn ================= */
+let CUR=null;
+async function openDrawer(maHD){
+  try{
+    if(!MENU.length) MENU = await api('/monan');
+    const r = await api('/hoadon/'+maHD); CUR=r; const h=r.hoaDon; const open = h.TrangThai==='Đang phục vụ';
+    $('#d-title').textContent = `${h.TenBan} · Hóa đơn #${h.MaHD}`;
+    $('#d-sub').innerHTML = `${tag(h.TrangThai)} &nbsp; ${esc(h.TenKhach)} · NV ${esc(h.NhanVien)} · ${dt(h.ThoiGianLap)}`;
+    $('#d-body').innerHTML = `
+      ${open?`<div class="row" style="margin-bottom:14px"><select id="d-mon" style="flex:1">${DM.map(c=>`<optgroup label="${esc(c.TenDM)}">${MENU.filter(m=>m.MaDM===c.MaDM).map(m=>`<option value="${m.MaMon}">${esc(m.TenMon)} — ${fmt(m.DonGia)}</option>`).join('')}</optgroup>`).join('')}</select>
+        <input type="number" id="d-sl" value="1" min="1" style="width:70px"><button class="btn primary" onclick="themMon()">Thêm</button></div>`:''}
+      <table><tr><th>Món</th><th class="num">SL</th><th class="num">Đơn giá</th><th class="num">Thành tiền</th>${open?'<th></th>':''}</tr>
+      ${r.chiTiet.map(c=>`<tr><td>${esc(c.TenMon)}<div class="muted" style="font-size:12px">${esc(c.GhiChu||c.DonViTinh)}</div></td><td class="num">${c.SoLuong}</td><td class="num">${fmt(c.DonGia)}</td><td class="num">${fmt(c.ThanhTien)}</td>${open?`<td><button class="x" style="font-size:16px" title="Xóa" onclick="xoaMon(${c.MaMon})">×</button></td>`:''}</tr>`).join('') || `<tr><td colspan="5" class="empty">Chưa gọi món nào</td></tr>`}</table>
+      ${r.nhatKy.length?`<h2 style="margin-top:18px">Nhật ký</h2>${r.nhatKy.map(n=>`<div class="muted" style="font-size:12px">${dt(n.ThoiGian)} — <b>${esc(n.HanhDong)}</b> ${esc(n.NoiDung||'')}</div>`).join('')}`:''}`;
+    $('#d-foot').innerHTML = `<div class="total"><span>Tổng tiền hàng</span><span>${fmt(h.TongTien)}</span></div>
+      ${!open?`<div class="total"><span>Giảm giá ${Number(h.GiamGia)}%</span><span>- ${fmt(h.TongTien-h.ThanhToan)}</span></div><div class="total"><span>Đã thanh toán (${esc(h.PhuongThucTT||'—')})</span><b>${fmt(h.ThanhToan)}</b></div>`:`
+      <div class="row" style="margin-top:12px;justify-content:space-between"><button class="btn danger" onclick="huyHoaDon()">Hủy hóa đơn</button>
+        <div class="row"><label style="margin:0">Giảm %</label><input type="number" id="d-gg" value="0" min="0" max="100" style="width:70px"><select id="d-pt" style="width:140px"><option>Tiền mặt</option><option>Chuyển khoản</option><option>Thẻ</option></select><button class="btn accent" onclick="thanhToan()" ${r.chiTiet.length?'':'disabled'}>Thanh toán</button></div></div>`}`;
+    $('#drawer').classList.add('show'); $('#overlay').classList.add('show');
+  }catch(e){ toast(e.message,true); }
+}
+function closeDrawer(){ $('#drawer').classList.remove('show'); $('#overlay').classList.remove('show'); }
+async function themMon(){ try{ await api(`/hoadon/${CUR.hoaDon.MaHD}/mon`,{method:'POST',body:{maMon:Number($('#d-mon').value),soLuong:Number($('#d-sl').value)}}); toast('Đã thêm món'); openDrawer(CUR.hoaDon.MaHD); loadBan(); }catch(e){toast(e.message,true);} }
+async function xoaMon(maMon){ if(!confirm('Xóa món này khỏi hóa đơn?')) return; try{ await api(`/hoadon/${CUR.hoaDon.MaHD}/mon/${maMon}`,{method:'DELETE'}); openDrawer(CUR.hoaDon.MaHD); loadBan(); }catch(e){toast(e.message,true);} }
+async function thanhToan(){ try{ const r=await api(`/hoadon/${CUR.hoaDon.MaHD}/thanhtoan`,{method:'POST',body:{phuongThuc:$('#d-pt').value,giamGia:$('#d-gg').value}}); toast('Đã thanh toán '+fmt(r.soTienPhaiTra)); closeDrawer(); loadBan(); }catch(e){toast(e.message,true);} }
+async function huyHoaDon(){ const ly=prompt('Lý do hủy hóa đơn:'); if(ly===null) return; try{ await api(`/hoadon/${CUR.hoaDon.MaHD}/huy`,{method:'POST',body:{lyDo:ly}}); toast('Đã hủy hóa đơn'); closeDrawer(); loadBan(); }catch(e){toast(e.message,true);} }
+
+/* ================= thực đơn ================= */
+let ALLMON=[];
+async function loadMenu(){ try{ await ensureRefs(); ALLMON = await api('/monan?all=1'); MENU = ALLMON.filter(m=>m.ConKinhDoanh);
+  $('#f-dm').innerHTML = '<option value="">Tất cả danh mục</option>'+DM.map(c=>`<option value="${c.MaDM}">${esc(c.TenDM)}</option>`).join(''); renderMenu(); }catch(e){toast(e.message,true);} }
+function renderMenu(){ const dm=$('#f-dm').value, q=$('#f-mon').value.toLowerCase(); const rows=ALLMON.filter(m=>(!dm||m.MaDM==dm)&&m.TenMon.toLowerCase().includes(q));
+  $('#menu-table').innerHTML = '<tr><th>Món</th><th>Danh mục</th><th class="num">Đơn giá</th><th>ĐVT</th><th>Trạng thái</th><th></th></tr>'+rows.map(m=>`<tr><td><b>${esc(m.TenMon)}</b><div class="muted" style="font-size:12px">${esc(m.MoTa||'')}</div></td><td>${esc(m.TenDM)}</td><td class="num">${fmt(m.DonGia)}</td><td>${esc(m.DonViTinh)}</td><td>${m.ConKinhDoanh?'<span class="tag ok">Đang bán</span>':'<span class="tag grey">Ngừng bán</span>'}</td><td><button class="btn sm" onclick="openMonForm(${m.MaMon})">Sửa</button></td></tr>`).join(''); }
+function openMonForm(id){ const m = id?ALLMON.find(x=>x.MaMon===id):{ConKinhDoanh:1,DonViTinh:'Phần'};
+  openModal(`<h2>${id?'Sửa món':'Thêm món mới'}</h2>
+    <div class="field"><label>Tên món</label><input id="mf-ten" value="${esc(m.TenMon||'')}"></div>
+    <div class="grid g2"><div class="field"><label>Danh mục</label><select id="mf-dm">${DM.map(c=>`<option value="${c.MaDM}" ${c.MaDM===m.MaDM?'selected':''}>${esc(c.TenDM)}</option>`).join('')}</select></div>
+    <div class="field"><label>Đơn giá (đ)</label><input id="mf-gia" type="number" min="1000" step="1000" value="${m.DonGia||''}"></div></div>
+    <div class="grid g2"><div class="field"><label>Đơn vị tính</label><input id="mf-dvt" value="${esc(m.DonViTinh||'Phần')}"></div>
+    <div class="field"><label>Trạng thái</label><select id="mf-ckd"><option value="1" ${m.ConKinhDoanh?'selected':''}>Đang bán</option><option value="0" ${!m.ConKinhDoanh?'selected':''}>Ngừng bán</option></select></div></div>
+    <div class="field"><label>Mô tả</label><input id="mf-mota" value="${esc(m.MoTa||'')}"></div>
+    <div class="row" style="justify-content:flex-end"><button class="btn" onclick="closeModal()">Hủy</button><button class="btn primary" onclick="luuMon(${id||0})">Lưu</button></div>`); }
+async function luuMon(id){ const body={tenMon:$('#mf-ten').value.trim(),maDM:Number($('#mf-dm').value),donGia:Number($('#mf-gia').value),donViTinh:$('#mf-dvt').value.trim(),moTa:$('#mf-mota').value.trim(),conKinhDoanh:$('#mf-ckd').value==='1'};
+  try{ if(id) await api('/monan/'+id,{method:'PUT',body}); else await api('/monan',{method:'POST',body}); closeModal(); toast('Đã lưu món'); loadMenu(); }catch(e){toast(e.message,true);} }
+
+/* ================= đặt bàn ================= */
+async function loadDatBan(){ try{ const l=await api('/datban');
+  $('#datban-table').innerHTML = '<tr><th>Thời gian</th><th>Khách</th><th>Bàn</th><th class="num">Người</th><th>Ghi chú</th><th>Trạng thái</th><th></th></tr>'+l.map(x=>`<tr><td>${dt(x.ThoiGianDat)}</td><td>${esc(x.TenKhach)}<div class="muted" style="font-size:12px">${x.SoDienThoai}</div></td><td>${x.TenBan} <span class="muted">(${x.SoCho} chỗ)</span></td><td class="num">${x.SoNguoi}</td><td class="muted">${esc(x.GhiChu||'')}</td><td>${tag(x.TrangThai)}</td>
+    <td class="row">${x.TrangThai==='Chờ xác nhận'?`<button class="btn sm primary" onclick="capNhatDB(${x.MaDatBan},'Đã xác nhận')">Xác nhận</button>`:''}${['Chờ xác nhận','Đã xác nhận'].includes(x.TrangThai)?`<button class="btn sm danger" onclick="capNhatDB(${x.MaDatBan},'Đã hủy')">Hủy</button>`:''}</td></tr>`).join(''); }catch(e){toast(e.message,true);} }
+async function capNhatDB(id,tt){ try{ await api(`/datban/${id}/trangthai`,{method:'PUT',body:{trangThai:tt}}); toast('Đã cập nhật'); loadDatBan(); }catch(e){toast(e.message,true);} }
+async function openDatBanForm(){ if(!BAN.length) BAN=await api('/ban'); const now=new Date(Date.now()+3600e3); now.setMinutes(0,0,0); const local=new Date(now-now.getTimezoneOffset()*60000).toISOString().slice(0,16);
+  openModal(`<h2>Đặt bàn mới</h2>
+    <div class="field"><label>Khách hàng</label><input id="m-kh" placeholder="Nhập SĐT hoặc tên để tìm…" oninput="debounce(timKhach)()" autocomplete="off"><div id="m-kh-list"></div><input type="hidden" id="m-kh-id"></div>
+    <div class="grid g2"><div class="field"><label>Thời gian</label><input type="datetime-local" id="db-tg" value="${local}"></div><div class="field"><label>Số người</label><input type="number" id="db-sn" value="4" min="1" max="20"></div></div>
+    <div class="field"><label>Bàn</label><select id="db-ban">${BAN.map(b=>`<option value="${b.MaBan}">${b.TenBan} — ${b.KhuVuc} (${b.SoCho} chỗ)</option>`).join('')}</select></div>
+    <div class="field"><label>Ghi chú</label><input id="db-gc"></div>
+    <div class="row" style="justify-content:flex-end"><button class="btn" onclick="closeModal()">Hủy</button><button class="btn primary" onclick="datBan()">Đặt bàn</button></div>`); }
+async function datBan(){ if(!$('#m-kh-id').value) return toast('Hãy chọn khách hàng (có thể thêm khách mới ở mục Khách hàng)',true);
+  try{ await api('/datban',{method:'POST',body:{maKH:Number($('#m-kh-id').value),maBan:Number($('#db-ban').value),thoiGianDat:$('#db-tg').value,soNguoi:Number($('#db-sn').value),ghiChu:$('#db-gc').value}}); closeModal(); toast('Đã đặt bàn'); loadDatBan(); }catch(e){toast(e.message,true);} }
+
+/* ================= hóa đơn ================= */
+function locNam(){
+  const y = $('#hd-nam').value;
+  if (y) {
+    $('#hd-tu').value = `${y}-01-01`;
+    $('#hd-den').value = `${y}-12-31`;
+  } else {
+    $('#hd-tu').value = '';
+    $('#hd-den').value = '';
+  }
+  loadHoaDon();
+}
+async function loadHoaDon(){ try{ const p=new URLSearchParams({trangThai:$('#hd-tt').value,tuNgay:$('#hd-tu').value,denNgay:$('#hd-den').value}); const l=await api('/hoadon?'+p);
+  $('#hoadon-table').innerHTML = '<tr><th>#</th><th>Thời gian</th><th>Bàn</th><th>Khách</th><th>Nhân viên</th><th class="num">Tổng</th><th class="num">Giảm</th><th class="num">Thanh toán</th><th>Trạng thái</th></tr>'+l.map(h=>`<tr style="cursor:pointer" onclick="openDrawer(${h.MaHD})"><td>${h.MaHD}</td><td>${dt(h.ThoiGianLap)}</td><td>${h.TenBan}</td><td>${esc(h.TenKhach)}</td><td class="muted">${esc(h.NhanVien)}</td><td class="num">${fmt(h.TongTien)}</td><td class="num">${Number(h.GiamGia)}%</td><td class="num"><b>${fmt(h.ThanhToan)}</b></td><td>${tag(h.TrangThai)}</td></tr>`).join('') || '<tr><td class="empty">Không có hóa đơn phù hợp</td></tr>'; }catch(e){toast(e.message,true);} }
+
+/* ================= khách hàng ================= */
+async function loadKhachHang(){ try{ const l=await api('/khachhang?q='+encodeURIComponent($('#kh-q').value));
+  $('#kh-table').innerHTML='<tr><th>Khách hàng</th><th>Liên hệ</th><th class="num">Tuổi</th><th class="num">Số lần</th><th class="num">Tổng chi tiêu</th><th class="num">Điểm</th><th>Hạng</th><th>Gần nhất</th></tr>'+l.map(k=>`<tr><td><b>${esc(k.HoTen)}</b></td><td>${k.SoDienThoai}<div class="muted" style="font-size:12px">${esc(k.Email||'')}</div></td><td class="num">${k.Tuoi??''}</td><td class="num">${k.SoLanDung}</td><td class="num">${fmt(k.TongChiTieu)}</td><td class="num">${num(k.DiemTichLuy)}</td><td><span class="tag ${k.HangThanhVien==='Kim cương'?'book':k.HangThanhVien==='Vàng'?'busy':k.HangThanhVien==='Bạc'?'grey':'ok'}">${k.HangThanhVien}</span></td><td class="muted">${d(k.LanGanNhat)}</td></tr>`).join(''); }catch(e){toast(e.message,true);} }
+function openKhForm(){ openModal(`<h2>Thêm khách hàng</h2>
+  <div class="field"><label>Họ tên</label><input id="kf-ten"></div>
+  <div class="grid g2"><div class="field"><label>Số điện thoại</label><input id="kf-sdt" placeholder="09xxxxxxxx"></div><div class="field"><label>Email</label><input id="kf-email"></div></div>
+  <div class="grid g2"><div class="field"><label>Giới tính</label><select id="kf-gt"><option value="">—</option><option>Nam</option><option>Nữ</option><option>Khác</option></select></div><div class="field"><label>Ngày sinh</label><input type="date" id="kf-ns"></div></div>
+  <div class="row" style="justify-content:flex-end"><button class="btn" onclick="closeModal()">Hủy</button><button class="btn primary" onclick="luuKh()">Lưu</button></div>`); }
+async function luuKh(){ try{ await api('/khachhang',{method:'POST',body:{hoTen:$('#kf-ten').value.trim(),soDienThoai:$('#kf-sdt').value.trim(),email:$('#kf-email').value.trim(),gioiTinh:$('#kf-gt').value,ngaySinh:$('#kf-ns').value}}); closeModal(); toast('Đã thêm khách hàng'); loadKhachHang(); }catch(e){toast(e.message,true);} }
+
+/* ================= kho ================= */
+async function loadKho(){ try{ const l=await api('/nguyenlieu');
+  $('#kho-table').innerHTML='<tr><th>Nguyên liệu</th><th class="num">Tồn kho</th><th class="num">Mức tối thiểu</th><th class="num">Giá nhập</th><th></th></tr>'+l.map(x=>`<tr><td>${x.SapHet?'<span class="tag bad" style="margin-right:6px">Sắp hết</span>':''}${esc(x.TenNL)}</td><td class="num" ${x.SapHet?'style="color:var(--red);font-weight:600"':''}>${num(x.SoLuongTon)} ${x.DonViTinh}</td><td class="num">${num(x.MucToiThieu)} ${x.DonViTinh}</td><td class="num">${fmt(x.DonGiaNhap)}</td><td class="row"><input type="number" id="nk-${x.MaNL}" placeholder="SL" min="0.1" step="0.1" style="width:80px"><button class="btn sm" onclick="nhapKho(${x.MaNL})">Nhập</button></td></tr>`).join(''); }catch(e){toast(e.message,true);} }
+async function nhapKho(id){ const sl=$('#nk-'+id).value; if(!sl) return; try{ await api(`/nguyenlieu/${id}/nhap`,{method:'POST',body:{soLuong:sl}}); toast('Đã nhập kho'); loadKho(); }catch(e){toast(e.message,true);} }
+
+/* ================= báo cáo ================= */
+async function loadBaoCao(){ try{ const r=await api('/baocao/thang?nam='+$('#bc-nam').value);
+  $('#bc-tong').innerHTML=`<div class="l">Tổng doanh thu năm ${r.nam}</div><div class="v">${fmt(r.tongDoanhThu)}</div>`;
+  $('#bc-table').innerHTML='<tr><th>Tháng</th><th class="num">Số hóa đơn</th><th class="num">Tiền hàng</th><th class="num">Giảm giá</th><th class="num">Doanh thu</th><th class="num">TB / hóa đơn</th><th class="num">Khách thành viên</th></tr>'+r.thang.map(t=>`<tr><td>Tháng ${t.Thang}</td><td class="num">${t.SoHoaDon}</td><td class="num">${fmt(t.TongTienHang)}</td><td class="num">${fmt(t.TienGiamGia)}</td><td class="num"><b>${fmt(t.DoanhThu)}</b></td><td class="num">${fmt(t.TrungBinhHoaDon)}</td><td class="num">${t.SoKhachThanhVien}</td></tr>`).join('') || '<tr><td class="empty">Không có dữ liệu cho năm này</td></tr>'; }catch(e){toast(e.message,true);} }
+
+loadDashboard();
+</script>
+</body>
+</html>

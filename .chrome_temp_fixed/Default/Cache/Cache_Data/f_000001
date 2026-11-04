@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nhà hàng Sen Vàng — Hệ thống Quản trị &amp; POS Thượng Hạng</title>
+  
+  <!-- Typography: Playfair Display (Editorial Display) + Be Vietnam Pro (Vietnamese Native) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&display=swap" rel="stylesheet">
+  
+  <!-- Haute SaaS Stylesheet -->
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<div class="app-container">
+  
+  <!-- ================= SIDEBAR NAVIGATION ================= -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand-emblem" id="brand-emblem" title="Nhà hàng Sen Vàng">
+        <!-- Golden Lotus Sacred Geometry Mandala SVG -->
+        <svg viewBox="0 0 24 24" class="icon lg" style="stroke: #051911; stroke-width: 2.2;">
+          <path d="M12 2c2 4 6 7 6 12a6 6 0 0 1-12 0c0-5 4-8 6-12Z"/>
+          <path d="M12 12c-2.5 2-5 2-7 1 0 4 3 7 7 8 4-1 7-4 7-8-2 1-4.5 1-7-1Z"/>
+        </svg>
+      </div>
+      <div class="brand-title">
+        <h1>Sen Vàng <span class="brand-badge">POS</span></h1>
+        <p>Ẩm thực Hoàng gia &amp; Vận hành</p>
+      </div>
+    </div>
+
+    <div class="sidebar-scroll">
+      <div class="nav-section-title">Vận hành phục vụ</div>
+      
+      <button class="nav-item active" data-page="dashboard">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+        <span>Tổng quan</span>
+      </button>
+
+      <button class="nav-item" data-page="ban">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16a2 2 0 0 1 2 2v2H2V8a2 2 0 0 1 2-2Z"/><path d="M4 10v10M20 10v10M9 10v6M15 10v6"/></svg>
+        <span>Sơ đồ bàn &amp; Gọi món</span>
+      </button>
+
+      <button class="nav-item" data-page="thucdon">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+        <span>Thực đơn món ăn</span>
+      </button>
+
+      <button class="nav-item" data-page="datban">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span>Lịch đặt bàn</span>
+      </button>
+
+      <div class="nav-section-title">Tài chính &amp; Hội viên</div>
+
+      <button class="nav-item" data-page="hoadon">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+        <span>Lịch sử hóa đơn</span>
+      </button>
+
+      <button class="nav-item" data-page="khachhang">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Khách hàng thành viên</span>
+      </button>
+
+      <button class="nav-item" data-page="baocao">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+        <span>Báo cáo doanh thu</span>
+      </button>
+
+      <div class="nav-section-title">Quản trị kho</div>
+
+      <button class="nav-item" data-page="kho">
+        <svg class="icon" viewBox="0 0 24 24"><path d="m7.5 4.27 9 5.15M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg>
+        <span>Kho nguyên liệu</span>
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="db-status">
+        <span class="status-dot-pulse"></span>
+        <span>SQL Server: <b>QuanLyNhaHang</b></span>
+      </div>
+      <div style="font-size:11px;color:#709986">Hệ điều hành ẩm thực v2.5 Ultra</div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN VIEWPORT ================= -->
+  <div class="main-wrapper">
+    
+    <!-- TOP NAVBAR -->
+    <header class="top-navbar">
+      <div class="top-nav-left">
+        <button class="menu-toggle-btn" id="mobile-menu-toggle" aria-label="Menu">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div class="breadcrumb-area">
+          <span class="system-name">Nhà hàng Sen Vàng</span>
+          <span class="separator">/</span>
+          <span class="current-view" id="current-view-name">Tổng quan vận hành</span>
+        </div>
+      </div>
+
+      <div class="top-nav-right">
+        <div class="live-badge" id="top-live-stats">
+          <span class="status-dot-pulse"></span> Đang kết nối dữ liệu máy chủ...
+        </div>
+
+        <div class="clock-pill">
+          <svg class="icon sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span id="top-clock">--:--:--</span>
+        </div>
+
+        <button class="btn ghost sm" id="btn-global-refresh" title="Đồng bộ dữ liệu mới nhất">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+          <span>Làm mới</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- CONTENT BODY -->
+    <main class="content-body">
+      
+      <!-- ================= 1. TỔNG QUAN (DASHBOARD) ================= -->
+      <section class="page active" id="page-dashboard">
+        
+        <!-- HERO CONCIERGE BANNER (First Impression Excellence) -->
+        <div class="hero-concierge">
+          <div class="hero-text-area">
+            <div class="hero-tagline">Hệ Thống Quản Trị Ẩm Thực Hoàng Gia</div>
+            <h2 id="hero-headline">Hương Sắc Thượng Uyển, Vận Hành Tinh Hoa</h2>
+            <p>Giám sát thời gian thực 24 bàn ẩm thực, đơn hàng và định lượng nguyên liệu trên hệ thống SQL Server QuanLyNhaHang.</p>
+            <div class="hero-quick-actions">
+              <button class="btn accent lg shimmer" onclick="window.app.navigateTo('ban')">
+                <svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16a2 2 0 0 1 2 2v2H2V8a2 2 0 0 1 2-2Z"/><path d="M4 10v10M20 10v10M9 10v6M15 10v6"/></svg>
+                <span>Xem Sơ Đồ Bàn Trực Tiếp</span>
+              </button>
+              <button class="btn ghost lg" style="color:#ffffff;border:1px solid rgba(255,255,255,0.2)" onclick="window.app.openDatBanForm()">
+                <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                <span>Đặt Bàn Mới</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Interactive Golden Lotus Mandala Centerpiece -->
+          <div class="hero-lotus-visual" id="hero-lotus-visual" title="Biểu tượng Hoa Sen Vàng — Chạm để tương tác">
+            <svg viewBox="0 0 100 100">
+              <defs>
+                <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#F5A31E" />
+                  <stop offset="50%" stop-color="#D98A0C" />
+                  <stop offset="100%" stop-color="#945904" />
+                </linearGradient>
+              </defs>
+              <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(217, 138, 12, 0.25)" stroke-width="1.5" stroke-dasharray="4 4" class="lotus-ring-outer"/>
+              <circle cx="50" cy="50" r="32" fill="none" stroke="rgba(217, 138, 12, 0.4)" stroke-width="1" class="lotus-ring-inner"/>
+              
+              <!-- 8 Lotus Petals -->
+              <path class="lotus-petal" d="M50 15 C54 28 64 36 64 50 C64 64 50 72 50 72 C50 72 36 64 36 50 C36 36 46 28 50 15 Z" fill="url(#goldGrad)" opacity="0.85" />
+              <path class="lotus-petal" transform="rotate(45 50 50)" d="M50 15 C54 28 64 36 64 50 C64 64 50 72 50 72 C50 72 36 64 36 50 C36 36 46 28 50 15 Z" fill="url(#goldGrad)" opacity="0.85" />
+              <path class="lotus-petal" transform="rotate(90 50 50)" d="M50 15 C54 28 64 36 64 50 C64 64 50 72 50 72 C50 72 36 64 36 50 C36 36 46 28 50 15 Z" fill="url(#goldGrad)" opacity="0.85" />
+              <path class="lotus-petal" transform="rotate(135 50 50)" d="M50 15 C54 28 64 36 64 50 C64 64 50 72 50 72 C50 72 36 64 36 50 C36 36 46 28 50 15 Z" fill="url(#goldGrad)" opacity="0.85" />
+              <path class="lotus-petal" transform="rotate(180 50 50)" d="M50 15 C54 28 64 36 64 50 C64 64 50 72 50 72 C50 72 36 64 36 50 C36 36 46 28 50 15 Z" fill="url(#goldGrad)" opacity="0.85" />
+              <path class="lotus-petal" transform="rotate(225 50 50)" d="M50 15 C54 28 64 36 64 50 C64 64 50 72 50 72 C50 72 36 64 36 50 C36 36 46 28 50 15 Z" fill="url(#goldGrad)" opacity="0.85" />
+              <path class="lotus-petal" transform="rotate(270 50 50)" d="M50 15 C54 28 64 36 64 50 C64 64 50 72 50 72 C50 72 36 64 36 50 C36 36 46 28 50 15 Z" fill="url(#goldGrad)" opacity="0.85" />
+              <path class="lotus-petal" transform="rotate(315 50 50)" d="M50 15 C54 28 64 36 64 50 C64 64 50 72 50 72 C50 72 36 64 36 50 C36 36 46 28 50 15 Z" fill="url(#goldGrad)" opacity="0.85" />
+              
+              <circle cx="50" cy="50" r="10" fill="#FFFDF8" stroke="#D98A0C" stroke-width="2" />
+            </svg>
+          </div>
+        </div>
+
+        <div class="page-header">
+          <div class="page-header-title">
+            <h2>Chỉ số kinh doanh hôm nay</h2>
+            <p id="dash-date-text">Đang tải ngày hệ thống...</p>
+          </div>
+        </div>
+
+        <!-- 4 KPI Stat Cards -->
+        <div class="grid g4" id="kpi-cards-grid">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- Charts & Top Dishes Row -->
+        <div class="grid g2" style="margin-top:24px">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                  Doanh thu 14 ngày gần nhất
+                </h3>
+                <div class="card-subtitle">Xu hướng doanh số bán hàng hàng ngày</div>
+              </div>
+            </div>
+            <div class="chart-container">
+              <div class="chart-bars-wrap" id="chart-bars"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"/><path d="m9 12 2 2 4-4"/></svg>
+                  Món bán chạy 30 ngày
+                </h3>
+                <div class="card-subtitle">Top các món được gọi nhiều nhất qua hàm SQL fn_MonBanChay</div>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table-modern" id="dash-top-mon"></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming Bookings & Stock Alert Row -->
+        <div class="grid g2" style="margin-top:24px">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">
+                  <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                  Khách đặt bàn sắp tới
+                </h3>
+                <div class="card-subtitle">Lượt đặt bàn chuẩn bị đón tiếp</div>
+              </div>
+              <button class="btn sm ghost" onclick="window.app.navigateTo('datban')">Tất cả lịch đặt →</button>
+            </div>
+            <div class="table-responsive">
+              <table class="table-modern" id="dash-datban-table"></table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title" style="color:var(--status-bad)">
+                  <svg class="icon" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  Cảnh báo nguyên liệu cần nhập
+                </h3>
+                <div class="card-subtitle">Vật tư dưới mức tồn kho tối thiểu</div>
+              </div>
+              <button class="btn sm ghost" onclick="window.app.navigateTo('kho')">Quản lý kho →</button>
+            </div>
+            <div class="table-responsive">
+              <table class="table-modern" id="dash-kho-table"></table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 2. SƠ ĐỒ BÀN (FLOOR PLAN) ================= -->
+      <section class="page" id="page-ban">
+        <div class="page-header">
+          <div class="page-header-title">
+            <h2>Sơ đồ bàn phục vụ</h2>
+            <p>Chọn bàn để xem hóa đơn, gọi món bổ sung hoặc thực hiện thanh toán</p>
+          </div>
+        </div>
+
+        <div class="floor-toolbar" id="zone-filter-bar">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <div id="floor-container">
+          <!-- Table cards grouped by zone rendered here -->
+        </div>
+      </section>
+
+      <!-- ================= 3. THỰC ĐƠN (MENU) ================= -->
+      <section class="page" id="page-thucdon">
+        <div class="page-header">
+          <div class="page-header-title">
+            <h2>Thực đơn món ăn</h2>
+            <p>Quản lý danh sách các món, danh mục, đơn vị tính và giá bán niêm yết</p>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn primary" onclick="window.app.openMonForm()">
+              <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              <span>Thêm món mới</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap">
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <select id="f-dm" class="input-box" style="width:220px" onchange="window.app.renderMenu()"></select>
+              <div class="input-with-icon" style="width:280px">
+                <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input id="f-mon" placeholder="Tìm tên món ăn..." oninput="window.app.renderMenu()">
+              </div>
+            </div>
+            <span class="tag grey" id="menu-count-badge">0 món</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table-modern" id="menu-table"></table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 4. ĐẶT BÀN ================= -->
+      <section class="page" id="page-datban">
+        <div class="page-header">
+          <div class="page-header-title">
+            <h2>Lịch đặt bàn trước</h2>
+            <p>Danh sách tiếp nhận yêu cầu đặt chỗ và tình trạng bàn phục vụ</p>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn primary" onclick="window.app.openDatBanForm()">
+              <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              <span>Đặt bàn mới</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap">
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <select id="db-filter-status" class="input-box" style="width:180px" onchange="window.app.renderDatBan()">
+                <option value="">Tất cả trạng thái</option>
+                <option value="Chờ xác nhận">Chờ xác nhận</option>
+                <option value="Đã xác nhận">Đã xác nhận</option>
+                <option value="Đã hủy">Đã hủy</option>
+              </select>
+              <div class="input-with-icon" style="width:280px">
+                <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input id="db-search" placeholder="Tìm theo tên khách, SĐT..." oninput="window.app.renderDatBan()">
+              </div>
+            </div>
+            <span class="tag grey" id="db-count-badge">0 lượt đặt</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table-modern" id="datban-table"></table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 5. HÓA ĐƠN ================= -->
+      <section class="page" id="page-hoadon">
+        <div class="page-header">
+          <div class="page-header-title">
+            <h2>Lịch sử hóa đơn</h2>
+            <p>Tra cứu và kiểm toán dữ liệu bán hàng theo ngày, tháng, trạng thái</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+            <select id="hd-nam" class="input-box" style="width:140px" onchange="window.app.locNam()">
+              <option value="">Tất cả các năm</option>
+              <option value="2026">Năm 2026</option>
+              <option value="2025">Năm 2025</option>
+              <option value="2024">Năm 2024</option>
+              <option value="2023">Năm 2023</option>
+              <option value="2022">Năm 2022</option>
+              <option value="2021">Năm 2021</option>
+              <option value="2020">Năm 2020</option>
+            </select>
+
+            <select id="hd-tt" class="input-box" style="width:170px" onchange="window.app.loadHoaDon()">
+              <option value="">Tất cả trạng thái</option>
+              <option value="Đang phục vụ">Đang phục vụ</option>
+              <option value="Đã thanh toán">Đã thanh toán</option>
+              <option value="Đã hủy">Đã hủy</option>
+            </select>
+
+            <div style="display:flex;align-items:center;gap:6px">
+              <input type="date" id="hd-tu" class="input-box" style="width:150px" onchange="window.app.loadHoaDon()">
+              <span style="color:var(--text-muted);font-size:12px">đến</span>
+              <input type="date" id="hd-den" class="input-box" style="width:150px" onchange="window.app.loadHoaDon()">
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table-modern" id="hoadon-table"></table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 6. KHÁCH HÀNG ================= -->
+      <section class="page" id="page-khachhang">
+        <div class="page-header">
+          <div class="page-header-title">
+            <h2>Khách hàng thân thiết (CRM)</h2>
+            <p>Hồ sơ hội viên, tích lũy điểm thưởng và phân loại theo hạng</p>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn primary" onclick="window.app.openKhForm()">
+              <svg class="icon sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              <span>Thêm khách hàng</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="input-with-icon" style="width:340px;margin-bottom:18px">
+            <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="kh-q" placeholder="Tìm theo tên hoặc số điện thoại..." oninput="window.app.loadKhachHang()">
+          </div>
+
+          <div class="table-responsive">
+            <table class="table-modern" id="kh-table"></table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 7. KHO NGUYÊN LIỆU ================= -->
+      <section class="page" id="page-kho">
+        <div class="page-header">
+          <div class="page-header-title">
+            <h2>Quản lý kho nguyên liệu</h2>
+            <p>Hệ thống tự động trừ kho nguyên liệu theo công thức định lượng khi món được phục vụ</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap">
+            <div class="input-with-icon" style="width:280px">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input id="kho-search" placeholder="Tìm tên nguyên liệu..." oninput="window.app.renderKho()">
+            </div>
+            <span class="tag grey" id="kho-count-badge">0 nguyên liệu</span>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table-modern" id="kho-table"></table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 8. BÁO CÁO THÁNG ================= -->
+      <section class="page" id="page-baocao">
+        <div class="page-header">
+          <div class="page-header-title">
+            <h2>Báo cáo doanh thu theo tháng</h2>
+            <p>Kết quả từ Stored Procedure sp_BaoCaoDoanhThuTheoThang</p>
+          </div>
+          <div class="page-header-actions">
+            <div style="display:flex;gap:8px;align-items:center">
+              <input type="number" id="bc-nam" class="input-box" style="width:110px" value="2025" min="2020" max="2030">
+              <button class="btn primary" onclick="window.app.loadBaoCao()">
+                <span>Xem báo cáo</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="bc-kpi-summary" style="margin-bottom:20px;max-width:420px"></div>
+
+        <div class="card">
+          <div class="table-responsive">
+            <table class="table-modern" id="bc-table"></table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ================= POS ORDER DRAWER ================= -->
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+<aside class="pos-drawer" id="pos-drawer" aria-label="Chi tiết hóa đơn">
+  <div class="drawer-header">
+    <div class="drawer-title-area">
+      <h2 id="d-title">Chi tiết bàn</h2>
+      <div class="drawer-meta-row" id="d-meta"></div>
+    </div>
+    <button class="close-btn" onclick="window.app.closeDrawer()" aria-label="Đóng">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <div class="drawer-body" id="d-body">
+    <!-- Rendered dynamically -->
+  </div>
+
+  <div class="drawer-footer" id="d-foot">
+    <!-- Rendered dynamically -->
+  </div>
+</aside>
+
+<!-- ================= MODAL DIALOG ================= -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal-container" id="modal-box"></div>
+</div>
+
+<!-- Core Creative Motion Libraries -->
+<script src="js/anime.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
