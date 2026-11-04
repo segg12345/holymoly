@@ -1,4 +1,3 @@
-
 # Environment secrets
 .env
 .env.*
@@ -19,10 +18,16 @@ coverage/
 *.log
 npm-debug.log*
 
-# Temporary browser profiles
+# Temporary browser profiles, caches & backups
 .chrome_temp*/
 .playwright/
 .puppeteer/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.bak
+*.bak.*
+*.original.*
 
 # OS files
 .DS_Store
