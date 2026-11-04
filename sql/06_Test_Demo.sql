@@ -37,7 +37,8 @@ SELECT * FROM dbo.NhatKyHoaDon WHERE MaHD = @MaHD;
 PRINT N'';
 PRINT N'===== B. DEMO ĐẶT BÀN & BÁO CÁO =====';
 DECLARE @MaDB INT, @Tong DECIMAL(16,0);
-EXEC dbo.sp_DatBan @MaKH = 5, @MaBan = 17, @ThoiGianDat = '2026-11-15 18:30', @SoNguoi = 6,
+DECLARE @NgayDatTuongLai DATETIME = DATEADD(DAY, 7, GETDATE());
+EXEC dbo.sp_DatBan @MaKH = 5, @MaBan = 17, @ThoiGianDat = @NgayDatTuongLai, @SoNguoi = 6,
                    @GhiChu = N'Sinh nhật', @MaDatBan = @MaDB OUTPUT;
 PRINT N'Đã đặt bàn, mã: ' + CAST(@MaDB AS NVARCHAR);
 
@@ -45,6 +46,9 @@ EXEC dbo.sp_BaoCaoDoanhThuTheoThang @Nam = 2026, @TongDoanhThu = @Tong OUTPUT;
 PRINT N'Tổng doanh thu năm 2026: ' + FORMAT(@Tong, 'N0') + N' đ';
 
 EXEC dbo.sp_NhapKhoNguyenLieu @MaNL = 9, @SoLuong = 10, @DonGiaNhap = 460000;
+
+-- Dọn lượt đặt bàn demo để kịch bản có thể chạy lại nhiều lần (idempotent)
+DELETE FROM dbo.DatBan WHERE MaDatBan = @MaDB;
 
 PRINT N'';
 PRINT N'===== C. KIỂM TRA VI PHẠM RÀNG BUỘC (mỗi lệnh dự kiến LỖI, được bắt bằng TRY/CATCH) =====';
@@ -83,7 +87,7 @@ BEGIN TRY  -- C8. Nghiệp vụ: thanh toán hóa đơn đã thanh toán
     EXEC dbo.sp_ThanhToanHoaDon 1, N'Tiền mặt', 0, @x OUTPUT;
 END TRY BEGIN CATCH PRINT N'[C8 SP] ' + ERROR_MESSAGE(); END CATCH
 
-BEGIN TRY  -- C9. Nghiệp vụ: gọi món vượt tồn kho (Cua rang me cần 0.65kg cua/phần, kho ~25kg)
+BEGIN TRY  -- C9. Nghiệp vụ: gọi món vượt tồn kho (Cua rang me cần 0.65kg cua/phần, kho tồn 15kg Cua thịt)
     DECLARE @HD2 INT;
     EXEC dbo.sp_MoHoaDon 2, 5, NULL, @HD2 OUTPUT;
     EXEC dbo.sp_ThemMonVaoHoaDon @HD2, 26, 100;
@@ -106,10 +110,12 @@ BEGIN TRANSACTION;
 ROLLBACK TRANSACTION;
 SELECT TenNL, SoLuongTon AS SauRollback FROM dbo.NguyenLieu WHERE MaNL = 1;   -- về giá trị cũ
 
+-- Demo tăng giá đồ uống 5% trong Transaction và ROLLBACK để bảo đảm tính idempotent cho kịch bản
 BEGIN TRANSACTION;
     UPDATE dbo.MonAn SET DonGia = DonGia * 1.05 WHERE MaDM = 6;  -- tăng giá đồ uống 5%
-COMMIT TRANSACTION;
-SELECT TenMon, DonGia FROM dbo.MonAn WHERE MaDM = 6;
+    SELECT TenMon, DonGia AS DonGiaMoi FROM dbo.MonAn WHERE MaDM = 6;
+ROLLBACK TRANSACTION;
+SELECT TenMon, DonGia AS DonGiaHienTai FROM dbo.MonAn WHERE MaDM = 6;
 
 PRINT N'';
 PRINT N'===== E. KIỂM TRA HIỆU SUẤT INDEX =====';

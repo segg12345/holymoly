@@ -30,7 +30,7 @@
 9. [Hướng dẫn cài đặt & Triển khai](#9-hướng-dẫn-cài-đặt--triển-khai)
    - [Yêu cầu môi trường](#91-yêu-cầu-môi-trường)
    - [Cài đặt Database (3 cách)](#92-cài-đặt-database)
-   - [Nạp dữ liệu lớn 3.007 hóa đơn (2020-2026)](#93-nạp-dữ-liệu-lớn-3007-hóa-đơn-2020-2026)
+   - [Nạp dữ liệu lớn 3.006 hóa đơn (2020-2026)](#93-nạp-dữ-liệu-lớn-3006-hóa-đơn-2020-2026)
    - [Khởi chạy ứng dụng Web POS](#94-khởi-chạy-ứng-dụng-web-pos)
 10. [Danh sách API Endpoints](#10-danh-sách-api-endpoints)
 11. [Khắc phục sự cố thường gặp (FAQ)](#11-khắc-phục-sự-cố-thường-gặp-faq)
@@ -60,14 +60,14 @@ Dự án hoàn thành vượt mức toàn bộ các tiêu chí đánh giá của
 |---|:---:|---|:---:|
 | **Số lượng bảng chính** | $\ge 6$ bảng | **10 bảng nghiệp vụ + 1 bảng Audit Log (`NhatKyHoaDon`)** | **183%** |
 | **Hệ thống ràng buộc** | Đầy đủ các loại cơ bản | **Đầy đủ 6 loại: PK, FK, UNIQUE, NOT NULL, DEFAULT, CHECK** (hơn 70 ràng buộc tường minh) | **Xuất sắc** |
-| **Quy mô dữ liệu mẫu** | 30 – 200 bản ghi | **3.007 hóa đơn, 15.775 dòng chi tiết** (2020–2026), 492 lượt đặt bàn; kiểm toán nhất quán dữ liệu 100% | **Vượt trội** |
+| **Quy mô dữ liệu mẫu** | 30 – 200 bản ghi | **3.006 hóa đơn, 15.775 dòng chi tiết** (2020–2026), 450 lượt đặt bàn; kiểm toán nhất quán dữ liệu 100% | **Vượt trội** |
 | **Mô hình hóa (ERD)** | 01 sơ đồ ERD | **Đầy đủ 2 dạng chuẩn quốc tế**: Mô hình Chen (Conceptual) & Lược đồ Crow's Foot (Physical), kèm bộ viewer HTML tương tác | **Xuất sắc** |
 | **Truy vấn dữ liệu** | 10 câu truy vấn | **16 câu truy vấn nâng cao**: Full/Left/Right/Inner Join, Subquery vô hướng & tập hợp, Set operators (UNION, INTERSECT, EXCEPT), Window Functions `RANK() OVER()`, GROUP BY phân cấp | **160%** |
-| **Stored Procedures** | 3 thủ tục | **7 thủ tục nghiệp vụ giao dịch**: Transaction ACID, kiểm soát lỗi `TRY...CATCH`, `THROW`, tham số `OUTPUT`, tự động trừ/hoàn kho | **233%** |
+| **Stored Procedures** | 3 thủ tục | **7 thủ tục nghiệp vụ giao dịch**: Transaction ACID, kiểm soát lỗi `TRY...CATCH`, `THROW`, tham số `OUTPUT`, chống Race Condition với `UPDLOCK, HOLDLOCK`, tự động trừ/hoàn kho | **233%** |
 | **Functions (UDF)** | 2 hàm | **6 hàm (5 Scalar functions, 1 Inline Table-Valued function)** | **300%** |
 | **Views** | 3 khung nhìn | **8 khung nhìn nghiệp vụ & phân tích**, bao gồm View cập nhật với `WITH CHECK OPTION` | **267%** |
 | **Triggers** | Khuyến khích | **3 Triggers**: Tự động tính tổng tiền/thanh toán hóa đơn, khóa chi tiết hóa đơn đã tất toán và tự động đồng bộ trạng thái bàn khi đặt bàn | **Xuất sắc** |
-| **Tối ưu hóa hiệu năng** | Không bắt buộc | **10 Chỉ mục (8 Non-Clustered & 2 Filtered Unique Indexes)**, gồm Covering Index có `INCLUDE` giảm đọc I/O từ 47 xuống 26 Logical Reads (-44.7%) | **Nâng cao** |
+| **Tối ưu hóa hiệu năng** | Không bắt buộc | **10 Chỉ mục (8 Non-Clustered & 2 Filtered Unique Indexes)**, gồm Covering Index có `INCLUDE` giảm đọc I/O từ 47 xuống 26 Logical Reads (-44.7%), truy vấn SARGable giảm 60% Logical Reads | **Nâng cao** |
 | **Giao diện người dùng** | Gợi ý mở rộng | **Ứng dụng Web POS hoàn chỉnh**: SPA responsive, Glassmorphism UI, Anti-jiggle layout, tương tác trực tiếp với SQL Server qua Node.js REST API | **Chuyên nghiệp** |
 
 ---
@@ -101,8 +101,8 @@ Quan-ly-nha-hang-master/
 ├── sql/                                # TẬP LỆNH SQL SERVER (T-SQL)
 │   ├── QuanLyNhaHang_FULL.sql          # ⭐ CHẠY 1 FILE NÀY LÀ ĐỦ (Gộp toàn bộ 01 -> 06)
 │   ├── 01_CreateDatabase_Tables.sql    # Tạo DB, 10 bảng chính, 1 bảng log, 70+ ràng buộc, Filtered Index
-│   ├── 02_InsertData.sql               # Dữ liệu danh mục, món ăn, nguyên liệu, bàn ăn, nhân viên, khách hàng
-│   ├── 02_InsertData_3000_2020_2025.sql# Dữ liệu lớn (3.007 hóa đơn, 15.775 chi tiết, 492 đặt bàn, 2020–2026)
+│   ├── 02_InsertData.sql               # Dữ liệu danh mục, món ăn, nguyên liệu, bàn ăn, nhân sự, khách hàng & 3.006 HĐ
+│   ├── 02_InsertData_3000_2020_2025.sql# Dữ liệu lớn (3.006 hóa đơn, 15.775 chi tiết, 450 đặt bàn, 2020–2026)
 │   ├── 03_Index_Function_View.sql      # 10 Index (8 Non-Clustered + 2 Filtered Unique), 6 Function, 8 View
 │   ├── 04_StoredProcedures_Triggers.sql# 7 Stored Procedure giao dịch chống Race Condition, 3 Trigger
 │   ├── 05_Queries.sql                  # 16 câu truy vấn nghiệp vụ nâng cao (đã tối ưu SARGable)
@@ -156,7 +156,7 @@ Quan-ly-nha-hang-master/
 | STT | Tên bảng | Chức năng nghiệp vụ | Khóa chính (PK) | Ràng buộc toàn vẹn tiêu biểu |
 |:---:|---|---|:---:|---|
 | 1 | `KhachHang` | Thông tin khách hàng, thẻ hội viên, CRM | `MaKH` | `UQ(SoDienThoai)`, `CK_SDT` (9-11 số), `CK_Email`, `CK(DiemTichLuy >= 0)` |
-| 2 | `NhanVien` | Nhân sự, phục vụ, thu ngân, bếp, quản lý | `MaNV` | `UQ(SoDienThoai)`, `UQ(Email)`, `CK(TuoiLaoDong >= 18)`, `CK(Luong >= 4tr)` |
+| 2 | `NhanVien` | Nhân sự, phục vụ, thu ngân, bếp, quản lý | `MaNV` | `UQ(SoDienThoai)`, `UQ_NhanVien_Email (Filtered Index: WHERE Email IS NOT NULL)`, `CK(TuoiLaoDong >= 18)`, `CK(Luong >= 4tr)` |
 | 3 | `BanAn` | Sơ đồ bàn theo khu vực, sức chứa | `MaBan` | `UQ(TenBan)`, `CK(SoCho BETWEEN 1 AND 20)`, `CK(KhuVuc IN (...))` |
 | 4 | `DanhMucMon` | Danh mục phân loại ẩm thực | `MaDM` | `UQ(TenDM)` |
 | 5 | `MonAn` | Thực đơn nhà hàng, đơn giá niêm yết | `MaMon` | `FK(MaDM)`, `UQ(TenMon)`, `CK(DonGia > 0)` |
@@ -212,15 +212,15 @@ Quan-ly-nha-hang-master/
 
 ### 5.5. 7 Thủ tục lưu trữ (Stored Procedures)
 
-Mọi thủ tục đều tích hợp **Transaction ACID**, khối bẫy lỗi `BEGIN TRY ... BEGIN CATCH`, thu hồi thao tác `ROLLBACK` và phát thông điệp lỗi chuẩn xác với `THROW`:
+Mọi thủ tục đều tích hợp **Transaction ACID**, chỉ thị `SET XACT_ABORT ON`, bao trùm toàn bộ pha đọc-kiểm-tra và cập nhật trong `BEGIN TRANSACTION ... COMMIT` với gợi ý khóa `WITH (UPDLOCK, HOLDLOCK)`, khối bẫy lỗi `BEGIN TRY ... BEGIN CATCH`, thu hồi thao tác `ROLLBACK` và phát thông điệp lỗi chuẩn xác với `THROW`:
 
-1. `sp_MoHoaDon`: Mở hóa đơn mới khi khách nhận bàn, chuyển trạng thái bàn sang *Đang phục vụ*, tự động khớp và chuyển lịch đặt bàn trước sang *Đã đến*, ghi nhật ký.
-2. `sp_ThemMonVaoHoaDon`: Thêm món vào hóa đơn; **tự động kiểm tra tồn kho theo định mức nguyên liệu**, báo lỗi nếu thiếu nguyên vật liệu; **tự động trừ số lượng tồn kho nguyên liệu tương ứng**, cộng dồn số lượng nếu món đã tồn tại trong hóa đơn.
-3. `sp_ThanhToanHoaDon`: Tính tổng tiền, áp dụng chiết khấu %, cập nhật trạng thái *Đã thanh toán*, **tự động tích điểm CRM cho khách hàng** (1 điểm / 10.000 VNĐ), **giải phóng bàn về trạng thái *Trống***, trả về số tiền phải trả qua tham số `OUTPUT`.
-4. `sp_HuyHoaDon`: Hủy hóa đơn đang phục vụ; **tự động hoàn trả toàn bộ nguyên liệu** đã xuất kho theo định lượng, trả bàn về trạng thái *Trống*, ghi nhận lý do hủy.
-5. `sp_DatBan`: Tiếp nhận đặt bàn; tự động kiểm tra số người không vượt quá sức chứa bàn và gọi hàm kiểm tra tránh xung đột khung giờ hẹn.
-6. `sp_BaoCaoDoanhThuTheoThang`: Tổng hợp kết quả kinh doanh 12 tháng trong năm (doanh thu, số hóa đơn, khách thành viên, chiết khấu) và xuất ra tổng doanh thu cả năm qua tham số `OUTPUT`.
-7. `sp_NhapKhoNguyenLieu`: Nhập thêm số lượng nguyên liệu vào kho và cập nhật đơn giá nhập kho mới nhất.
+1. `sp_MoHoaDon`: Mở hóa đơn mới khi khách nhận bàn, chuyển trạng thái bàn sang *Đang phục vụ*, tự động khớp và chuyển lịch đặt bàn trước sang *Đã đến*, ghi nhật ký. Khóa dòng bàn với `UPDLOCK, HOLDLOCK` và kết hợp Filtered Index `UQ_HoaDon_BanDangPhucVu` triệt tiêu nguy cơ mở trùng 2 hóa đơn cho 1 bàn.
+2. `sp_ThemMonVaoHoaDon`: Thêm món vào hóa đơn; **tự động kiểm tra tồn kho theo định mức nguyên liệu (BOM)** trong transaction, báo lỗi nếu thiếu nguyên vật liệu; **tự động trừ số lượng tồn kho nguyên liệu tương ứng**, cộng dồn số lượng nếu món đã tồn tại trong hóa đơn.
+3. `sp_ThanhToanHoaDon`: Tính tổng tiền, áp dụng chiết khấu %, cập nhật trạng thái *Đã thanh toán* (kiểm tra `IF @@ROWCOUNT = 0`), **tự động tích điểm CRM cho khách hàng** bằng `CAST(FLOOR(@SoTienPhaiTra / 10000.0) AS INT)` (1 điểm / 10.000 VNĐ), **tự động đồng bộ trạng thái bàn** (chuyển sang *Đã đặt* nếu còn lịch đặt hợp lệ trong ngày hoặc *Trống* nếu không còn), trả về số tiền phải trả qua tham số `OUTPUT`.
+4. `sp_HuyHoaDon`: Hủy hóa đơn đang phục vụ; **tự động hoàn trả toàn bộ nguyên liệu** đã xuất kho theo định lượng được gộp nhóm an toàn `GROUP BY c.MaNL` (loại trừ lỗi hoàn trùng nguyên liệu khi nhiều món dùng chung thành phần), giải phóng bàn theo lịch đặt, ghi nhận lý do hủy và log kiểm toán.
+5. `sp_DatBan`: Tiếp nhận đặt bàn; tự động kiểm tra số người không vượt quá sức chứa bàn (`SoNguoi <= SoCho`) và kiểm tra tránh xung đột khung giờ hẹn trong cửa sổ SARGable $\pm 120$ phút với khóa Key-Range.
+6. `sp_BaoCaoDoanhThuTheoThang`: Tổng hợp kết quả kinh doanh 12 tháng trong năm theo khoảng thời gian SARGable (doanh thu, số hóa đơn, khách thành viên, chiết khấu) và xuất ra tổng doanh thu cả năm qua tham số `OUTPUT`.
+7. `sp_NhapKhoNguyenLieu`: Nhập thêm số lượng nguyên liệu vào kho và cập nhật đơn giá nhập kho mới nhất trong transaction an toàn.
 
 ---
 
@@ -270,7 +270,7 @@ MÃ CA    LOẠI RÀNG BUỘC / NGHIỆP VỤ           THAO TÁC THỰC HIỆN 
 [C6]     FK ON DELETE RESTRICT                Xóa danh mục đang có món        LỖI vi phạm ràng buộc khóa ngoại
 [C7]     WITH CHECK OPTION                    Chèn món ngừng bán qua view     LỖI vi phạm view WITH CHECK OPTION
 [C8]     Stored Procedure Logic               Thanh toán lại đơn đã xong      LỖI nghiệp vụ (hóa đơn đã đóng)
-[C9]     Quản trị tồn kho (SP)                Gọi 100 cua (kho chỉ còn 25kg)  LỖI: "Không đủ nguyên liệu: Cua biển"
+[C9]     Quản trị tồn kho (SP)                Gọi 100 cua (kho tồn 15kg Cua thịt) LỖI: "Không đủ nguyên liệu: Cua thịt"
 [C10]    Trigger kiểm soát                    Sửa chi tiết đơn đã trả tiền    LỖI Trigger: Hóa đơn đã khóa
 ========================================================================================
 ```
@@ -300,10 +300,10 @@ Dự án cung cấp 2 bộ dữ liệu phục vụ mục đích kiểm thử và
 1. **Dữ liệu danh mục & thực thể chuẩn hóa ([sql/02_InsertData.sql](sql/02_InsertData.sql))**:
    - 6 danh mục món, 40 món ăn thuần Việt, 26 nguyên liệu, 68 công thức định lượng, 24 bàn ăn, 15 nhân viên, 100 khách hàng.
 2. **Dữ liệu giao dịch thực tế ([sql/02_InsertData_3000_2020_2025.sql](sql/02_InsertData_3000_2020_2025.sql))**:
-   - **3.007 hóa đơn** (2.874 Đã thanh toán, 127 Đã hủy, 6 Đang phục vụ) trải dài từ năm 2020 đến 2026.
+   - **3.006 hóa đơn** (2.873 Đã thanh toán, 127 Đã hủy, 6 Đang phục vụ) trải dài từ năm 2020 đến 2026.
    - **15.775 dòng chi tiết hóa đơn** (trung bình 3–7 món/hóa đơn), tổng doanh thu thực tế đạt hơn 2,13 tỷ VNĐ.
-   - **492 lượt đặt bàn** (422 Đã đến, 61 Đã hủy, 8 Đã xác nhận, 1 Chờ xác nhận).
-   - **Bảng nhật ký `NhatKyHoaDon`**: 2 bản ghi log kiểm thử mẫu thời gian thực, 0 bản ghi mồ côi.
+   - **450 lượt đặt bàn** (394 Đã đến, 56 Đã hủy).
+   - **Bảng nhật ký `NhatKyHoaDon`**: Ghi vết thời gian thực mọi biến động hóa đơn, 0 bản ghi mồ côi.
    - Phục vụ kiểm thử hiệu năng, vẽ biểu đồ xu hướng doanh thu nhiều năm và chứng minh hiệu quả chỉ mục Covering Index.
 
 ### Kiểm toán toàn vẹn dữ liệu & Bộ kiểm thử tự động:
@@ -389,7 +389,7 @@ sqlcmd -S localhost\SQLEXPRESS -E -i sql\QuanLyNhaHang_FULL.sql -f 65001
 
 ---
 
-### 9.3. Nạp dữ liệu lớn 3.007 hóa đơn (2020 – 2026)
+### 9.3. Nạp dữ liệu lớn 3.006 hóa đơn (2020 – 2026)
 Để phục vụ việc báo cáo doanh thu nhiều năm, đánh giá tải hoặc demo đồ án ấn tượng:
 ```bat
 sqlcmd -S localhost\SQLEXPRESS -E -d QuanLyNhaHang -i sql\02_InsertData_3000_2020_2025.sql -f 65001
@@ -489,8 +489,8 @@ Mở trình duyệt web và truy cập:
      DB_SERVER=localhost
      DB_PORT=1433
      DB_NAME=QuanLyNhaHang
-     DB_USER=nhahang_app
-     DB_PASSWORD=NhaHang@123
+     DB_USER=your_database_user
+     DB_PASSWORD=<mat_khau_sql_server>
      DB_TRUST_CERT=true
      ```
 

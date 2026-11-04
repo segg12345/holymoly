@@ -81,7 +81,7 @@
    - Bổ sung khóa `UPDLOCK, HOLDLOCK` và ghi log `NhatKyHoaDon` khi xóa món khỏi hóa đơn (`DELETE /api/hoadon/:id/mon/:maMon`) và kiểm tra xung đột lịch đặt khi cập nhật trạng thái đặt bàn (`PUT /api/datban/:id/trangthai`).
 2. **[web/public/index.html](file:///d:/Quan-ly-nha-hang-master/web/public/index.html)**, **[web/public/js/app.js](file:///d:/Quan-ly-nha-hang-master/web/public/js/app.js)** & **[web/public/js/modules/](file:///d:/Quan-ly-nha-hang-master/web/public/js/modules/)**:
    - Tách `app.js` thành 6 module chuyên biệt theo chức năng:
-     - [core.js](file:///d:/Quan-ly-nha-hang-master/web/public/js/modules/core.js): Hàm tiện ích, định dạng tiền tệ/thời gian theo múi giờ `Asia/Ho_Chi_Minh`, hàm chống XSS `esc()`, `safeAttr()`, gọi API, quản lý `STATE` và Modal/Drawer.
+     - [core.js](file:///d:/Quan-ly-nha-hang-master/web/public/js/modules/core.js): Hàm tiện ích, định dạng tiền tệ/thời gian theo múi giờ `Asia/Ho_Chi_Minh`, hàm chống XSS `esc()`, gọi API, quản lý `STATE` và Modal/Drawer.
      - [effects.js](file:///d:/Quan-ly-nha-hang-master/web/public/js/modules/effects.js): Hiệu ứng 3D Card Tilt, Magnetic Button, Animated Counter (`anime.js`).
      - [dashboard.js](file:///d:/Quan-ly-nha-hang-master/web/public/js/modules/dashboard.js): Trang Tổng quan điều hành & Báo cáo doanh thu.
      - [pos.js](file:///d:/Quan-ly-nha-hang-master/web/public/js/modules/pos.js): Sơ đồ bàn, mở bàn, ngăn kéo gọi món, thanh toán, hủy hóa đơn.

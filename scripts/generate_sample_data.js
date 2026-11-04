@@ -10,7 +10,7 @@ require('../web/node_modules/dotenv').config({ path: path.join(__dirname, '..', 
 
 const config = {
   user: process.env.DB_USER || 'nhahang_app',
-  password: process.env.DB_PASSWORD || 'NhaHang@123',
+  password: process.env.DB_PASSWORD || '',
   server: process.env.DB_SERVER || 'localhost',
   database: process.env.DB_NAME || 'QuanLyNhaHang',
   port: parseInt(process.env.DB_PORT || '1433'),
