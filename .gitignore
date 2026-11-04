@@ -1,0 +1,33 @@
+
+# Environment secrets
+.env
+.env.*
+!.env.example
+web/.env
+server/.env
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build artifacts
+dist/
+build/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary browser profiles
+.chrome_temp*/
+.playwright/
+.puppeteer/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
