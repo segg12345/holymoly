@@ -100,22 +100,32 @@ Quan-ly-nha-hang-master/
 │
 ├── sql/                                # TẬP LỆNH SQL SERVER (T-SQL)
 │   ├── QuanLyNhaHang_FULL.sql          # ⭐ CHẠY 1 FILE NÀY LÀ ĐỦ (Gộp toàn bộ 01 -> 06)
-│   ├── 01_CreateDatabase_Tables.sql    # Tạo DB, 10 bảng chính, 1 bảng log, 70+ ràng buộc
-│   ├── 02_InsertData.sql               # Dữ liệu mẫu ban đầu (danh mục, món ăn, kho, 200+ hóa đơn)
+│   ├── 01_CreateDatabase_Tables.sql    # Tạo DB, 10 bảng chính, 1 bảng log, 70+ ràng buộc, Filtered Index
+│   ├── 02_InsertData.sql               # Dữ liệu mẫu chuẩn hóa (danh mục, món ăn, kho, 3.007 hóa đơn)
 │   ├── 02_InsertData_3000_2020_2025.sql# Dữ liệu mẫu mở rộng (3.007 hóa đơn, 15.775 chi tiết, 2020-2025)
-│   ├── 03_Index_Function_View.sql      # 8 Index có INCLUDE, 6 Function, 8 View
-│   ├── 04_StoredProcedures_Triggers.sql# 7 Stored Procedure giao dịch, 2 Trigger
-│   ├── 05_Queries.sql                  # 16 câu truy vấn nghiệp vụ nâng cao
-│   └── 06_Test_Demo.sql                # Kịch bản kiểm thử: Demo POS, 10 ca vi phạm ràng buộc, Rollback
+│   ├── 03_Index_Function_View.sql      # 9 Index (kèm Filtered Unique Index), 6 Function SARGable, 8 View
+│   ├── 04_StoredProcedures_Triggers.sql# 7 Stored Procedure giao dịch chống Race Condition, 3 Trigger
+│   ├── 05_Queries.sql                  # 16 câu truy vấn nghiệp vụ nâng cao (đã tối ưu SARGable)
+│   ├── 06_Test_Demo.sql                # Kịch bản kiểm thử: Demo POS, 10 ca vi phạm ràng buộc, Rollback
+│   └── 07_DataIntegrity_Audit.sql      # Kịch bản kiểm toán toàn vẹn dữ liệu 6 nhóm nghiệp vụ
 │
 ├── web/                                # ỨNG DỤNG WEB POS (FULL-STACK NODE.JS + EXPRESS)
-│   ├── server.js                       # Backend REST API kết nối SQL Server qua driver mssql
-│   ├── package.json                    # Cấu hình dependency Node.js
+│   ├── server.js                       # Backend REST API (Validation, Error Masking, UTC+7, Locking)
+│   ├── package.json                    # Cấu hình dependency & script kiểm thử tự động (npm test)
 │   ├── .env.example                    # Mẫu cấu hình chuỗi kết nối SQL Server & bảo mật
-│   └── public/                         # Frontend Single Page Application (SPA)
+│   ├── test/                           # Bộ kiểm thử tự động (Unit, API Integration, Transaction, Concurrency)
+│   │   └── remediation.test.js         # 13 test suites chạy trực tiếp trên SQL Server thực tế
+│   └── public/                         # Frontend Single Page Application (SPA - ES Modules)
 │       ├── index.html                  # Giao diện chính POS (Glassmorphism layout)
 │       ├── css/app.css                 # Hệ thống style responsive, anti-jiggle, hiệu ứng
-│       ├── js/app.js                   # Logic xử lý giao diện, gọi API, Chart.js, Drawer
+│       ├── js/app.js                   # Entrypoint điều phối SPA & Delegated Event Listeners
+│       ├── js/modules/                 # Các module tách theo chức năng nghiệp vụ
+│       │   ├── core.js                 # Tiện ích định dạng, múi giờ Asia/Ho_Chi_Minh, XSS Escaping, API
+│       │   ├── effects.js              # Hiệu ứng 3D Tilt, Magnetic Button, Animated Counter
+│       │   ├── dashboard.js            # Tổng quan điều hành & Báo cáo doanh thu (SVG Charts)
+│       │   ├── pos.js                  # Sơ đồ bàn, Mở bàn, Ngăn kéo gọi món, Thanh toán, Hủy đơn
+│       │   ├── menu.js                 # Quản lý Thực đơn món ăn & Định lượng nguyên liệu
+│       │   └── operations.js           # Quản lý Đặt bàn, Hóa đơn, Khách hàng CRM, Nhập kho, Nhân sự
 │       ├── js/anime.min.js             # Thư viện hiệu ứng mượt mà
 │       └── screenshots/                # Bộ sưu tập ảnh chụp màn hình các phân hệ giao diện
 │
@@ -159,18 +169,20 @@ Quan-ly-nha-hang-master/
 
 ---
 
-### 5.2. 8 Chỉ mục tối ưu hóa (Non-Clustered Indexes)
+### 5.2. 10 Chỉ mục tối ưu hóa & Toàn vẹn (Non-Clustered & Filtered Unique Indexes)
 
-Được thiết kế dựa trên tần suất xuất hiện trong các mệnh đề `WHERE`, `JOIN` và `ORDER BY`, kết hợp kỹ thuật **Covering Index** với mệnh đề `INCLUDE` để tránh Lookup:
+Được thiết kế dựa trên tần suất xuất hiện trong các mệnh đề `WHERE`, `JOIN` và `ORDER BY`, kết hợp kỹ thuật **Covering Index** (`INCLUDE`) và **Filtered Unique Index**:
 
 1. `IX_HoaDon_ThoiGianLap`: Lọc theo thời gian lập hóa đơn, bao gồm `INCLUDE (TrangThai, ThanhToan)`.
 2. `IX_HoaDon_TrangThai`: Lọc theo trạng thái và bàn ăn `(TrangThai, MaBan)`.
 3. `IX_HoaDon_MaKH`: Tối ưu hóa truy vấn lịch sử tiêu dùng theo khách hàng.
 4. `IX_HoaDon_MaNV`: Tối ưu hóa thống kê hiệu suất doanh số nhân viên.
-5. `IX_ChiTietHoaDon_MaMon`: Thống kê món bán chạy, bao gồm `INCLUDE (SoLuong, ThanhTien)`.
-6. `IX_MonAn_MaDM`: Tăng tốc lọc thực đơn theo danh mục.
-7. `IX_DatBan_ThoiGianDat`: Tối ưu tìm kiếm lịch đặt bàn theo khung giờ, bao gồm `INCLUDE (TrangThai)`.
-8. `IX_KhachHang_HoTen`: Tìm kiếm nhanh thông tin khách hàng theo tên.
+5. `UQ_HoaDon_BanDangPhucVu`: **Filtered Unique Index** trên `(MaBan) WHERE TrangThai = N'Đang phục vụ'` — chặn tuyệt đối việc mở 2 hóa đơn đồng thời trên cùng một bàn ở cấp độ Storage Engine.
+6. `UQ_NhanVien_Email`: **Filtered Unique Index** trên `(Email) WHERE Email IS NOT NULL` — cho phép nhiều nhân viên chưa có email (`NULL`) nhưng đảm bảo không trùng email khi có giá trị.
+7. `IX_ChiTietHoaDon_MaMon`: Thống kê món bán chạy, bao gồm `INCLUDE (SoLuong, ThanhTien)`.
+8. `IX_MonAn_MaDM`: Tăng tốc lọc thực đơn theo danh mục.
+9. `IX_DatBan_ThoiGianDat`: Tối ưu tìm kiếm lịch đặt bàn theo khung giờ (`Index Seek` với truy vấn SARGable), bao gồm `INCLUDE (TrangThai)`.
+10. `IX_KhachHang_HoTen`: Tìm kiếm nhanh thông tin khách hàng theo tên.
 
 ---
 
@@ -212,10 +224,11 @@ Mọi thủ tục đều tích hợp **Transaction ACID**, khối bẫy lỗi `B
 
 ---
 
-### 5.6. 2 Trigger kiểm soát toàn vẹn
+### 5.6. 3 Trigger kiểm soát toàn vẹn & đồng bộ trạng thái
 
 * `trg_ChiTietHoaDon_CapNhatTongTien`: Tự động tính toán lại `TongTien` và `ThanhToan` trên bảng `HoaDon` bất cứ khi nào bảng `ChiTietHoaDon` phát sinh thao tác `INSERT`, `UPDATE` hoặc `DELETE`.
 * `trg_ChiTietHoaDon_KhoaHoaDonDaThanhToan`: Tuyệt đối ngăn chặn thao tác sửa hoặc xóa món ăn trong các hóa đơn đã được thanh toán hoặc đã bị hủy (`ROLLBACK TRANSACTION` và phát thông báo lỗi).
+* `trg_DatBan_DongBoTrangThaiBan`: Tự động đồng bộ trạng thái `BanAn.TrangThai` (*Đang phục vụ* / *Đã đặt* / *Trống*) khi phát sinh `INSERT`, `UPDATE`, `DELETE` trên bảng `DatBan`.
 
 ---
 
@@ -293,10 +306,12 @@ Dự án cung cấp 2 bộ dữ liệu phục vụ mục đích kiểm thử và
    - 100 khách hàng tích lũy điểm và 450+ lượt đặt bàn.
    - Phục vụ kiểm thử tải lớn, vẽ biểu đồ xu hướng doanh thu nhiều năm và chứng minh hiệu quả vượt trội của chỉ mục Covering Index.
 
-### Kiểm toán toàn vẹn dữ liệu:
+### Kiểm toán toàn vẹn dữ liệu & Bộ kiểm thử tự động:
+* **Script kiểm toán SQL ([sql/07_DataIntegrity_Audit.sql](sql/07_DataIntegrity_Audit.sql))**: Kiểm tra tự động 6 nhóm toàn vẹn dữ liệu: (1) hóa đơn trùng bàn & đồng bộ trạng thái bàn, (2) tổng tiền & thành tiền hóa đơn, (3) đặt bàn trùng lịch $\pm 120$ phút & vượt sức chứa, (4) nhất quán tồn kho & định lượng công thức, (5) đối chiếu điểm tích lũy khách hàng `SUM(FLOOR(ThanhToan / 10000.0))`, và (6) kiểm tra bản ghi mồ côi.
+* **Bộ kiểm thử tự động ([web/test/remediation.test.js](web/test/remediation.test.js))**: Chạy bằng lệnh `cd web && npm test`, bao gồm Unit Tests, API Integration Tests, Transaction Tests và Concurrency Tests (10 luồng song song kiểm chứng chống race condition cho `sp_MoHoaDon`, `sp_ThanhToanHoaDon`, `sp_HuyHoaDon`, `sp_DatBan` trên SQL Server thực tế).
 * 100% hóa đơn khớp chính xác giữa `TongTien` và `SUM(ChiTietHoaDon.ThanhTien)`.
 * 100% hóa đơn đã thanh toán có `ThanhToan = ROUND(TongTien * (1 - GiamGia/100), 0)`.
-* Không tồn tại bất kỳ bản ghi mồ côi (Orphan Record) nào giữa các quan hệ cha - con.
+* Không tồn tại bất kỳ bản ghi mồ côi (Orphan Record) nào giữa 10 bảng nghiệp vụ chính.
 
 ---
 
@@ -433,16 +448,20 @@ Mở trình duyệt web và truy cập:
 | `GET` | `/api/baocao/thang?nam=2026` | Báo cáo doanh thu chi tiết 12 tháng theo năm | Stored Procedure `sp_BaoCaoDoanhThuTheoThang` |
 | `GET` | `/api/ban` | Lấy danh sách trạng thái bàn ăn và hóa đơn mở | Khung nhìn `vw_TinhTrangBan` |
 | `POST` | `/api/hoadon` | Mở hóa đơn mới cho bàn ăn | Stored Procedure `sp_MoHoaDon` |
-| `GET` | `/api/hoadon/:id` | Xem chi tiết món và tổng tiền của hóa đơn | Khung nhìn `vw_ChiTietHoaDonDayDu` |
-| `POST` | `/api/hoadon/:id/mon` | Gọi thêm món ăn vào hóa đơn | Stored Procedure `sp_ThemMonVaoHoaDon` |
+| `GET` | `/api/hoadon/:id` | Xem chi tiết món, tổng tiền và thuế VAT của hóa đơn | `HoaDon`, `ChiTietHoaDon`, `fn_TinhThueVAT` |
+| `POST` | `/api/hoadon/:id/mon` | Gọi thêm món ăn vào hóa đơn (kèm trừ kho) | Stored Procedure `sp_ThemMonVaoHoaDon` |
+| `DELETE` | `/api/hoadon/:id/mon/:maMon` | Xóa món khỏi hóa đơn đang phục vụ (hoàn kho) | Transaction ACID + `UPDLOCK, HOLDLOCK` |
 | `POST` | `/api/hoadon/:id/thanhtoan`| Tất toán hóa đơn, tích điểm CRM, giải phóng bàn | Stored Procedure `sp_ThanhToanHoaDon` |
-| `POST` | `/api/hoadon/:id/huy` | Hủy hóa đơn đang phục vụ, hoàn trả kho | Stored Procedure `sp_HuyHoaDon` |
-| `GET` | `/api/thucdon` | Danh sách thực đơn phục vụ gọi món | Khung nhìn `vw_ThucDon` |
-| `GET` | `/api/datban` | Lấy danh sách lịch hẹn đặt bàn sắp tới | Khung nhìn `vw_DatBanSapToi` |
-| `POST` | `/api/datban` | Tiếp nhận đặt bàn mới từ khách | Stored Procedure `sp_DatBan` |
-| `GET` | `/api/kho` | Kiểm tra tồn kho và danh sách nguyên liệu sắp hết| Khung nhìn `vw_NguyenLieuSapHet` |
-| `POST` | `/api/kho/nhap` | Nhập thêm nguyên liệu vào kho | Stored Procedure `sp_NhapKhoNguyenLieu` |
-| `GET` | `/api/khachhang` | Danh sách khách hàng và lịch sử chi tiêu CRM | Khung nhìn `vw_KhachHangThanThiet` |
+| `POST` | `/api/hoadon/:id/huy` | Hủy hóa đơn đang phục vụ, hoàn trả kho 1 lần | Stored Procedure `sp_HuyHoaDon` |
+| `GET` | `/api/monan` | Danh sách thực đơn kèm công thức định lượng | `MonAn`, `DanhMucMon`, `CongThuc` |
+| `POST` / `PUT` | `/api/monan` / `/api/monan/:id` | Thêm mới / cập nhật món ăn thực đơn | `MonAn` (kiểm tra validation chặt chẽ) |
+| `GET` | `/api/datban` | Lấy danh sách lịch hẹn đặt bàn | `DatBan`, `KhachHang`, `BanAn` |
+| `POST` | `/api/datban` | Tiếp nhận đặt bàn mới (chống trùng lịch $\pm 2\text{h}$) | Stored Procedure `sp_DatBan` |
+| `PUT` | `/api/datban/:id/trangthai` | Cập nhật trạng thái đặt bàn & đồng bộ bàn | Transaction + `trg_DatBan_DongBoTrangThaiBan` |
+| `GET` | `/api/nguyenlieu` | Kiểm tra tồn kho và danh sách nguyên liệu sắp hết | `NguyenLieu` |
+| `POST` | `/api/nguyenlieu/:id/nhap` | Nhập thêm nguyên liệu vào kho | Stored Procedure `sp_NhapKhoNguyenLieu` |
+| `GET` / `POST` | `/api/khachhang` | Danh sách hội viên CRM & đăng ký khách hàng mới | `vw_KhachHangThanThiet`, `KhachHang` |
+| `GET` | `/api/nhanvien` | Danh sách nhân sự kèm tính tuổi lao động | `NhanVien`, `fn_TinhTuoi` |
 
 ---
 

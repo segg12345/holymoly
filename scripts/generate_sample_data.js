@@ -481,7 +481,7 @@ UPDATE k
    SET DiemTichLuy = ISNULL(t.Diem, 0)
 FROM dbo.KhachHang k
 LEFT JOIN (
-    SELECT MaKH, SUM(ThanhToan) / 10000 AS Diem
+    SELECT MaKH, SUM(CAST(FLOOR(ThanhToan / 10000.0) AS INT)) AS Diem
     FROM dbo.HoaDon
     WHERE TrangThai = N'Đã thanh toán' AND MaKH IS NOT NULL
     GROUP BY MaKH

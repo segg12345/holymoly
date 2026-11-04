@@ -3,6 +3,9 @@
    ===================================================================== */
 USE QuanLyNhaHang;
 GO
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
 
 -- Q1. SELECT * + WHERE + ORDER BY: Danh sách bàn khu Sân vườn, sắp xếp theo số chỗ giảm dần
 SELECT * FROM dbo.BanAn WHERE KhuVuc = N'Sân vườn' ORDER BY SoCho DESC, TenBan;
@@ -30,8 +33,11 @@ WHERE ct.MaHD IS NULL;
 -- Q5. FULL OUTER JOIN: Đối chiếu bàn và lượt đặt bàn hôm nay (bàn nào có đặt, lượt đặt nào không khớp bàn)
 SELECT b.TenBan, b.KhuVuc, b.TrangThai, d.MaDatBan, d.ThoiGianDat, d.SoNguoi
 FROM dbo.BanAn b
-FULL OUTER JOIN (SELECT * FROM dbo.DatBan WHERE CAST(ThoiGianDat AS DATE) = CAST(GETDATE() AS DATE)) d
-       ON d.MaBan = b.MaBan
+FULL OUTER JOIN (
+    SELECT * FROM dbo.DatBan
+    WHERE ThoiGianDat >= CAST(GETDATE() AS DATE)
+      AND ThoiGianDat < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))
+) d ON d.MaBan = b.MaBan
 ORDER BY b.TenBan;
 
 -- Q6. GROUP BY + HAVING: Nhân viên có doanh thu thanh toán > 10 triệu trong 30 ngày qua

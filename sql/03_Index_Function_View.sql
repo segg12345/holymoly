@@ -3,11 +3,15 @@
    ===================================================================== */
 USE QuanLyNhaHang;
 GO
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
 
 /* ======================= 1. INDEX ======================= */
 -- Các cột được dùng thường xuyên trong WHERE / JOIN / ORDER BY
 CREATE NONCLUSTERED INDEX IX_HoaDon_ThoiGianLap   ON dbo.HoaDon (ThoiGianLap) INCLUDE (TrangThai, ThanhToan);
 CREATE NONCLUSTERED INDEX IX_HoaDon_TrangThai     ON dbo.HoaDon (TrangThai, MaBan);
+CREATE UNIQUE NONCLUSTERED INDEX UQ_HoaDon_BanDangPhucVu ON dbo.HoaDon (MaBan) WHERE TrangThai = N'Đang phục vụ';
 CREATE NONCLUSTERED INDEX IX_HoaDon_MaKH          ON dbo.HoaDon (MaKH);
 CREATE NONCLUSTERED INDEX IX_HoaDon_MaNV          ON dbo.HoaDon (MaNV);
 CREATE NONCLUSTERED INDEX IX_ChiTietHoaDon_MaMon  ON dbo.ChiTietHoaDon (MaMon) INCLUDE (SoLuong, ThanhTien);
@@ -75,7 +79,8 @@ RETURN (
     JOIN dbo.MonAn  m ON m.MaMon = ct.MaMon
     JOIN dbo.DanhMucMon d ON d.MaDM = m.MaDM
     WHERE h.TrangThai = N'Đã thanh toán'
-      AND CAST(h.ThoiGianThanhToan AS DATE) BETWEEN @TuNgay AND @DenNgay
+      AND h.ThoiGianThanhToan >= @TuNgay
+      AND h.ThoiGianThanhToan < DATEADD(DAY, 1, @DenNgay)
     GROUP BY m.MaMon, m.TenMon, d.TenDM
 );
 GO
@@ -89,7 +94,8 @@ BEGIN
     IF EXISTS (SELECT 1 FROM dbo.DatBan
                WHERE MaBan = @MaBan
                  AND TrangThai IN (N'Chờ xác nhận', N'Đã xác nhận')
-                 AND ABS(DATEDIFF(MINUTE, ThoiGianDat, @ThoiGian)) < 120)
+                 AND ThoiGianDat > DATEADD(MINUTE, -120, @ThoiGian)
+                 AND ThoiGianDat < DATEADD(MINUTE, 120, @ThoiGian))
         RETURN 0;
     RETURN 1;
 END
@@ -171,7 +177,7 @@ GO
 -- 3.7 Khách hàng thân thiết (CRM)
 CREATE VIEW dbo.vw_KhachHangThanThiet
 AS
-SELECT k.MaKH, k.HoTen, k.SoDienThoai, k.Email,
+SELECT k.MaKH, k.HoTen, k.SoDienThoai, k.Email, k.GioiTinh, k.NgaySinh,
        dbo.fn_TinhTuoi(k.NgaySinh) AS Tuoi,
        k.DiemTichLuy,
        dbo.fn_XepHangKhachHang(k.DiemTichLuy) AS HangThanhVien,
@@ -180,7 +186,7 @@ SELECT k.MaKH, k.HoTen, k.SoDienThoai, k.Email,
        MAX(h.ThoiGianThanhToan)    AS LanGanNhat
 FROM dbo.KhachHang k
 LEFT JOIN dbo.HoaDon h ON h.MaKH = k.MaKH AND h.TrangThai = N'Đã thanh toán'
-GROUP BY k.MaKH, k.HoTen, k.SoDienThoai, k.Email, k.NgaySinh, k.DiemTichLuy;
+GROUP BY k.MaKH, k.HoTen, k.SoDienThoai, k.Email, k.GioiTinh, k.NgaySinh, k.DiemTichLuy;
 GO
 
 -- 3.8 Lịch đặt bàn sắp tới

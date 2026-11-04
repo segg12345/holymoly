@@ -7,7 +7,10 @@ const sqlDir = path.join(__dirname, '..', 'sql');
 const old02 = fs.readFileSync(path.join(sqlDir, '02_InsertData.sql'), 'utf8');
 
 // Lấy phần đầu của 02_InsertData.sql (từ dòng 1 đến hết Nhân Viên, trước Khách Hàng)
-const splitIdx = old02.indexOf('/* ---------------- KHÁCH HÀNG (40) ---------------- */');
+let splitIdx = old02.indexOf('/* ---------------- KHÁCH HÀNG (40) ---------------- */');
+if (splitIdx === -1) {
+  splitIdx = old02.indexOf('/* ---------------- KHÁCH HÀNG (100 thành viên) ---------------- */');
+}
 if (splitIdx === -1) {
   throw new Error('Không tìm thấy vị trí KHÁCH HÀNG trong 02_InsertData.sql');
 }

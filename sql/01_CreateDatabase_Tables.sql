@@ -14,6 +14,9 @@ CREATE DATABASE QuanLyNhaHang COLLATE Vietnamese_CI_AS;
 GO
 USE QuanLyNhaHang;
 GO
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
 
 /* ---------------------------------------------------------------
    1. KHÁCH HÀNG
@@ -51,12 +54,16 @@ CREATE TABLE dbo.NhanVien (
     DangLamViec  BIT               NOT NULL CONSTRAINT DF_NhanVien_DangLamViec DEFAULT 1,
     CONSTRAINT PK_NhanVien            PRIMARY KEY (MaNV),
     CONSTRAINT UQ_NhanVien_SoDienThoai UNIQUE (SoDienThoai),
-    CONSTRAINT UQ_NhanVien_Email       UNIQUE (Email),
     CONSTRAINT CK_NhanVien_GioiTinh   CHECK (GioiTinh IN (N'Nam', N'Nữ', N'Khác')),
     CONSTRAINT CK_NhanVien_ChucVu     CHECK (ChucVu IN (N'Quản lý', N'Thu ngân', N'Phục vụ', N'Đầu bếp', N'Phụ bếp', N'Bảo vệ')),
     CONSTRAINT CK_NhanVien_Luong      CHECK (LuongCoBan >= 4000000),
-    CONSTRAINT CK_NhanVien_TuoiLaoDong CHECK (DATEDIFF(YEAR, NgaySinh, NgayVaoLam) >= 18)
+    CONSTRAINT CK_NhanVien_TuoiLaoDong CHECK (DATEDIFF(YEAR, NgaySinh, NgayVaoLam) >= 18),
+    CONSTRAINT CK_NhanVien_Email      CHECK (Email IS NULL OR Email LIKE '%_@_%._%')
 );
+
+CREATE UNIQUE NONCLUSTERED INDEX UQ_NhanVien_Email
+ON dbo.NhanVien (Email)
+WHERE Email IS NOT NULL;
 
 /* ---------------------------------------------------------------
    3. BÀN ĂN

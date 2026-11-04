@@ -3,6 +3,9 @@
    ===================================================================== */
 USE QuanLyNhaHang;
 GO
+SET QUOTED_IDENTIFIER ON;
+SET ANSI_NULLS ON;
+GO
 
 /* ======================= TRIGGERS ======================= */
 
@@ -41,6 +44,38 @@ BEGIN
 END
 GO
 
+-- Tự động đồng bộ trạng thái Bàn Ăn khi Lịch Đặt Bàn thay đổi
+CREATE TRIGGER dbo.trg_DatBan_DongBoTrangThaiBan
+ON dbo.DatBan
+AFTER INSERT, UPDATE, DELETE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    ;WITH AffectedTables AS (
+        SELECT MaBan FROM inserted
+        UNION
+        SELECT MaBan FROM deleted
+    )
+    UPDATE b
+       SET TrangThai = CASE
+           WHEN EXISTS (
+               SELECT 1 FROM dbo.HoaDon h
+               WHERE h.MaBan = b.MaBan AND h.TrangThai = N'Đang phục vụ'
+           ) THEN N'Đang phục vụ'
+           WHEN EXISTS (
+               SELECT 1 FROM dbo.DatBan d
+               WHERE d.MaBan = b.MaBan
+                 AND d.TrangThai IN (N'Chờ xác nhận', N'Đã xác nhận')
+                 AND d.ThoiGianDat >= CAST(GETDATE() AS DATE)
+                 AND d.ThoiGianDat < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))
+           ) THEN N'Đã đặt'
+           ELSE N'Trống'
+       END
+    FROM dbo.BanAn b
+    JOIN AffectedTables a ON a.MaBan = b.MaBan;
+END
+GO
+
 /* ======================= STORED PROCEDURES ======================= */
 
 -- SP1. Mở hóa đơn mới cho một bàn (khách vào bàn)
@@ -52,26 +87,34 @@ CREATE PROCEDURE dbo.sp_MoHoaDon
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET XACT_ABORT ON;
     BEGIN TRY
-        IF NOT EXISTS (SELECT 1 FROM dbo.BanAn WHERE MaBan = @MaBan)
-            THROW 50001, N'Bàn không tồn tại.', 1;
-        IF EXISTS (SELECT 1 FROM dbo.BanAn WHERE MaBan = @MaBan AND TrangThai = N'Đang phục vụ')
-            THROW 50002, N'Bàn đang có khách, không thể mở hóa đơn mới.', 1;
-        IF NOT EXISTS (SELECT 1 FROM dbo.NhanVien WHERE MaNV = @MaNV AND DangLamViec = 1)
-            THROW 50003, N'Nhân viên không hợp lệ hoặc đã nghỉ việc.', 1;
-        IF @MaKH IS NOT NULL AND NOT EXISTS (SELECT 1 FROM dbo.KhachHang WHERE MaKH = @MaKH)
-            THROW 50004, N'Khách hàng không tồn tại.', 1;
-
         BEGIN TRANSACTION;
+            DECLARE @TrangThaiBan NVARCHAR(20);
+            SELECT @TrangThaiBan = TrangThai
+            FROM dbo.BanAn WITH (UPDLOCK, HOLDLOCK)
+            WHERE MaBan = @MaBan;
+
+            IF @TrangThaiBan IS NULL
+                THROW 50001, N'Bàn không tồn tại.', 1;
+            IF @TrangThaiBan = N'Đang phục vụ'
+                OR EXISTS (SELECT 1 FROM dbo.HoaDon WITH (UPDLOCK, HOLDLOCK) WHERE MaBan = @MaBan AND TrangThai = N'Đang phục vụ')
+                THROW 50002, N'Bàn đang có khách, không thể mở hóa đơn mới.', 1;
+            IF NOT EXISTS (SELECT 1 FROM dbo.NhanVien WHERE MaNV = @MaNV AND DangLamViec = 1)
+                THROW 50003, N'Nhân viên không hợp lệ hoặc đã nghỉ việc.', 1;
+            IF @MaKH IS NOT NULL AND NOT EXISTS (SELECT 1 FROM dbo.KhachHang WHERE MaKH = @MaKH)
+                THROW 50004, N'Khách hàng không tồn tại.', 1;
+
             INSERT INTO dbo.HoaDon (MaBan, MaKH, MaNV) VALUES (@MaBan, @MaKH, @MaNV);
             SET @MaHD = SCOPE_IDENTITY();
 
-            UPDATE dbo.BanAn SET TrangThai = N'Đang phục vụ' WHERE MaBan = @MaBan;
-
             -- Nếu bàn này có lượt đặt của khách trong ±2h thì đánh dấu "Đã đến"
             UPDATE dbo.DatBan SET TrangThai = N'Đã đến'
-             WHERE MaBan = @MaBan AND TrangThai = N'Đã xác nhận'
-               AND ABS(DATEDIFF(MINUTE, ThoiGianDat, GETDATE())) < 120;
+             WHERE MaBan = @MaBan AND TrangThai IN (N'Chờ xác nhận', N'Đã xác nhận')
+               AND ThoiGianDat > DATEADD(MINUTE, -120, GETDATE())
+               AND ThoiGianDat < DATEADD(MINUTE, 120, GETDATE());
+
+            UPDATE dbo.BanAn SET TrangThai = N'Đang phục vụ' WHERE MaBan = @MaBan;
 
             INSERT INTO dbo.NhatKyHoaDon (MaHD, HanhDong, NoiDung)
             VALUES (@MaHD, N'Mở hóa đơn', CONCAT(N'Bàn ', @MaBan, N', NV ', @MaNV));
@@ -93,30 +136,35 @@ CREATE PROCEDURE dbo.sp_ThemMonVaoHoaDon
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET XACT_ABORT ON;
     BEGIN TRY
         IF @SoLuong IS NULL OR @SoLuong <= 0
             THROW 50010, N'Số lượng phải lớn hơn 0.', 1;
-        IF NOT EXISTS (SELECT 1 FROM dbo.HoaDon WHERE MaHD = @MaHD AND TrangThai = N'Đang phục vụ')
-            THROW 50011, N'Hóa đơn không tồn tại hoặc không ở trạng thái Đang phục vụ.', 1;
-        IF NOT EXISTS (SELECT 1 FROM dbo.MonAn WHERE MaMon = @MaMon AND ConKinhDoanh = 1)
-            THROW 50012, N'Món ăn không tồn tại hoặc đã ngừng kinh doanh.', 1;
-
-        -- Kiểm tra tồn kho: nguyên liệu nào thiếu thì báo lỗi kèm tên
-        DECLARE @NLThieu NVARCHAR(100);
-        SELECT TOP 1 @NLThieu = nl.TenNL
-        FROM dbo.CongThuc c JOIN dbo.NguyenLieu nl ON nl.MaNL = c.MaNL
-        WHERE c.MaMon = @MaMon AND nl.SoLuongTon < c.DinhLuong * @SoLuong;
-        IF @NLThieu IS NOT NULL
-        BEGIN
-            DECLARE @Msg NVARCHAR(200) = CONCAT(N'Không đủ nguyên liệu: ', @NLThieu);
-            THROW 50013, @Msg, 1;
-        END
-
-        DECLARE @DonGia DECIMAL(12,0) = (SELECT DonGia FROM dbo.MonAn WHERE MaMon = @MaMon);
 
         BEGIN TRANSACTION;
+            IF NOT EXISTS (SELECT 1 FROM dbo.HoaDon WITH (UPDLOCK, HOLDLOCK) WHERE MaHD = @MaHD AND TrangThai = N'Đang phục vụ')
+                THROW 50011, N'Hóa đơn không tồn tại hoặc không ở trạng thái Đang phục vụ.', 1;
+
+            DECLARE @DonGia DECIMAL(12,0);
+            SELECT @DonGia = DonGia FROM dbo.MonAn WITH (UPDLOCK) WHERE MaMon = @MaMon AND ConKinhDoanh = 1;
+            IF @DonGia IS NULL
+                THROW 50012, N'Món ăn không tồn tại hoặc đã ngừng kinh doanh.', 1;
+
+            -- Kiểm tra tồn kho có khóa dòng nguyên liệu: nguyên liệu nào thiếu thì báo lỗi kèm tên
+            DECLARE @NLThieu NVARCHAR(100);
+            SELECT TOP 1 @NLThieu = nl.TenNL
+            FROM dbo.CongThuc c
+            JOIN dbo.NguyenLieu nl WITH (UPDLOCK, HOLDLOCK) ON nl.MaNL = c.MaNL
+            WHERE c.MaMon = @MaMon AND nl.SoLuongTon < c.DinhLuong * @SoLuong;
+
+            IF @NLThieu IS NOT NULL
+            BEGIN
+                DECLARE @Msg NVARCHAR(200) = CONCAT(N'Không đủ nguyên liệu: ', @NLThieu);
+                THROW 50013, @Msg, 1;
+            END
+
             -- Món đã có trong hóa đơn thì cộng dồn số lượng
-            IF EXISTS (SELECT 1 FROM dbo.ChiTietHoaDon WHERE MaHD = @MaHD AND MaMon = @MaMon)
+            IF EXISTS (SELECT 1 FROM dbo.ChiTietHoaDon WITH (UPDLOCK, HOLDLOCK) WHERE MaHD = @MaHD AND MaMon = @MaMon)
                 UPDATE dbo.ChiTietHoaDon
                    SET SoLuong = SoLuong + @SoLuong,
                        GhiChu  = COALESCE(@GhiChu, GhiChu)
@@ -150,33 +198,55 @@ CREATE PROCEDURE dbo.sp_ThanhToanHoaDon
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET XACT_ABORT ON;
     BEGIN TRY
-        IF NOT EXISTS (SELECT 1 FROM dbo.HoaDon WHERE MaHD = @MaHD AND TrangThai = N'Đang phục vụ')
-            THROW 50020, N'Hóa đơn không tồn tại hoặc đã được thanh toán/hủy.', 1;
-        IF NOT EXISTS (SELECT 1 FROM dbo.ChiTietHoaDon WHERE MaHD = @MaHD)
-            THROW 50021, N'Hóa đơn chưa có món nào, không thể thanh toán.', 1;
         IF @GiamGia < 0 OR @GiamGia > 100
             THROW 50022, N'Giảm giá phải trong khoảng 0-100%.', 1;
-
-        DECLARE @MaBan INT, @MaKH INT, @TongTien DECIMAL(14,0);
-        SELECT @MaBan = MaBan, @MaKH = MaKH FROM dbo.HoaDon WHERE MaHD = @MaHD;
-        SELECT @TongTien = SUM(ThanhTien) FROM dbo.ChiTietHoaDon WHERE MaHD = @MaHD;
-        SET @SoTienPhaiTra = ROUND(@TongTien * (1 - @GiamGia / 100.0), 0);
+        IF @PhuongThucTT IS NULL OR @PhuongThucTT NOT IN (N'Tiền mặt', N'Chuyển khoản', N'Thẻ')
+            THROW 50023, N'Phương thức thanh toán không hợp lệ.', 1;
 
         BEGIN TRANSACTION;
+            DECLARE @MaBan INT, @MaKH INT, @TongTien DECIMAL(14,0), @TrangThai NVARCHAR(20);
+            SELECT @MaBan = MaBan, @MaKH = MaKH, @TongTien = TongTien, @TrangThai = TrangThai
+            FROM dbo.HoaDon WITH (UPDLOCK, HOLDLOCK)
+            WHERE MaHD = @MaHD;
+
+            IF @TrangThai IS NULL OR @TrangThai <> N'Đang phục vụ'
+                THROW 50020, N'Hóa đơn không tồn tại hoặc đã được thanh toán/hủy.', 1;
+
+            IF NOT EXISTS (SELECT 1 FROM dbo.ChiTietHoaDon WITH (HOLDLOCK) WHERE MaHD = @MaHD)
+                THROW 50021, N'Hóa đơn chưa có món nào, không thể thanh toán.', 1;
+
+            SET @SoTienPhaiTra = ROUND(@TongTien * (1 - @GiamGia / 100.0), 0);
+
             UPDATE dbo.HoaDon
                SET TrangThai = N'Đã thanh toán',
                    ThoiGianThanhToan = GETDATE(),
                    PhuongThucTT = @PhuongThucTT,
                    GiamGia = @GiamGia,
-                   TongTien = @TongTien,
                    ThanhToan = @SoTienPhaiTra
-             WHERE MaHD = @MaHD;
+             WHERE MaHD = @MaHD AND TrangThai = N'Đang phục vụ';
 
-            UPDATE dbo.BanAn SET TrangThai = N'Trống' WHERE MaBan = @MaBan;
+            IF @@ROWCOUNT = 0
+                THROW 50020, N'Hóa đơn đã được xử lý bởi giao dịch khác.', 1;
+
+            UPDATE dbo.BanAn
+               SET TrangThai = CASE
+                   WHEN EXISTS (
+                       SELECT 1 FROM dbo.DatBan d
+                       WHERE d.MaBan = @MaBan
+                         AND d.TrangThai IN (N'Chờ xác nhận', N'Đã xác nhận')
+                         AND d.ThoiGianDat >= CAST(GETDATE() AS DATE)
+                         AND d.ThoiGianDat < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))
+                   ) THEN N'Đã đặt'
+                   ELSE N'Trống'
+               END
+             WHERE MaBan = @MaBan;
 
             IF @MaKH IS NOT NULL
-                UPDATE dbo.KhachHang SET DiemTichLuy = DiemTichLuy + @SoTienPhaiTra / 10000 WHERE MaKH = @MaKH;
+                UPDATE dbo.KhachHang
+                   SET DiemTichLuy = DiemTichLuy + CAST(FLOOR(@SoTienPhaiTra / 10000.0) AS INT)
+                 WHERE MaKH = @MaKH;
 
             INSERT INTO dbo.NhatKyHoaDon (MaHD, HanhDong, NoiDung)
             VALUES (@MaHD, N'Thanh toán', CONCAT(@PhuongThucTT, N' - ', FORMAT(@SoTienPhaiTra, 'N0'), N' đ'));
@@ -196,24 +266,53 @@ CREATE PROCEDURE dbo.sp_HuyHoaDon
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET XACT_ABORT ON;
     BEGIN TRY
-        IF NOT EXISTS (SELECT 1 FROM dbo.HoaDon WHERE MaHD = @MaHD AND TrangThai = N'Đang phục vụ')
-            THROW 50030, N'Chỉ có thể hủy hóa đơn đang phục vụ.', 1;
-
-        DECLARE @MaBan INT = (SELECT MaBan FROM dbo.HoaDon WHERE MaHD = @MaHD);
-
         BEGIN TRANSACTION;
-            -- hoàn kho
-            UPDATE nl SET SoLuongTon = nl.SoLuongTon + c.DinhLuong * ct.SoLuong
+            DECLARE @MaBan INT, @TrangThai NVARCHAR(20);
+            SELECT @MaBan = MaBan, @TrangThai = TrangThai
+            FROM dbo.HoaDon WITH (UPDLOCK, HOLDLOCK)
+            WHERE MaHD = @MaHD;
+
+            IF @TrangThai IS NULL OR @TrangThai <> N'Đang phục vụ'
+                THROW 50030, N'Chỉ có thể hủy hóa đơn đang phục vụ.', 1;
+
+            UPDATE dbo.HoaDon
+               SET TrangThai = N'Đã hủy',
+                   ThanhToan = 0,
+                   GhiChu = @LyDo
+             WHERE MaHD = @MaHD AND TrangThai = N'Đang phục vụ';
+
+            IF @@ROWCOUNT = 0
+                THROW 50030, N'Chỉ có thể hủy hóa đơn đang phục vụ.', 1;
+
+            -- hoàn kho (tổng hợp theo nguyên liệu để tránh cập nhật nhiều lần cùng 1 dòng)
+            UPDATE nl
+               SET SoLuongTon = nl.SoLuongTon + t.TongHoan
             FROM dbo.NguyenLieu nl
-            JOIN dbo.CongThuc c ON c.MaNL = nl.MaNL
-            JOIN dbo.ChiTietHoaDon ct ON ct.MaMon = c.MaMon
-            WHERE ct.MaHD = @MaHD;
+            JOIN (
+                SELECT c.MaNL, SUM(c.DinhLuong * ct.SoLuong) AS TongHoan
+                FROM dbo.CongThuc c
+                JOIN dbo.ChiTietHoaDon ct ON ct.MaMon = c.MaMon
+                WHERE ct.MaHD = @MaHD
+                GROUP BY c.MaNL
+            ) t ON t.MaNL = nl.MaNL;
 
-            UPDATE dbo.HoaDon SET TrangThai = N'Đã hủy', ThanhToan = 0, GhiChu = @LyDo WHERE MaHD = @MaHD;
-            UPDATE dbo.BanAn SET TrangThai = N'Trống' WHERE MaBan = @MaBan;
+            UPDATE dbo.BanAn
+               SET TrangThai = CASE
+                   WHEN EXISTS (
+                       SELECT 1 FROM dbo.DatBan d
+                       WHERE d.MaBan = @MaBan
+                         AND d.TrangThai IN (N'Chờ xác nhận', N'Đã xác nhận')
+                         AND d.ThoiGianDat >= CAST(GETDATE() AS DATE)
+                         AND d.ThoiGianDat < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))
+                   ) THEN N'Đã đặt'
+                   ELSE N'Trống'
+               END
+             WHERE MaBan = @MaBan;
 
-            INSERT INTO dbo.NhatKyHoaDon (MaHD, HanhDong, NoiDung) VALUES (@MaHD, N'Hủy hóa đơn', @LyDo);
+            INSERT INTO dbo.NhatKyHoaDon (MaHD, HanhDong, NoiDung)
+            VALUES (@MaHD, N'Hủy hóa đơn', @LyDo);
         COMMIT TRANSACTION;
     END TRY
     BEGIN CATCH
@@ -234,19 +333,39 @@ CREATE PROCEDURE dbo.sp_DatBan
 AS
 BEGIN
     SET NOCOUNT ON;
+    SET XACT_ABORT ON;
     BEGIN TRY
         IF @ThoiGianDat < GETDATE()
             THROW 50040, N'Thời gian đặt phải ở tương lai.', 1;
-        IF NOT EXISTS (SELECT 1 FROM dbo.BanAn WHERE MaBan = @MaBan AND SoCho >= @SoNguoi)
-            THROW 50041, N'Bàn không tồn tại hoặc không đủ chỗ cho số người yêu cầu.', 1;
-        IF dbo.fn_BanTrongTrongKhungGio(@MaBan, @ThoiGianDat) = 0
-            THROW 50042, N'Bàn đã có người đặt trong khung giờ này (±2 giờ).', 1;
+        IF @SoNguoi IS NULL OR @SoNguoi <= 0
+            THROW 50041, N'Số người đặt bàn không hợp lệ.', 1;
 
-        INSERT INTO dbo.DatBan (MaKH, MaBan, ThoiGianDat, SoNguoi, GhiChu)
-        VALUES (@MaKH, @MaBan, @ThoiGianDat, @SoNguoi, @GhiChu);
-        SET @MaDatBan = SCOPE_IDENTITY();
+        BEGIN TRANSACTION;
+            IF NOT EXISTS (SELECT 1 FROM dbo.KhachHang WHERE MaKH = @MaKH)
+                THROW 50043, N'Khách hàng không tồn tại.', 1;
+
+            IF NOT EXISTS (
+                SELECT 1 FROM dbo.BanAn WITH (UPDLOCK, HOLDLOCK)
+                WHERE MaBan = @MaBan AND SoCho >= @SoNguoi
+            )
+                THROW 50041, N'Bàn không tồn tại hoặc không đủ chỗ cho số người yêu cầu.', 1;
+
+            IF EXISTS (
+                SELECT 1 FROM dbo.DatBan WITH (UPDLOCK, HOLDLOCK)
+                WHERE MaBan = @MaBan
+                  AND TrangThai IN (N'Chờ xác nhận', N'Đã xác nhận')
+                  AND ThoiGianDat > DATEADD(MINUTE, -120, @ThoiGianDat)
+                  AND ThoiGianDat < DATEADD(MINUTE, 120, @ThoiGianDat)
+            )
+                THROW 50042, N'Bàn đã có người đặt trong khung giờ này (±2 giờ).', 1;
+
+            INSERT INTO dbo.DatBan (MaKH, MaBan, ThoiGianDat, SoNguoi, GhiChu)
+            VALUES (@MaKH, @MaBan, @ThoiGianDat, @SoNguoi, @GhiChu);
+            SET @MaDatBan = SCOPE_IDENTITY();
+        COMMIT TRANSACTION;
     END TRY
     BEGIN CATCH
+        IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
         THROW;
     END CATCH
 END
@@ -259,6 +378,9 @@ CREATE PROCEDURE dbo.sp_BaoCaoDoanhThuTheoThang
 AS
 BEGIN
     SET NOCOUNT ON;
+    DECLARE @TuNgay DATETIME = DATEFROMPARTS(@Nam, 1, 1);
+    DECLARE @DenNgay DATETIME = DATEFROMPARTS(@Nam + 1, 1, 1);
+
     SELECT MONTH(h.ThoiGianThanhToan)        AS Thang,
            COUNT(*)                          AS SoHoaDon,
            SUM(h.TongTien)                   AS TongTienHang,
@@ -267,12 +389,15 @@ BEGIN
            AVG(h.ThanhToan)                  AS TrungBinhHoaDon,
            COUNT(DISTINCT h.MaKH)            AS SoKhachThanhVien
     FROM dbo.HoaDon h
-    WHERE h.TrangThai = N'Đã thanh toán' AND YEAR(h.ThoiGianThanhToan) = @Nam
+    WHERE h.TrangThai = N'Đã thanh toán'
+      AND h.ThoiGianThanhToan >= @TuNgay AND h.ThoiGianThanhToan < @DenNgay
     GROUP BY MONTH(h.ThoiGianThanhToan)
     ORDER BY Thang;
 
     SELECT @TongDoanhThu = ISNULL(SUM(ThanhToan), 0)
-    FROM dbo.HoaDon WHERE TrangThai = N'Đã thanh toán' AND YEAR(ThoiGianThanhToan) = @Nam;
+    FROM dbo.HoaDon
+    WHERE TrangThai = N'Đã thanh toán'
+      AND ThoiGianThanhToan >= @TuNgay AND ThoiGianThanhToan < @DenNgay;
 END
 GO
 
@@ -284,13 +409,28 @@ CREATE PROCEDURE dbo.sp_NhapKhoNguyenLieu
 AS
 BEGIN
     SET NOCOUNT ON;
-    IF @SoLuong <= 0 THROW 50050, N'Số lượng nhập phải lớn hơn 0.', 1;
-    IF NOT EXISTS (SELECT 1 FROM dbo.NguyenLieu WHERE MaNL = @MaNL) THROW 50051, N'Nguyên liệu không tồn tại.', 1;
-    UPDATE dbo.NguyenLieu
-       SET SoLuongTon = SoLuongTon + @SoLuong,
-           DonGiaNhap = ISNULL(@DonGiaNhap, DonGiaNhap)
-     WHERE MaNL = @MaNL;
+    SET XACT_ABORT ON;
+    BEGIN TRY
+        IF @SoLuong IS NULL OR @SoLuong <= 0
+            THROW 50050, N'Số lượng nhập phải lớn hơn 0.', 1;
+        IF @DonGiaNhap IS NOT NULL AND @DonGiaNhap < 0
+            THROW 50052, N'Đơn giá nhập không được âm.', 1;
+
+        BEGIN TRANSACTION;
+            IF NOT EXISTS (SELECT 1 FROM dbo.NguyenLieu WITH (UPDLOCK, HOLDLOCK) WHERE MaNL = @MaNL)
+                THROW 50051, N'Nguyên liệu không tồn tại.', 1;
+
+            UPDATE dbo.NguyenLieu
+               SET SoLuongTon = SoLuongTon + @SoLuong,
+                   DonGiaNhap = ISNULL(@DonGiaNhap, DonGiaNhap)
+             WHERE MaNL = @MaNL;
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH
 END
 GO
-PRINT N'>> Đã tạo 2 trigger và 7 stored procedure.';
+PRINT N'>> Đã tạo 3 trigger và 7 stored procedure.';
 GO

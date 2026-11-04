@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "Giao diện web quản lý nhà hàng kết nối SQL Server (BTL DBMS)",
   "main": "server.js",
-  "scripts": { "start": "node server.js", "dev": "node --watch server.js" },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test test/*.test.js"
+  },
   "dependencies": {
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
