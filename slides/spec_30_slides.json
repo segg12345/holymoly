@@ -1,0 +1,889 @@
+{
+  "$schema": "../.agents/skills/building-powerpoint-decks/scripts/spec.schema.json",
+  "direction": "clean-corporate",
+  "footer": "Hệ thống Quản lý Nhà hàng Sen Vàng · Đồ án Hệ Quản trị CSDL 2026",
+  "sources": [
+    "Tài liệu đồ án Sen Vàng",
+    "SQL Server 2022 Scripts",
+    "Báo cáo kiểm toán độc lập"
+  ],
+  "slides": [
+    {
+      "id": "cover",
+      "pattern": "title",
+      "title": "Hệ thống Quản lý Nhà hàng Sen Vàng",
+      "subtitle": "Đồ án Hệ Quản trị Cơ sở Dữ liệu · Microsoft SQL Server & Web Full-Stack POS",
+      "notes": {
+        "say": [
+          "Kính chào quý thầy cô và các bạn sinh viên tham dự buổi báo cáo đồ án.",
+          "Hôm nay nhóm xin bảo vệ đề tài Hệ thống Quản lý Nhà hàng Sen Vàng trên Microsoft SQL Server và ứng dụng Web Full-Stack.",
+          "Dự án giải quyết toàn diện bài toán vận hành nhà hàng bằng kiến trúc Database-Centric chuẩn 3NF và BCNF."
+        ]
+      }
+    },
+    {
+      "id": "executive-summary",
+      "pattern": "kpi",
+      "title": "Kết quả kiểm toán xuất sắc và vượt mọi chỉ tiêu",
+      "kicker": "Tổng quan",
+      "metrics": [
+        {
+          "value": "9.75 / 10",
+          "label": "Điểm kiểm toán tổng hợp",
+          "note": "Xếp hạng Xuất sắc (Grade A+)"
+        },
+        {
+          "value": "11",
+          "label": "Bảng cơ sở dữ liệu",
+          "note": "10 bảng nghiệp vụ, 1 log"
+        },
+        {
+          "value": "3.006",
+          "label": "Hóa đơn thực tế",
+          "note": "15.775 chi tiết (2020 - 2026)"
+        },
+        {
+          "value": "100%",
+          "label": "Toàn vẹn ACID",
+          "note": "Triệt tiêu Race Condition"
+        }
+      ],
+      "highlight": 0,
+      "notes": {
+        "say": [
+          "Báo cáo kiểm toán kỹ thuật độc lập xếp loại dự án ở mức Xuất sắc với điểm số 9.75 trên 10.",
+          "Quy mô dữ liệu bao gồm 3.006 hóa đơn thực tế và 15.775 dòng chi tiết qua 7 năm vận hành liên tục.",
+          "Toàn bộ 7 thủ tục giao dịch bảo đảm tính toàn vẹn dữ liệu tuyệt đối và triệt tiêu Race Condition."
+        ]
+      }
+    },
+    {
+      "id": "agenda",
+      "pattern": "bullets",
+      "title": "Lộ trình báo cáo đồ án gồm sáu nội dung chính",
+      "kicker": "Chương trình",
+      "items": [
+        "1. Đặt vấn đề và Mục tiêu giải pháp quản lý nhà hàng",
+        "2. Thiết kế kiến trúc và Chuẩn hóa mô hình CSDL (ERD)",
+        "3. Hệ thống chỉ mục và Tối ưu hóa truy vấn SARGable",
+        "4. Lập trình T-SQL giao dịch, Thủ tục và Triggers",
+        "5. Ứng dụng Web POS và Kiểm thử phòng thủ bảo mật",
+        "6. Kiểm toán dữ liệu, Kết luận và Hướng phát triển"
+      ],
+      "notes": {
+        "say": [
+          "Bài thuyết trình hôm nay được cấu trúc mạch lạc thành sáu phần cốt lõi.",
+          "Chúng tôi sẽ đi từ bài toán nghiệp vụ, qua chiều sâu thiết kế CSDL, kỹ thuật tối ưu hóa SQL Server, đến phần mềm ứng dụng và chứng minh kiểm thử."
+        ]
+      }
+    },
+    {
+      "id": "problem-context",
+      "pattern": "compare",
+      "title": "Giải pháp số hóa loại bỏ hoàn toàn rủi ro thất thoát",
+      "kicker": "Đặt vấn đề",
+      "columns": [
+        {
+          "heading": "Vận hành thủ công truyền thống",
+          "points": [
+            "Ghi giấy dễ thất lạc và sai lệch số liệu",
+            "Xung đột trùng bàn trong giờ cao điểm",
+            "Thất thoát nguyên liệu không rõ lý do"
+          ]
+        },
+        {
+          "heading": "Hệ thống Sen Vàng tự động hóa",
+          "points": [
+            "Số hóa từ mở bàn đến xuất hóa đơn",
+            "Chống trùng lịch bàn bằng Index lọc",
+            "Tự động trừ hoàn kho theo công thức BOM"
+          ]
+        }
+      ],
+      "highlight": 1,
+      "notes": {
+        "say": [
+          "Mô hình truyền thống bộc lộ nhiều điểm nghẽn: ghi chép giấy dễ sai sót, dễ trùng bàn giờ cao điểm và kho thường xuyên thất thoát.",
+          "Hệ thống Sen Vàng giải quyết triệt để bằng việc số hóa tự động: quản lý bàn thông minh, trừ kho tự động theo công thức và báo cáo tức thời."
+        ]
+      }
+    },
+    {
+      "id": "requirements-matrix",
+      "pattern": "table",
+      "title": "Dự án vượt từ 160% đến 300% mọi tiêu chí yêu cầu",
+      "kicker": "Đối chiếu",
+      "header": [
+        "Hạng mục đánh giá",
+        "Yêu cầu tối thiểu",
+        "Hiện thực đồ án",
+        "Tỷ lệ hoàn thành"
+      ],
+      "rows": [
+        [
+          "Bảng nghiệp vụ",
+          ">= 6 bảng",
+          "10 bảng + 1 bảng Audit Log",
+          "183%"
+        ],
+        [
+          "Ràng buộc toàn vẹn",
+          "Đầy đủ cơ bản",
+          "Đủ 6 loại, hơn 70 ràng buộc",
+          "Vượt trội"
+        ],
+        [
+          "Dữ liệu mẫu",
+          "30 - 200 dòng",
+          "3.006 HĐ, 15.775 chi tiết",
+          "1.500%"
+        ],
+        [
+          "Truy vấn nghiệp vụ",
+          "10 câu",
+          "16 câu nâng cao SARGable",
+          "160%"
+        ],
+        [
+          "Stored Procedures",
+          "3 thủ tục",
+          "7 thủ tục giao dịch ACID",
+          "233%"
+        ],
+        [
+          "Hàm nghiệp vụ (UDF)",
+          "2 hàm",
+          "6 hàm (5 Scalar + 1 TVF)",
+          "300%"
+        ],
+        [
+          "Khung nhìn (Views)",
+          "3 khung nhìn",
+          "8 views (có CHECK OPTION)",
+          "267%"
+        ],
+        [
+          "Triggers kiểm soát",
+          "Khuyến khích",
+          "3 triggers tự động hóa",
+          "Xuất sắc"
+        ]
+      ],
+      "highlight_row": 0,
+      "notes": {
+        "say": [
+          "Dự án không chỉ đáp ứng mà còn vượt xa toàn bộ yêu cầu đề tài môn học.",
+          "Chúng tôi xây dựng 10 bảng nghiệp vụ, 7 thủ tục lưu trữ giao dịch ACID, 6 hàm, 8 views và nạp hơn 3.000 hóa đơn thực tế."
+        ]
+      }
+    },
+    {
+      "id": "system-architecture",
+      "pattern": "process",
+      "title": "Kiến trúc ba tầng hướng cơ sở dữ liệu làm trọng tâm",
+      "kicker": "Kiến trúc",
+      "steps": [
+        {
+          "label": "1. Giao diện Web SPA",
+          "detail": "Glassmorphism UI, ES Modules thuần, không tải lại trang"
+        },
+        {
+          "label": "2. REST API Node.js",
+          "detail": "Express 4.x, connection pool, che chắn lỗi bảng nội bộ"
+        },
+        {
+          "label": "3. CSDL SQL Server",
+          "detail": "SQL Server 2022, kiểm soát khóa và giao dịch ACID"
+        }
+      ],
+      "highlight": 2,
+      "notes": {
+        "say": [
+          "Hệ thống tuân thủ triết lý Database-Centric Architecture: mọi quy tắc nghiệp vụ quan trọng đều nằm tại tầng SQL Server.",
+          "Tầng web client và Node.js chỉ đóng vai trò hiển thị và trung chuyển, bảo đảm dữ liệu luôn nhất quán dù truy cập từ bất kỳ nền tảng nào."
+        ]
+      }
+    },
+    {
+      "id": "erd-chen",
+      "pattern": "image_text",
+      "title": "Mô hình quan niệm Chen phân định rõ ràng các thực thể",
+      "kicker": "Mô hình Chen",
+      "image": "../erd/erd_chen.png",
+      "alt": "Sơ đồ quan niệm ERD theo ký pháp Chen của Hệ thống Nhà hàng Sen Vàng",
+      "caption": "Sơ đồ Chen ERD: Thực thể mạnh và yếu, liên kết quan hệ và thuộc tính đa trị",
+      "points": [
+        "Phân định rõ thực thể mạnh BanAn, MonAn và thực thể liên kết ChiTietHoaDon",
+        "Thuộc tính suy diễn TongTien và ThanhTien được tính toán tự động",
+        "Quan hệ một nhiều và nhiều nhiều được mô hình hóa chuẩn xác theo học thuật"
+      ],
+      "notes": {
+        "say": [
+          "Mô hình quan niệm theo ký pháp Chen thể hiện đầy đủ các thực thể cốt lõi trong nhà hàng.",
+          "Các thuộc tính suy diễn như thành tiền và tổng tiền được xác định rõ ràng, phục vụ việc tối ưu hóa tính toán ở các bước sau."
+        ]
+      }
+    },
+    {
+      "id": "erd-physical",
+      "pattern": "image_text",
+      "title": "Lược đồ vật lý đạt chuẩn 3NF và BCNF triệt tiêu dư thừa",
+      "kicker": "Lược đồ ERD",
+      "image": "../erd/erd.png",
+      "alt": "Lược đồ quan hệ vật lý Crow's Foot thể hiện 10 bảng nghiệp vụ và 1 bảng nhật ký",
+      "caption": "Lược đồ Crow's Foot: 10 bảng nghiệp vụ, 1 bảng log, khóa chính và khóa ngoại chặt chẽ",
+      "points": [
+        "Triệt tiêu hoàn toàn dị thường thêm, xóa và sửa dữ liệu",
+        "Khóa chính và khóa ngoại tường minh giữa mười bảng thực thể",
+        "Bảng NhatKyHoaDon độc lập bảo đảm tính bất biến của vết kiểm toán"
+      ],
+      "notes": {
+        "say": [
+          "Lược đồ vật lý chuẩn hóa theo ký pháp Crow's Foot đạt chuẩn 3NF và BCNF.",
+          "Mọi thuộc tính phụ thuộc hàm đều quy về khóa chính, triệt tiêu nguy cơ dị thường khi cập nhật hoặc xóa dữ liệu."
+        ]
+      }
+    },
+    {
+      "id": "schema-menu",
+      "pattern": "bullets",
+      "title": "Phân hệ Thực đơn và Món ăn kiểm soát giá bán chặt chẽ",
+      "kicker": "Thực đơn",
+      "items": [
+        "Bảng DanhMuc: Phân cấp món Khai vị, Món chính, Lẩu, Tráng miệng, Đồ uống",
+        "Bảng MonAn: Quản lý tên món, đơn vị tính, đơn giá hiện hành và đường dẫn ảnh",
+        "Ràng buộc CK_MonAn_DonGia: Bắt buộc đơn giá món ăn luôn phải lớn hơn 0",
+        "Trạng thái phục vụ: Kiểm soát món ăn đang kinh doanh hay tạm ngưng bán"
+      ],
+      "notes": {
+        "say": [
+          "Phân hệ thực đơn gồm bảng DanhMuc và MonAn liên kết khóa ngoại chặt chẽ.",
+          "Mỗi món ăn có ràng buộc đơn giá dương, hình ảnh minh họa và cờ trạng thái để linh hoạt điều chỉnh kinh doanh."
+        ]
+      }
+    },
+    {
+      "id": "schema-tables-booking",
+      "pattern": "compare",
+      "title": "Quản lý 24 bàn ăn bốn khu vực và chống trùng lịch đặt",
+      "kicker": "Sơ đồ bàn",
+      "columns": [
+        {
+          "heading": "Bảng BanAn (Sơ đồ bàn)",
+          "points": [
+            "Quản lý 24 bàn chia đều 4 khu vực",
+            "Khu vực: Tầng 1, Tầng 2, VIP, Sân vườn",
+            "Sức chứa từ 2 đến 12 khách mỗi bàn"
+          ]
+        },
+        {
+          "heading": "Bảng DatBan (Đặt trước)",
+          "points": [
+            "Lưu mã khách, mã bàn và giờ hẹn",
+            "Chống trùng lịch trong cửa sổ +-120p",
+            "Filtered Index chống trùng thời gian"
+          ]
+        }
+      ],
+      "highlight": 1,
+      "notes": {
+        "say": [
+          "Nhà hàng quản lý 24 bàn phân bố tại 4 khu vực với sức chứa đa dạng.",
+          "Bảng DatBan phối hợp cùng các hàm và chỉ mục lọc để ngăn chặn tình trạng khách đặt trùng bàn trong khoảng thời gian 2 tiếng."
+        ]
+      }
+    },
+    {
+      "id": "schema-inventory-bom",
+      "pattern": "process",
+      "title": "Quản trị kho nguyên liệu tự động hóa theo công thức món",
+      "kicker": "Định lượng kho",
+      "steps": [
+        {
+          "label": "1. Thiết lập BOM",
+          "detail": "Bảng DinhLuong gắn công thức"
+        },
+        {
+          "label": "2. Gọi món ăn",
+          "detail": "Thủ tục gọi món tự động trừ kho"
+        },
+        {
+          "label": "3. Hủy đơn món",
+          "detail": "Thủ tục hủy hoàn kho chính xác"
+        },
+        {
+          "label": "4. Cảnh báo tồn",
+          "detail": "View cảnh báo khi chạm ngưỡng"
+        }
+      ],
+      "highlight": 1,
+      "notes": {
+        "say": [
+          "Định lượng món ăn hoạt động như mô hình Bill of Materials trong sản xuất.",
+          "Khi khách gọi món, hệ thống tự động trừ kho nguyên liệu tương ứng; khi hủy đơn, kho được hoàn trả chính xác, và view cảnh báo tự động thông báo khi sắp hết hàng."
+        ]
+      }
+    },
+    {
+      "id": "schema-crm-staff",
+      "pattern": "bullets",
+      "title": "Hệ thống CRM phân hạng thành viên và quản lý nhân sự",
+      "kicker": "Khách hàng CRM",
+      "items": [
+        "Tích lũy điểm tự động: Cứ 100.000 VNĐ chi tiêu tích lũy được 1 điểm thưởng",
+        "Phân hạng 4 cấp thành viên: Đồng, Bạc, Vàng và Kim Cương",
+        "Chiết khấu tự động: Hạng Bạc giảm 5%, Vàng giảm 10%, Kim Cương giảm 15%",
+        "Bảng NhanVien: Quản lý chức danh, ngày vào làm và mức lương cơ bản tường minh"
+      ],
+      "notes": {
+        "say": [
+          "Hệ thống tích hợp CRM chuyên sâu giúp chăm sóc khách hàng tự động.",
+          "Khách hàng được nâng hạng thành viên theo doanh số và tự động nhận chiết khấu tương ứng ngay khi nhân viên bấm thanh toán."
+        ]
+      }
+    },
+    {
+      "id": "constraints-integrity",
+      "pattern": "statement",
+      "title": "Hơn 70 ràng buộc tường minh bảo vệ dữ liệu ở tầng gốc",
+      "support": "Toàn bộ dữ liệu được xác thực nghiêm ngặt bằng quy tắc CSDL, ngăn chặn hoàn toàn sai lệch từ ứng dụng bên ngoài.",
+      "kicker": "Toàn vẹn",
+      "points": [
+        "Đủ 6 loại chuẩn: PK, FK, CHECK, DEFAULT, NOT NULL, UNIQUE",
+        "Kiểm tra định dạng số điện thoại, email và miền giá trị",
+        "Ngăn chặn triệt để tình trạng giá âm hoặc tồn kho âm"
+      ],
+      "notes": {
+        "say": [
+          "Thay vì phụ thuộc vào kiểm tra ở mã nguồn ứng dụng, chúng tôi đặt hơn 70 ràng buộc toàn vẹn trực tiếp trong SQL Server.",
+          "Điều này bảo đảm dù có bất kỳ lỗi nào ở tầng giao diện, dữ liệu trong cơ sở dữ liệu vẫn luôn trong sạch 100%."
+        ]
+      }
+    },
+    {
+      "id": "index-architecture",
+      "pattern": "bullets",
+      "title": "Hệ thống 10 chỉ mục giảm 44.7% chi phí đọc dữ liệu I/O",
+      "kicker": "Chỉ mục",
+      "items": [
+        "IX_HoaDon_ThoiGianLap: Covering Index INCLUDE (TrangThai, ThanhToan) báo cáo",
+        "IX_ChiTietHoaDon_MaMon: Covering Index INCLUDE (SoLuong, ThanhTien) món chạy",
+        "IX_HoaDon_TrangThai: Tối ưu tra cứu nhanh các hóa đơn đang mở tại từng bàn",
+        "IX_DatBan_ThoiGianDat: Hỗ trợ tìm kiếm lịch đặt theo cửa sổ thời gian SARGable",
+        "UQ_HoaDon_BanDangPhucVu: Filtered Index ngăn 1 bàn mở 2 hóa đơn cùng lúc",
+        "UQ_DatBan_BanThoiGian: Filtered Index chống trùng lịch đặt đã xác nhận"
+      ],
+      "notes": {
+        "say": [
+          "Chúng tôi xây dựng 10 chỉ mục gồm 8 chỉ mục Non-Clustered và 2 Filtered Unique Indexes.",
+          "Kết quả đo lường bằng SET STATISTICS IO ON cho thấy Covering Index giúp giảm đọc I/O từ 47 xuống 26 Logical Reads, tương đương giảm 44.7% chi phí."
+        ]
+      }
+    },
+    {
+      "id": "sargable-optimization",
+      "pattern": "compare",
+      "title": "Tối ưu hóa SARGable giúp giảm 60% Logical Reads",
+      "kicker": "Tối ưu SARGable",
+      "columns": [
+        {
+          "heading": "Truy vấn Non-SARGable (Cũ)",
+          "points": [
+            "Hàm ABS(DATEDIFF) bọc quanh cột chỉ mục",
+            "SQL Server phải Index Scan toàn bảng",
+            "Tiêu tốn 5 Logical Reads và khóa rộng"
+          ]
+        },
+        {
+          "heading": "Truy vấn SARGable (Tối ưu)",
+          "points": [
+            "Khoảng ThoiGianDat BETWEEN @Tu AND @Den",
+            "SQL Server thực thi Index Range Seek",
+            "Chỉ tốn 2 Logical Reads, giảm 60% I/O"
+          ]
+        }
+      ],
+      "highlight": 1,
+      "notes": {
+        "say": [
+          "Một điểm sáng kỹ thuật của đồ án là chuẩn hóa các câu truy vấn sang dạng SARGable.",
+          "Bằng việc loại bỏ hàm ABS(DATEDIFF) quanh cột thời gian, bộ tối ưu hóa truy vấn của SQL Server chuyển từ quét toàn bảng sang tìm kiếm theo dải chỉ mục, giảm 60% lượng đọc trang."
+        ]
+      }
+    },
+    {
+      "id": "udfs-business-logic",
+      "pattern": "process",
+      "title": "Bộ 6 hàm người dùng chuẩn hóa các phép tính nghiệp vụ",
+      "kicker": "Hàm UDF",
+      "steps": [
+        {
+          "label": "1. Tích điểm",
+          "detail": "fn_TinhDiemTichLuy: 100k quy ra 1 điểm"
+        },
+        {
+          "label": "2. Phân hạng",
+          "detail": "fn_XacDinhHangThanhVien: 4 cấp bậc"
+        },
+        {
+          "label": "3. Chiết khấu",
+          "detail": "fn_PhanTramGiamGia: Giảm 0% đến 15%"
+        },
+        {
+          "label": "4. Khả dụng",
+          "detail": "fn_KiemTraBanKhaDung: Cửa sổ +-2 giờ"
+        },
+        {
+          "label": "5. Món chạy",
+          "detail": "fn_MonBanChay: Inline TVF top món bán"
+        }
+      ],
+      "highlight": 4,
+      "notes": {
+        "say": [
+          "Hệ thống có 6 hàm người dùng gồm 5 hàm vô hướng và 1 hàm bảng nội tuyến.",
+          "Hàm fn_MonBanChay là Inline TVF hiệu năng cao, cho phép tái sử dụng trực tiếp trong các câu truy vấn báo cáo doanh thu mà không suy giảm tốc độ."
+        ]
+      }
+    },
+    {
+      "id": "views-analytics",
+      "pattern": "bullets",
+      "title": "Hệ thống 8 khung nhìn phục vụ vận hành và báo cáo",
+      "kicker": "Khung nhìn",
+      "items": [
+        "v_DanhSachMonAn & v_BanAnKhaDung: Cung cấp dữ liệu tức thời cho Web POS",
+        "v_HoaDonChuaThanhToan: Tổng hợp các hóa đơn đang mở kèm tên bàn và nhân sự",
+        "v_ChiTietHoaDonDayDu: Kết hợp thông tin món, số lượng, đơn vị tính và tiền",
+        "v_DoanhThuTheoNgay: Thống kê doanh số, giảm giá, tiền thuế theo từng ngày",
+        "v_CanhBaoNguyenLieu: Lọc các nguyên liệu có tồn kho chạm ngưỡng an toàn",
+        "v_MonAnHoatDong: Khung nhìn cập nhật an toàn với mệnh đề WITH CHECK OPTION"
+      ],
+      "notes": {
+        "say": [
+          "8 khung nhìn đóng vai trò là tầng trừu tượng dữ liệu cho ứng dụng.",
+          "Đặc biệt, view v_MonAnHoatDong có mệnh đề WITH CHECK OPTION, ngăn chặn việc vô tình chèn món ăn có trạng thái không hợp lệ qua khung nhìn."
+        ]
+      }
+    },
+    {
+      "id": "stored-procedures-core",
+      "pattern": "table",
+      "title": "Bảy thủ tục lưu trữ giao dịch chống Race Condition",
+      "kicker": "Thủ tục SP",
+      "header": [
+        "Tên thủ tục",
+        "Nghiệp vụ thực thi",
+        "Cơ chế bảo vệ ACID",
+        "Tham số trả về"
+      ],
+      "rows": [
+        [
+          "sp_MoHoaDon",
+          "Mở bàn mới cho khách",
+          "UPDLOCK trên BanAn",
+          "OUTPUT @MaHD"
+        ],
+        [
+          "sp_ThemMonVaoHoaDon",
+          "Gọi món & trừ tồn kho",
+          "Kiểm tra BOM, trừ kho ngay",
+          "Mã HĐ, Mã món"
+        ],
+        [
+          "sp_ThanhToanHoaDon",
+          "Tính tiền & tích điểm",
+          "Chiết khấu hạng, VAT 8%",
+          "OUTPUT @ThanhToan"
+        ],
+        [
+          "sp_HuyHoaDon",
+          "Hủy hóa đơn phục vụ",
+          "Hoàn kho GROUP BY c.MaNL",
+          "Ghi nhật ký log"
+        ],
+        [
+          "sp_DatBan",
+          "Tiếp nhận đặt bàn trước",
+          "Kiểm tra trùng lịch +-2h",
+          "OUTPUT @MaDatBan"
+        ],
+        [
+          "sp_NhapKhoNguyenLieu",
+          "Nhập hàng vào kho",
+          "Tính đơn giá bình quân",
+          "Mã NL, Số lượng"
+        ],
+        [
+          "sp_BaoCaoDoanhThu",
+          "Báo cáo theo tháng",
+          "Thống kê doanh thu, khách",
+          "Bảng doanh số"
+        ]
+      ],
+      "highlight_row": 0,
+      "notes": {
+        "say": [
+          "7 Stored Procedures là trái tim xử lý nghiệp vụ của hệ thống.",
+          "Mỗi thủ tục đều mở transaction riêng biệt, sử dụng UPDLOCK để chống tranh chấp đồng thời và trả về thông tin qua tham số OUTPUT rõ ràng."
+        ]
+      }
+    },
+    {
+      "id": "pessimistic-locking",
+      "pattern": "statement",
+      "title": "Khóa bi quan UPDLOCK và HOLDLOCK triệt tiêu xung đột",
+      "support": "Khi hai thu ngân cùng thao tác trên một bàn, khóa cấp dòng ngăn chặn hoàn toàn hiện tượng Lost Update và đọc bóng ma.",
+      "kicker": "Khóa bi quan",
+      "points": [
+        "UPDLOCK giữ tài nguyên không cho luồng khác đọc ghi",
+        "HOLDLOCK giữ khóa cho đến khi Transaction hoàn tất",
+        "Loại bỏ hoàn toàn tình trạng thanh toán trùng hóa đơn"
+      ],
+      "notes": {
+        "say": [
+          "Trong môi trường nhà hàng đông đúc, việc 2 nhân viên cùng mở 1 bàn là nguy cơ hiện hữu.",
+          "Chúng tôi sử dụng khóa bi quan UPDLOCK kết hợp HOLDLOCK, ép các luồng tranh chấp phải xếp hàng tuần tự, bảo đảm không bao giờ xảy ra Race Condition."
+        ]
+      }
+    },
+    {
+      "id": "filtered-index-lock",
+      "pattern": "big_number",
+      "title": "Chốt chặn vật lý ngăn một bàn mở hai hóa đơn đồng thời",
+      "kicker": "Filtered Index",
+      "number": "1",
+      "unit": "HĐ mở",
+      "caption": "Tối đa một hóa đơn Đang phục vụ trên mỗi bàn tại mọi thời điểm",
+      "points": [
+        "UQ_HoaDon_BanDangPhucVu thực thi tại tầng Storage Engine",
+        "Chặn đứng xung đột ở mức microsecond dù có lỗi ứng dụng",
+        "Không tốn chi phí lập chỉ mục cho các hóa đơn quá khứ"
+      ],
+      "notes": {
+        "say": [
+          "Bên cạnh kiểm tra trong Stored Procedure, chúng tôi dựng thêm một chốt chặn vật lý bằng Filtered Unique Index.",
+          "Chỉ mục này ép cứng quy tắc: mỗi mã bàn chỉ được phép xuất hiện duy nhất 1 lần trong trạng thái Đang phục vụ, triệt tiêu 100% khả năng trùng hóa đơn."
+        ]
+      }
+    },
+    {
+      "id": "acid-transactions",
+      "pattern": "process",
+      "title": "Cơ chế giao dịch chuẩn mực với XACT_ABORT và THROW",
+      "kicker": "Giao dịch ACID",
+      "steps": [
+        {
+          "label": "1. XACT_ABORT ON",
+          "detail": "Tự động Rollback tức thời khi phát sinh lỗi"
+        },
+        {
+          "label": "2. BEGIN TRAN",
+          "detail": "Mở ranh giới giao dịch nguyên tử đọc ghi"
+        },
+        {
+          "label": "3. Khóa UPDLOCK",
+          "detail": "Kiểm tra bàn và tồn kho chống tranh chấp"
+        },
+        {
+          "label": "4. Ghi & Nhật ký",
+          "detail": "Chèn dòng dữ liệu và ghi Audit Log"
+        },
+        {
+          "label": "5. COMMIT / THROW",
+          "detail": "Bắt lỗi CATCH và ném mã lỗi 50001 - 50099"
+        }
+      ],
+      "highlight": 4,
+      "notes": {
+        "say": [
+          "Mọi thủ tục sửa đổi dữ liệu đều tuân thủ 5 bước chuẩn mực của một giao dịch ACID.",
+          "Lệnh SET XACT_ABORT ON kết hợp khối TRY...CATCH bảo đảm nếu xảy ra sự cố, toàn bộ dữ liệu sẽ tự động Rollback, không để lại dữ liệu rác."
+        ]
+      }
+    },
+    {
+      "id": "trigger-automation",
+      "pattern": "bullets",
+      "title": "Hệ thống ba Triggers tự động hóa đồng bộ và toàn vẹn",
+      "kicker": "Triggers",
+      "items": [
+        "trg_ChiTietHoaDon_CapNhatTongTien: Tự động tính TongTien khi đổi món",
+        "trg_KhoaHoaDonDaThanhToan: Chặn sửa hoặc xóa chi tiết khi hóa đơn đã kết thúc",
+        "trg_DatBan_DongBoTrangThaiBan: Tự động đổi trạng thái bàn sang Đã đặt theo ngày",
+        "Tất cả Trigger đều được thiết kế an toàn cho nhiều dòng (Multi-Row safe)"
+      ],
+      "notes": {
+        "say": [
+          "3 Trigger trong hệ thống đảm nhiệm vai trò phản ứng sự kiện tự động.",
+          "Đặc biệt, trigger khóa hóa đơn hoạt động ở mức INSTEAD OF, ngăn chặn mọi hành vi gian lận sửa đổi chi tiết trên những hóa đơn đã xuất tiền."
+        ]
+      }
+    },
+    {
+      "id": "advanced-queries",
+      "pattern": "table",
+      "title": "Mười sáu câu truy vấn nâng cao phân tích dữ liệu sâu",
+      "kicker": "Truy vấn T-SQL",
+      "header": [
+        "Nhóm kỹ thuật",
+        "Số lượng",
+        "Câu truy vấn tiêu biểu",
+        "Mục đích nghiệp vụ"
+      ],
+      "rows": [
+        [
+          "Kết nối (Joins)",
+          "4 câu",
+          "INNER, LEFT, RIGHT, FULL",
+          "Đối chiếu bàn, khách, món"
+        ],
+        [
+          "Truy vấn con",
+          "3 câu",
+          "Vô hướng, IN, EXISTS",
+          "Tìm nguyên liệu chưa dùng"
+        ],
+        [
+          "Toán tử tập hợp",
+          "3 câu",
+          "UNION, INTERSECT, EXCEPT",
+          "Tổng hợp dòng tiền, món tồn"
+        ],
+        [
+          "Hàm xếp hạng",
+          "2 câu",
+          "RANK() OVER (PARTITION BY)",
+          "Xếp hạng món chạy theo nhóm"
+        ],
+        [
+          "Phân nhóm nâng cao",
+          "2 câu",
+          "GROUP BY ... HAVING",
+          "Nhóm doanh số trên 50 triệu"
+        ],
+        [
+          "Dự báo & Phân cấp",
+          "2 câu",
+          "CTE đệ quy & Phân tích giờ",
+          "Tỷ lệ lấp đầy bàn ăn"
+        ]
+      ],
+      "highlight_row": 3,
+      "notes": {
+        "say": [
+          "16 câu truy vấn nghiệp vụ bao quát toàn bộ các kỹ thuật T-SQL nâng cao.",
+          "Từ các phép nối nâng cao, toán tử tập hợp, đến Window Functions RANK() OVER() để phân tích doanh thu và hiệu suất bán hàng của nhà hàng."
+        ]
+      }
+    },
+    {
+      "id": "sample-data-scale",
+      "pattern": "chart",
+      "title": "Quy mô dữ liệu 3.006 hóa đơn thực tế qua bảy năm",
+      "kicker": "Dữ liệu mẫu",
+      "type": "column",
+      "categories": [
+        "2020",
+        "2021",
+        "2022",
+        "2023",
+        "2024",
+        "2025",
+        "2026"
+      ],
+      "series": [
+        {
+          "name": "Số lượng hóa đơn",
+          "values": [
+            180.0,
+            310.0,
+            460.0,
+            580.0,
+            690.0,
+            650.0,
+            136.0
+          ]
+        }
+      ],
+      "highlight": "2024",
+      "number_format": "0",
+      "caption": "Tập dữ liệu trải dài từ 2020 đến đầu 2026 với 15.775 dòng chi tiết và 450 lượt đặt bàn",
+      "alt": "Biểu đồ cột thể hiện phân bổ số lượng hóa đơn qua các năm từ 2020 đến 2026",
+      "notes": {
+        "say": [
+          "Dữ liệu mẫu của dự án không dừng lại ở vài chục dòng mô phỏng mà lên tới 3.006 hóa đơn thực tế.",
+          "Biểu đồ thể hiện sự phân bổ hóa đơn tăng trưởng qua các năm, tạo điều kiện lý tưởng để kiểm thử hiệu năng chỉ mục và báo cáo."
+        ]
+      }
+    },
+    {
+      "id": "data-audit-zero-defect",
+      "pattern": "kpi",
+      "title": "Kịch bản kiểm toán dữ liệu đạt kết quả 0 lỗi tuyệt đối",
+      "kicker": "Kiểm toán",
+      "metrics": [
+        {
+          "value": "0",
+          "label": "Tiền âm hoặc kho âm",
+          "note": "Tuân thủ nghiêm ngặt CHECK"
+        },
+        {
+          "value": "0",
+          "label": "Lệch tiền chi tiết hóa đơn",
+          "note": "Khớp 100% giữa ChiTiet và HoaDon"
+        },
+        {
+          "value": "0",
+          "label": "Sai lệch điểm tích lũy",
+          "note": "fn_TinhDiemTichLuy khớp 100%"
+        },
+        {
+          "value": "0",
+          "label": "Hóa đơn mồ côi hoặc lỗi FK",
+          "note": "Toàn vẹn khóa ngoại 100%"
+        }
+      ],
+      "highlight": 1,
+      "notes": {
+        "say": [
+          "Kịch bản kiểm toán độc lập 07_DataIntegrity_Audit.sql rà soát trên toàn bộ 6 nhóm nghiệp vụ trọng yếu.",
+          "Kết quả trả về đều là 0 lỗi vi phạm: không có tồn kho âm, không lệch một đồng tiền thuế hay một điểm tích lũy."
+        ]
+      }
+    },
+    {
+      "id": "web-pos-architecture",
+      "pattern": "image_text",
+      "title": "Ứng dụng Web POS Single Page hiện đại và trực quan",
+      "kicker": "Web POS",
+      "image": "../web/public/screenshots/screenshot_desktop_ultra.png",
+      "alt": "Giao diện màn hình chính Web POS Nhà hàng Sen Vàng",
+      "caption": "Giao diện Web POS Glassmorphism: Sơ đồ 24 bàn trực quan, mở bàn và gọi món tức thì",
+      "points": [
+        "Kiến trúc SPA bằng ES Modules thuần, không phụ thuộc nặng nề",
+        "Sơ đồ 24 bàn hiển thị trực quan theo màu sắc trạng thái bàn",
+        "Ngăn kéo POS Drawer mở bàn, thêm món và in phiếu tạm tính nhanh"
+      ],
+      "notes": {
+        "say": [
+          "Để hiện thực hóa đồ án, chúng tôi xây dựng ứng dụng Web POS chuyên nghiệp.",
+          "Giao diện Single Page sử dụng phong cách Glassmorphism, hiển thị sơ đồ 24 bàn theo thời gian thực và hỗ trợ nhân viên thao tác chỉ bằng vài cú nhấp chuột."
+        ]
+      }
+    },
+    {
+      "id": "web-security-defense",
+      "pattern": "compare",
+      "title": "Phòng thủ theo chiều sâu chống SQL Injection và XSS",
+      "kicker": "Bảo mật",
+      "columns": [
+        {
+          "heading": "Tầng Frontend (Client)",
+          "points": [
+            "Hàm esc() bảo vệ tại 68 vị trí nội suy",
+            "Triệt tiêu hoàn toàn nguy cơ Stored XSS",
+            "Validation dữ liệu đầu vào ngay tại Form"
+          ]
+        },
+        {
+          "heading": "Tầng Backend (Server)",
+          "points": [
+            "100% truy vấn SQL được Parameterized",
+            "Triệt tiêu tuyệt đối lỗi SQL Injection",
+            "Middleware che chắn cấu trúc nội bộ"
+          ]
+        }
+      ],
+      "highlight": 1,
+      "notes": {
+        "say": [
+          "Về mặt bảo mật, chúng tôi triển khai chiến lược phòng thủ theo chiều sâu.",
+          "Tại backend, 100% câu truy vấn được tham số hóa ngăn chặn hoàn toàn SQL Injection; tại frontend, hàm esc() bảo vệ tại 68 vị trí nội suy dữ liệu chống Stored XSS."
+        ]
+      }
+    },
+    {
+      "id": "automated-test-proof",
+      "pattern": "process",
+      "title": "Bộ kiểm thử tự động 13 test suites hoàn thành trong 5.1s",
+      "kicker": "Kiểm thử",
+      "steps": [
+        {
+          "label": "1. Unit Tests",
+          "detail": "Kiểm tra tính đúng đắn của UDFs và múi giờ Asia/Ho_Chi_Minh"
+        },
+        {
+          "label": "2. Integration Tests",
+          "detail": "Kiểm thử toàn diện 22 REST API endpoints trên CSDL thật"
+        },
+        {
+          "label": "3. Rollback Test",
+          "detail": "Kiểm tra cơ chế hoàn tác dữ liệu khi có sự cố phát sinh"
+        },
+        {
+          "label": "4. Concurrency Test",
+          "detail": "10 request song song: 1 thành công, 9 bị chặn an toàn"
+        }
+      ],
+      "highlight": 3,
+      "notes": {
+        "say": [
+          "Bộ kiểm thử tự động với 13 test suites chạy thành công 100% trong 5.1 giây.",
+          "Đặc biệt, bài test Concurrency bắn đồng thời 10 request mở bàn vào SQL Server: hệ thống ghi nhận đúng 1 request thành công và 9 request bị chặn an toàn mà không phát sinh lỗi."
+        ]
+      }
+    },
+    {
+      "id": "lessons-and-future",
+      "pattern": "matrix",
+      "title": "Bốn định hướng nâng cấp hệ thống trong tương lai",
+      "kicker": "Hướng phát triển",
+      "x_axis": "Độ phức tạp kỹ thuật",
+      "y_axis": "Giá trị vận hành",
+      "quadrants": [
+        {
+          "heading": "Màn hình bếp KDS",
+          "text": "Giá trị cao, Triển khai nhanh: Điều phối chế biến tức thời theo thời gian thực"
+        },
+        {
+          "heading": "Phân quyền RBAC CSDL",
+          "text": "Giá trị cao, Kỹ thuật sâu: Phân quyền Quản lý, Thu ngân, Phục vụ tại SQL Server"
+        },
+        {
+          "heading": "Đặt bàn trực tuyến",
+          "text": "Trải nghiệm tiện lợi: Tích hợp cổng đặt bàn tự phục vụ cho khách hàng"
+        },
+        {
+          "heading": "Table Partitioning",
+          "text": "Tối ưu lâu dài: Phân vùng bảng HoaDon theo năm khi dữ liệu vượt 1 triệu dòng"
+        }
+      ],
+      "highlight": 0,
+      "notes": {
+        "say": [
+          "Chúng tôi đã vạch ra 4 hướng phát triển rõ nét cho hệ thống.",
+          "Ưu tiên hàng đầu là triển khai màn hình nhà bếp KDS và hệ thống phân quyền người dùng RBAC trực tiếp ở mức CSDL để đưa giải pháp vào ứng dụng thương mại hoàn chỉnh."
+        ]
+      }
+    },
+    {
+      "id": "conclusion-qa",
+      "pattern": "statement",
+      "title": "Hệ thống Quản lý Nhà hàng Sen Vàng hoàn thành xuất sắc",
+      "support": "Dự án đã giải quyết toàn diện bài toán nghiệp vụ F&B với nền tảng cơ sở dữ liệu mạnh mẽ, bảo đảm tính toàn vẹn và hiệu năng vượt trội.",
+      "kicker": "Tổng kết",
+      "points": [
+        "Hoàn thành 100% mục tiêu môn Hệ quản trị cơ sở dữ liệu",
+        "Sẵn sàng chạy Live Demo toàn bộ kịch bản thực tế",
+        "Kính mời quý Thầy Cô và các bạn đặt câu hỏi thảo luận"
+      ],
+      "notes": {
+        "say": [
+          "Tóm lại, đồ án Hệ thống Quản lý Nhà hàng Sen Vàng đã hoàn thành toàn diện cả về chiều sâu cơ sở dữ liệu lẫn tính ứng dụng thực tiễn.",
+          "Nhóm xin chân thành cảm ơn sự lắng nghe của quý thầy cô và các bạn sinh viên, và rất mong nhận được những góp ý quý báu."
+        ]
+      }
+    }
+  ]
+}
