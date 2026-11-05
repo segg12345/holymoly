@@ -31,8 +31,7 @@
    - [Nạp dữ liệu lớn 3.006 hóa đơn (2020-2026)](#63-nạp-dữ-liệu-lớn-3006-hóa-đơn-2020-2026)
    - [Khởi chạy ứng dụng Web POS](#64-khởi-chạy-ứng-dụng-web-pos)
 7. [Danh sách API Endpoints](#7-danh-sách-api-endpoints)
-8. [Khắc phục sự cố thường gặp (FAQ)](#8-khắc-phục-sự-cố-thường-gặp-faq)
-9. [Tài liệu & Báo cáo đính kèm](#9-tài-liệu--báo-cáo-đính-kèm)
+8. [Tài liệu & Báo cáo đính kèm](#9-tài-liệu--báo-cáo-đính-kèm)
 
 ---
 
@@ -410,49 +409,11 @@ Mở trình duyệt web và truy cập:
 
 ---
 
-## 8. KHẮC PHỤC SỰ CỐ THƯỜNG GẶP (FAQ)
-
-### ❓ 1. Lỗi `Cannot drop database "QuanLyNhaHang" because it is currently in use`
-* **Nguyên nhân**: Đang có một kết nối khác (tab query khác trong SSMS hoặc server Node.js đang chạy) chiếm dụng database.
-* **Cách xử lý**: Đóng server Node.js và các tab query đang mở, hoặc chạy lệnh sau trong SSMS:
-  ```sql
-  USE master;
-  ALTER DATABASE QuanLyNhaHang SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-  DROP DATABASE QuanLyNhaHang;
-  ```
-
-### ❓ 2. Chữ tiếng Việt bị hiển thị thành dấu hỏi `???`
-* **Nguyên nhân**: File SQL được mở hoặc thực thi dưới bảng mã ANSI thay vì UTF-8.
-* **Cách xử lý**: Toàn bộ script đã được lưu dưới định dạng **UTF-8 with BOM**. Trong SSMS, chọn *File → Save As → Save with Encoding → UTF-8 with Signature*. Nếu dùng `sqlcmd`, luôn thêm cờ `-C -f 65001` để vừa tin cậy chứng chỉ vừa hiển thị đúng font tiếng Việt.
-
-### ❓ 3. Ứng dụng Web báo lỗi `ECONNREFUSED` hoặc `ELOGIN`
-* **Nguyên nhân**: Chưa bật TCP/IP cho instance SQL Server hoặc sai tài khoản/mật khẩu trong file `.env`.
-* **Cách xử lý**:
-  1. Kiểm tra lại cổng TCP/IP = 1433 trong *SQL Server Configuration Manager*.
-  2. Kiểm tra thông tin trong file `web/.env`:
-     ```ini
-     DB_SERVER=localhost
-     DB_PORT=1433
-     DB_NAME=QuanLyNhaHang
-     DB_USER=your_database_user
-     DB_PASSWORD=<mat_khau_sql_server>
-     DB_TRUST_CERT=true
-     ```
-
-### ❓ 4. Lỗi `Failed to connect ... self signed certificate`
-* **Cách xử lý**: Đảm bảo trong file `web/.env` đã cấu hình `DB_TRUST_CERT=true`.
-
----
-
-## 9. TÀI LIỆU & BÁO CÁO ĐÍNH KÈM
+## 8. TÀI LIỆU & BÁO CÁO ĐÍNH KÈM
 
 Bộ sản phẩm bàn giao đầy đủ của đồ án bao gồm:
 * 📄 **Báo cáo đồ án chính thức (Word - đã cập nhật đầy đủ)**: [`báo cáo/Quản lý nhà hàng.docx`](<báo cáo/Quản lý nhà hàng.docx>)
 * 📑 **Bản in báo cáo chính thức hoàn chỉnh (PDF)**: [`báo cáo/Quản lý nhà hàng.pdf`](<báo cáo/Quản lý nhà hàng.pdf>)
-* 🔍 **Báo cáo kiểm toán độc lập chi tiết (Markdown)**: [`FINAL_REVIEW_REPORT.md`](FINAL_REVIEW_REPORT.md)
-* 🛠️ **Báo cáo kỹ thuật khắc phục lỗi & tối ưu hóa (Markdown)**: [`REMEDIATION_REPORT.md`](REMEDIATION_REPORT.md)
-* 📊 **Slide thuyết trình bảo vệ đồ án (PowerPoint 30 slides)**: [`slides/Slides_QuanLyNhaHang.pptx`](slides/Slides_QuanLyNhaHang.pptx)
-* 🖼️ **Ảnh kết xuất từng slide trình chiếu**: [`slides/renders/`](slides/renders/)
 * 🗺️ **Sơ đồ thực thể ERD tương tác**: [`erd/erd_viewer.html`](erd/erd_viewer.html) & [`erd/erd_chen_viewer.html`](erd/erd_chen_viewer.html)
 
 ---
