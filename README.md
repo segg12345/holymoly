@@ -5,6 +5,7 @@
 [![Web Framework: Express](https://img.shields.io/badge/Framework-Express%204.x-000000?logo=express&logoColor=white)](https://expressjs.com/)
 [![Architecture: Database--Centric](https://img.shields.io/badge/Architecture-Database--Centric%203NF-0078D4)](https://learn.microsoft.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Audit: 100% Passed](https://img.shields.io/badge/Audit-100%25%20Passed%20(Deep%20Audit)-brightgreen)](FINAL_REVIEW_REPORT.md)
 
 > **Đồ án môn học**: Hệ quản trị cơ sở dữ liệu (DBMS - Database Management Systems)  
 > **Nền tảng công nghệ**: Microsoft SQL Server (T-SQL, Transactions ACID, Trigger, Stored Procedure) & Web Full-Stack (Node.js, Express, Modern Glassmorphism Responsive UI).
@@ -12,26 +13,26 @@
 ---
 
 ## 📌 MỤC LỤC
-1. [Cấu trúc thư mục dự án](#4-cấu-trúc-thư-mục-dự-án)
-2. [Chi tiết các đối tượng CSDL & Nghiệp vụ](#5-chi-tiết-các-đối-tượng-csdl--nghiệp-vụ)
-   - [Hệ thống 10 bảng thực thể + 1 bảng log](#51-hệ-thống-10-bảng-nghiệp-vụ--1-bảng-audit-log)
-   - [10 Chỉ mục tối ưu hóa & Toàn vẹn](#52-10-chỉ-mục-tối-ưu-hóa--toàn-vẹn-non-clustered--filtered-unique-indexes)
-   - [6 Hàm nghiệp vụ (User-Defined Functions)](#53-6-hàm-nghiệp-vụ-udfs)
-   - [8 Khung nhìn (Views)](#54-8-khung-nhìn-views)
-   - [7 Thủ tục lưu trữ giao dịch (Stored Procedures)](#55-7-thủ-tục-lưu-trữ-stored-procedures)
-   - [3 Trigger kiểm soát toàn vẹn](#56-3-trigger-kiểm-soát-toàn-vẹn--đồng-bộ-trạng-thái)
-   - [16 Truy vấn nghiệp vụ nâng cao](#57-16-truy-vấn-nghiệp-vụ-nâng-cao)
-3. [Kịch bản kiểm thử & Toàn vẹn dữ liệu](#6-kịch-bản-kiểm-thử--toàn-vẹn-dữ-liệu)
-4. [Dữ liệu mẫu & Kiểm toán chất lượng](#7-dữ-liệu-mẫu--kiểm-toán-chất-lượng)
-5. [Giao diện Web POS ("Sen Vàng POS")](#8-giao-diện-web-pos-sen-vàng-pos)
-6. [Hướng dẫn cài đặt & Triển khai](#9-hướng-dẫn-cài-đặt--triển-khai)
-   - [Yêu cầu môi trường](#91-yêu-cầu-môi-trường)
-   - [Cài đặt Database (3 cách)](#92-cài-đặt-database)
-   - [Nạp dữ liệu lớn 3.006 hóa đơn (2020-2026)](#93-nạp-dữ-liệu-lớn-3006-hóa-đơn-2020-2026)
-   - [Khởi chạy ứng dụng Web POS](#94-khởi-chạy-ứng-dụng-web-pos)
-7. [Danh sách API Endpoints](#10-danh-sách-api-endpoints)
-8. [Khắc phục sự cố thường gặp (FAQ)](#11-khắc-phục-sự-cố-thường-gặp-faq)
-9. [Tài liệu & Báo cáo đính kèm](#12-tài-liệu--báo-cáo-đính-kèm)
+1. [Cấu trúc thư mục dự án](#1-cấu-trúc-thư-mục-dự-án)
+2. [Chi tiết các đối tượng CSDL & Nghiệp vụ](#2-chi-tiết-các-đối-tượng-csdl--nghiệp-vụ)
+   - [Hệ thống 10 bảng thực thể + 1 bảng log](#21-hệ-thống-10-bảng-nghiệp-vụ--1-bảng-audit-log)
+   - [10 Chỉ mục tối ưu hóa & Toàn vẹn](#22-10-chỉ-mục-tối-ưu-hóa--toàn-vẹn-non-clustered--filtered-unique-indexes)
+   - [6 Hàm nghiệp vụ (User-Defined Functions)](#23-6-hàm-nghiệp-vụ-udfs)
+   - [8 Khung nhìn (Views)](#24-8-khung-nhìn-views)
+   - [7 Thủ tục lưu trữ giao dịch (Stored Procedures)](#25-7-thủ-tục-lưu-trữ-stored-procedures)
+   - [3 Trigger kiểm soát toàn vẹn](#26-3-trigger-kiểm-soát-toàn-vẹn--đồng-bộ-trạng-thái)
+   - [16 Truy vấn nghiệp vụ nâng cao](#27-16-truy-vấn-nghiệp-vụ-nâng-cao)
+3. [Kịch bản kiểm thử & Toàn vẹn dữ liệu](#3-kịch-bản-kiểm-thử--toàn-vẹn-dữ-liệu)
+4. [Dữ liệu mẫu & Kiểm toán chất lượng](#4-dữ-liệu-mẫu--kiểm-toán-chất-lượng)
+5. [Giao diện Web POS ("Sen Vàng POS")](#5-giao-diện-web-pos-sen-vàng-pos)
+6. [Hướng dẫn cài đặt & Triển khai](#6-hướng-dẫn-cài-đặt--triển-khai)
+   - [Yêu cầu môi trường](#61-yêu-cầu-môi-trường)
+   - [Cài đặt Database (3 cách)](#62-cài-đặt-database)
+   - [Nạp dữ liệu lớn 3.006 hóa đơn (2020-2026)](#63-nạp-dữ-liệu-lớn-3006-hóa-đơn-2020-2026)
+   - [Khởi chạy ứng dụng Web POS](#64-khởi-chạy-ứng-dụng-web-pos)
+7. [Danh sách API Endpoints](#7-danh-sách-api-endpoints)
+8. [Khắc phục sự cố thường gặp (FAQ)](#8-khắc-phục-sự-cố-thường-gặp-faq)
+9. [Tài liệu & Báo cáo đính kèm](#9-tài-liệu--báo-cáo-đính-kèm)
 
 ---
 
@@ -40,24 +41,34 @@
 ```plaintext
 Quan-ly-nha-hang-master/
 ├── README.md                           # Tài liệu hướng dẫn toàn diện của dự án
+├── FINAL_REVIEW_REPORT.md              # Báo cáo kiểm toán độc lập đối chiếu 100% tiêu chí đề bài tập lớn
+├── REMEDIATION_REPORT.md               # Báo cáo kỹ thuật chi tiết các bản vá và tối ưu hóa hệ thống
 │
-├── sql/                                # TẬP LỆNH SQL SERVER (T-SQL)
-│   ├── QuanLyNhaHang_FULL.sql          # ⭐ CHẠY 1 FILE NÀY LÀ ĐỦ (Gộp toàn bộ 01 -> 06)
-│   ├── 01_CreateDatabase_Tables.sql    # Tạo DB, 10 bảng chính, 1 bảng log, 70+ ràng buộc, Filtered Index
-│   ├── 02_InsertData.sql               # Dữ liệu danh mục, món ăn, nguyên liệu, bàn ăn, nhân sự, khách hàng & 3.006 HĐ
+├── sql/                                # TẬP LỆNH SQL SERVER (T-SQL) MODULAR
+│   ├── 01_CreateDatabase_Tables.sql    # Tạo DB, 10 bảng chính, 1 bảng log, chuẩn hóa ràng buộc DATEADD & SĐT
+│   ├── 02_InsertData.sql               # Dữ liệu mẫu nền tảng: danh mục, món, nguyên liệu, bàn, nhân sự, khách hàng
 │   ├── 02_InsertData_3000_2020_2025.sql# Dữ liệu lớn (3.006 hóa đơn, 15.775 chi tiết, 450 đặt bàn, 2020–2026)
 │   ├── 03_Index_Function_View.sql      # 10 Index (8 Non-Clustered + 2 Filtered Unique), 6 Function, 8 View
 │   ├── 04_StoredProcedures_Triggers.sql# 7 Stored Procedure giao dịch chống Race Condition, 3 Trigger
-│   ├── 05_Queries.sql                  # 16 câu truy vấn nghiệp vụ nâng cao (đã tối ưu SARGable)
+│   ├── 05_Queries.sql                  # 16 câu truy vấn nâng cao tối ưu SARGable (Q5 Tháng 10/2026, Q6 Năm 2025 > 50M)
 │   ├── 06_Test_Demo.sql                # Kịch bản kiểm thử: Demo POS, 10 ca vi phạm ràng buộc, Rollback
-│   └── 07_DataIntegrity_Audit.sql      # Kịch bản kiểm toán toàn vẹn dữ liệu 6 nhóm nghiệp vụ
+│   ├── 07_DataIntegrity_Audit.sql      # Kịch bản kiểm toán toàn vẹn dữ liệu 10 nhóm nghiệp vụ (0 lỗi)
+│   └── fix some constraint.sql         # Script ALTER TABLE vá nhanh ràng buộc tuổi & SĐT cho DB đang chạy
+│
+├── báo cáo/                            # BÁO CÁO THUYẾT MINH BÀI TẬP LỚN & HỒ SƠ KIỂM TOÁN
+│   ├── Quản lý nhà hàng.docx           # ⭐ Báo cáo đồ án chính thức (Word - đã cập nhật đầy đủ số liệu mới nhất)
+│   ├── Quản lý nhà hàng.pdf            # ⭐ Bản in báo cáo chính thức hoàn chỉnh (PDF)
+│   ├── BaoCao_QuanLyNhaHang.docx       # Báo cáo đồ án (bản dự phòng chuẩn kỹ thuật)
+│   ├── BaoCao_QuanLyNhaHang.pdf        # Bản in PDF (bản dự phòng chuẩn kỹ thuật)
+│   ├── BaoCao_KiemToanDocLap_QuanLyNhaHang.docx # Hồ sơ kiểm toán độc lập đối chiếu đề bài (Word)
+│   └── BaoCao_KiemToanDocLap_QuanLyNhaHang.pdf  # Bản in hồ sơ kiểm toán độc lập (PDF)
 │
 ├── web/                                # ỨNG DỤNG WEB POS (FULL-STACK NODE.JS + EXPRESS)
 │   ├── server.js                       # Backend REST API (Validation, Error Masking, UTC+7, Locking)
 │   ├── package.json                    # Cấu hình dependency & script kiểm thử tự động (npm test)
 │   ├── .env.example                    # Mẫu cấu hình chuỗi kết nối SQL Server & bảo mật
 │   ├── test/                           # Bộ kiểm thử tự động (Unit, API Integration, Transaction, Concurrency)
-│   │   └── remediation.test.js         # 13 test suites chạy trực tiếp trên SQL Server thực tế
+│   │   └── remediation.test.js         # 13 test suites chạy trực tiếp trên SQL Server thực tế (100% Pass)
 │   └── public/                         # Frontend Single Page Application (SPA - ES Modules)
 │       ├── index.html                  # Giao diện chính POS (Glassmorphism layout)
 │       ├── css/app.css                 # Hệ thống style responsive, anti-jiggle, hiệu ứng
@@ -72,6 +83,11 @@ Quan-ly-nha-hang-master/
 │       ├── js/anime.min.js             # Thư viện hiệu ứng mượt mà
 │       └── screenshots/                # Bộ sưu tập ảnh chụp màn hình các phân hệ giao diện
 │
+├── slides/                             # TÀI LIỆU BÁO CÁO & THUYẾT TRÌNH BẢO VỆ
+│   ├── Slides_QuanLyNhaHang.pptx       # Slide thuyết trình đồ án PowerPoint 30 slides chuyên nghiệp
+│   ├── spec_30_slides.json             # Đặc tả chi tiết cấu trúc và nội dung 30 slides
+│   └── renders/                        # Thư mục 30 ảnh kết xuất chất lượng cao từng slide (s001 - s030)
+│
 ├── erd/                                # SƠ ĐỒ THỰC THỂ - QUAN HỆ (ERD)
 │   ├── erd.png                         # Ảnh sơ đồ vật lý (Crow's Foot)
 │   ├── erd_chen.png                    # Ảnh sơ đồ quan niệm (Chen Notation)
@@ -80,14 +96,7 @@ Quan-ly-nha-hang-master/
 │   ├── erd_chen_viewer.html            # Trình xem tương tác HTML cho mô hình Chen
 │   └── *.py                            # Các script Python tự động kết xuất sơ đồ (Graphviz/Matplotlib)
 │
-├── report/                             # BÁO CÁO THUYẾT MINH BÀI TẬP LỚN
-│   ├── BaoCao_QuanLyNhaHang.docx       # Báo cáo đồ án định dạng Microsoft Word chuẩn học thuật
-│   └── BaoCao_QuanLyNhaHang.pdf        # Bản in ấn chất lượng cao định dạng PDF
-│
-├── slides/                             # TÀI LIỆU BÁO CÁO & THUYẾT TRÌNH
-│   └── Slides_QuanLyNhaHang.pptx       # Slide thuyết trình đồ án PowerPoint chuyên nghiệp
-│
-└── scripts/                            # Các công cụ script bổ trợ (sinh dữ liệu, đồng bộ tài liệu)
+└── scripts/                            # Các công cụ script bổ trợ (sinh dữ liệu, đồng bộ tài liệu Word/PDF)
 ```
 
 ---
@@ -98,8 +107,8 @@ Quan-ly-nha-hang-master/
 
 | STT | Tên bảng | Chức năng nghiệp vụ | Khóa chính (PK) | Ràng buộc toàn vẹn tiêu biểu |
 |:---:|---|---|:---:|---|
-| 1 | `KhachHang` | Thông tin khách hàng, thẻ hội viên, CRM | `MaKH` | `UQ(SoDienThoai)`, `CK_SDT` (9-11 số), `CK_Email`, `CK(DiemTichLuy >= 0)` |
-| 2 | `NhanVien` | Nhân sự, phục vụ, thu ngân, bếp, quản lý | `MaNV` | `UQ(SoDienThoai)`, `UQ_NhanVien_Email (Filtered Index: WHERE Email IS NOT NULL)`, `CK(TuoiLaoDong >= 18)`, `CK(Luong >= 4tr)` |
+| 1 | `KhachHang` | Thông tin khách hàng, thẻ hội viên, CRM | `MaKH` | `UQ(SoDienThoai)`, `CK_KhachHang_SDT` (bắt buộc đầu số `0[0-9]%`, 10–11 chữ số, không chứa ký tự lạ), `CK_Email`, `CK(DiemTichLuy >= 0)` |
+| 2 | `NhanVien` | Nhân sự, phục vụ, thu ngân, bếp, quản lý | `MaNV` | `UQ(SoDienThoai)`, `UQ_NhanVien_Email (Filtered Index: WHERE Email IS NOT NULL)`, `CK_NhanVien_TuoiLaoDong (NgayVaoLam >= DATEADD(YEAR, 18, NgaySinh))`, `CK_NhanVien_SDT` (đầu số 0, 10–11 số), `CK(Luong >= 4tr)` |
 | 3 | `BanAn` | Sơ đồ bàn theo khu vực, sức chứa | `MaBan` | `UQ(TenBan)`, `CK(SoCho BETWEEN 1 AND 20)`, `CK(KhuVuc IN (...))` |
 | 4 | `DanhMucMon` | Danh mục phân loại ẩm thực | `MaDM` | `UQ(TenDM)` |
 | 5 | `MonAn` | Thực đơn nhà hàng, đơn giá niêm yết | `MaMon` | `FK(MaDM)`, `UQ(TenMon)`, `CK(DonGia > 0)` |
@@ -182,18 +191,18 @@ File [sql/05_Queries.sql](sql/05_Queries.sql) bao phủ toàn bộ các kỹ thu
 * **Q2**: `INNER JOIN` + `BETWEEN` (thực đơn theo tầm giá 50.000đ – 150.000đ).
 * **Q3**: `LEFT JOIN` + `IS NULL` (tìm khách hàng chưa từng phát sinh đơn).
 * **Q4**: `RIGHT JOIN` (tìm món ăn chưa từng bán được lần nào).
-* **Q5**: `FULL OUTER JOIN` (đối chiếu danh sách bàn và lượt đặt bàn trong ngày).
-* **Q6**: `GROUP BY` + `HAVING` (nhân viên có doanh số trên 10 triệu đồng).
+* **Q5**: `FULL OUTER JOIN` (đối chiếu danh sách bàn ăn và lượt đặt bàn trong tháng 10/2026 có dữ liệu thực tế; ưu tiên xếp bàn đã đặt trước lên đầu `ORDER BY CASE WHEN d.MaDatBan IS NOT NULL THEN 0 ELSE 1 END, b.TenBan` giúp nhận diện trực quan bàn có khách đặt vs bàn còn trống).
+* **Q6**: `GROUP BY` + `HAVING` (thống kê nhân viên đạt doanh số trên 50 triệu đồng trong năm tài chính 2025 `ThoiGianThanhToan >= '2025-01-01' AND < '2026-01-01'`, `HAVING SUM(h.ThanhToan) > 50000000`, tối ưu hóa index SARGable).
 * **Q7**: Subquery vô hướng (món ăn có đơn giá cao hơn mức trung bình của toàn thực đơn).
 * **Q8**: Subquery tập hợp với `IN` + `EXISTS` (khách hàng có từ 3 hóa đơn trở lên và có lịch hẹn đặt bàn).
 * **Q9**: Toán tử tập hợp `UNION` (tổng hợp danh bạ liên hệ khách hàng và nhân viên).
-* **Q10**: Toán tử tập hợp `INTERSECT` (khách vừa đặt bàn vừa có hóa đơn đã thanh toán).
+* **Q10**: Toán tử tập hợp `INTERSECT` (danh sách khách hàng vừa từng đặt bàn vừa từng có hóa đơn đã thanh toán).
 * **Q11**: Toán tử tập hợp `EXCEPT` (món đang bán nhưng không phát sinh doanh số trong 30 ngày qua).
 * **Q12**: `LIKE` + `UNION ALL` (tìm kiếm linh hoạt theo từ khóa tên món hoặc họ khách).
 * **Q13**: `TOP n` kết hợp Table-Valued Function (top 5 món ăn bán chạy nhất trong 90 ngày).
 * **Q14**: `TOP PERCENT` kết hợp gọi hàm tính thuế VAT (10% hóa đơn có giá trị lớn nhất).
 * **Q15**: Window Function `RANK() OVER (PARTITION BY ...)` (phân tích doanh thu theo khu vực và ca phục vụ, xếp hạng hiệu quả).
-* **Q16**: Truy vấn trực tiếp trên các View nghiệp vụ (`vw_KhachHangThanThiet`, `vw_NguyenLieuSapHet`, `vw_DoanhThuTheoNgay`).
+* **Q16**: Truy vấn trực tiếp trên View nghiệp vụ (`vw_KhachHangThanThiet` - top 10 khách hàng thân thiết có chi tiêu cao nhất).
 
 ---
 
@@ -250,15 +259,14 @@ Dự án cung cấp 2 bộ dữ liệu phục vụ mục đích kiểm thử và
    - Phục vụ kiểm thử hiệu năng, vẽ biểu đồ xu hướng doanh thu nhiều năm và chứng minh hiệu quả chỉ mục Covering Index.
 
 ### Kiểm toán toàn vẹn dữ liệu & Bộ kiểm thử tự động:
-* **Script kiểm toán SQL ([sql/07_DataIntegrity_Audit.sql](sql/07_DataIntegrity_Audit.sql))**: Kiểm tra tự động 6 nhóm toàn vẹn dữ liệu: (1) hóa đơn trùng bàn & đồng bộ trạng thái bàn, (2) tổng tiền & thành tiền hóa đơn, (3) đặt bàn trùng lịch $\pm 120$ phút & vượt sức chứa, (4) nhất quán tồn kho & định lượng công thức, (5) đối chiếu điểm tích lũy khách hàng `SUM(FLOOR(ThanhToan / 10000.0))`, và (6) kiểm tra bản ghi mồ côi.
-* **Bộ kiểm thử tự động ([web/test/remediation.test.js](web/test/remediation.test.js))**: Chạy bằng lệnh `cd web && npm test`, bao gồm Unit Tests, API Integration Tests, Transaction Tests và Concurrency Tests (10 luồng song song kiểm chứng chống race condition cho `sp_MoHoaDon`, `sp_ThanhToanHoaDon`, `sp_HuyHoaDon`, `sp_DatBan` trên SQL Server thực tế).
-* 100% hóa đơn khớp chính xác giữa `TongTien` và `SUM(ChiTietHoaDon.ThanhTien)`.
-* 100% hóa đơn đã thanh toán có `ThanhToan = ROUND(TongTien * (1 - GiamGia/100), 0)`.
-* Không tồn tại bất kỳ bản ghi mồ côi (Orphan Record) nào giữa 10 bảng nghiệp vụ chính.
+* **Script kiểm toán SQL ([sql/07_DataIntegrity_Audit.sql](sql/07_DataIntegrity_Audit.sql))**: Kiểm tra tự động 10 nhóm toàn vẹn dữ liệu: (1) hóa đơn trùng bàn & đồng bộ trạng thái bàn, (2) khớp tổng tiền & thành tiền chi tiết, (3) tính toán chiết khấu thanh toán, (4) đặt bàn trùng lịch $\pm 120$ phút & vượt sức chứa bàn, (5) nhất quán tồn kho & định lượng công thức BOM, (6) đối chiếu điểm tích lũy khách hàng `SUM(FLOOR(ThanhToan / 10000.0))`, (7) kiểm tra bản ghi mồ côi, (8) ràng buộc tuổi lao động `NgayVaoLam >= DATEADD(YEAR, 18, NgaySinh)`, (9) định dạng SĐT Việt Nam `0[0-9]%`, (10) lương tối thiểu nhân viên. Khi chạy với bảng mã UTF-8 (`-f 65001`), toàn bộ 10 nhóm kiểm toán đều trả về **0 lỗi**.
+* **Bộ kiểm thử tự động ([web/test/remediation.test.js](web/test/remediation.test.js))**: Chạy bằng lệnh `cd web && npm test`, bao gồm 13 test suites (100% PASS) kiểm thử Unit, API Integration, Transaction và Concurrency (10 luồng song song kiểm chứng chống race condition cho `sp_MoHoaDon`, `sp_ThanhToanHoaDon`, `sp_HuyHoaDon`, `sp_DatBan` trên SQL Server thực tế).
+* **Bản vá độc lập ([sql/fix some constraint.sql](sql/fix%20some%20constraint.sql))**: Cung cấp sẵn các câu lệnh `ALTER TABLE` cập nhật ngay các ràng buộc tuổi lao động và số điện thoại trên CSDL đang chạy mà không cần xóa database.
+* **Hồ sơ kiểm toán độc lập**: Chi tiết kết quả đối chiếu toàn bộ yêu cầu đề bài tập lớn tại [FINAL_REVIEW_REPORT.md](FINAL_REVIEW_REPORT.md) và [BaoCao_KiemToanDocLap_QuanLyNhaHang.pdf](<báo cáo/BaoCao_KiemToanDocLap_QuanLyNhaHang.pdf>).
 
 ---
 
-## 5 GIAO DIỆN WEB POS ("SEN VÀNG POS")
+## 5. GIAO DIỆN WEB POS ("SEN VÀNG POS")
 
 Ứng dụng Web POS đi kèm được thiết kế theo phong cách hiện đại (Glassmorphism & Clean Typography), giao diện nhạy bén (Responsive) trên mọi kích thước màn hình từ Desktop đến Tablet và Smartphone.
 
@@ -286,7 +294,7 @@ Hỗ trợ nhân viên phục vụ cầm máy tính bảng hoặc điện thoạ
 
 ---
 
-##6. HƯỚNG DẪN CÀI ĐẶT & TRIỂN KHAI
+## 6. HƯỚNG DẪN CÀI ĐẶT & TRIỂN KHAI
 
 ### 6.1. Yêu cầu môi trường
 
@@ -301,41 +309,39 @@ Hỗ trợ nhân viên phục vụ cầm máy tính bảng hoặc điện thoạ
 
 ### 6.2. Cài đặt Database
 
-#### CÁCH 1 — Khuyến nghị: Chạy 1 file duy nhất qua SSMS
-1. Khởi động **SQL Server Management Studio (SSMS)** và kết nối tới server (ví dụ: `localhost` hoặc `.\SQLEXPRESS`).
-2. Vào **File → Open → File...** và chọn file:
-   ```
-   sql/QuanLyNhaHang_FULL.sql
-   ```
-3. Nhấn **Execute (F5)**. Script sẽ tự động hoàn toàn:
-   - Xóa DB cũ (nếu có) và khởi tạo database `QuanLyNhaHang`.
-   - Tạo 10 bảng nghiệp vụ + 1 bảng Audit log với 70+ ràng buộc toàn vẹn.
-   - Nạp dữ liệu mẫu cơ bản.
-   - Tạo toàn bộ 10 Index, 6 Function, 8 View, 7 Stored Procedure, 3 Trigger.
-   - Tự động chạy kiểm thử 16 truy vấn và kịch bản demo (xem kết quả tại tab *Results* và *Messages*).
+#### CÁCH 1 — Khuyến nghị: Chạy tuần tự các script T-SQL trong thư mục `sql/`
+Khởi động **SQL Server Management Studio (SSMS)** và kết nối tới server (ví dụ: `localhost` hoặc `.\SQLEXPRESS`). Mở và thực thi lần lượt các file theo đúng thứ tự phụ thuộc:
+1. `sql/01_CreateDatabase_Tables.sql`: Khởi tạo CSDL `QuanLyNhaHang`, tạo 10 bảng thực thể + 1 bảng Audit log, thiết lập khóa chính, khóa ngoại, Filtered Indexes và các ràng buộc chuẩn hóa (`DATEADD` tuổi lao động, định dạng SĐT `0[0-9]%`).
+2. `sql/02_InsertData.sql`: Nạp bộ dữ liệu nền tảng (6 danh mục, 40 món ăn, 26 nguyên liệu, 68 công thức, 24 bàn, 15 nhân viên, 100 khách hàng).
+3. `sql/03_Index_Function_View.sql`: Tạo 10 chỉ mục tối ưu hóa, 6 hàm nghiệp vụ (UDFs) và 8 khung nhìn (Views).
+4. `sql/04_StoredProcedures_Triggers.sql`: Tạo 7 Stored Procedure giao dịch ACID (chống Race Condition) và 3 Trigger kiểm soát toàn vẹn.
+5. `sql/05_Queries.sql`: Thực thi 16 câu truy vấn nghiệp vụ nâng cao (đối chiếu bàn Q5, doanh số năm Q6, INTERSECT Q10,...).
+6. `sql/06_Test_Demo.sql`: Chạy kịch bản demo chu trình phục vụ POS và kiểm chứng 10 ca vi phạm ràng buộc có bẫy lỗi `TRY...CATCH`.
 
-#### CÁCH 2 — Chạy tuần tự từng script rời
-Nếu muốn theo dõi và học tập từng bước, hãy thực thi lần lượt các file trong thư mục `sql/`:
-1. `01_CreateDatabase_Tables.sql`
-2. `02_InsertData.sql`
-3. `03_Index_Function_View.sql`
-4. `04_StoredProcedures_Triggers.sql`
-5. `05_Queries.sql`
-6. `06_Test_Demo.sql`
+#### CÁCH 2 — Nâng cấp nhanh ràng buộc cho database hiện hữu (`fix some constraint.sql`)
+Nếu CSDL `QuanLyNhaHang` đã tồn tại và đang chứa dữ liệu, bạn có thể áp dụng ngay các bản vá ràng buộc tuổi lao động và số điện thoại mà **không cần xóa hay tạo lại CSDL**:
+Mở file `sql/fix some constraint.sql` trong SSMS và nhấn **Execute (F5)** (thực thi các lệnh `ALTER TABLE` an toàn tuyệt đối).
 
-#### CÁCH 3 — Cài đặt bằng dòng lệnh qua `sqlcmd`
-Mở Command Prompt hoặc PowerShell tại thư mục gốc dự án:
+#### CÁCH 3 — Cài đặt tự động bằng dòng lệnh qua `sqlcmd`
+Mở Command Prompt hoặc PowerShell tại thư mục gốc dự án và chạy lần lượt:
 ```bat
-sqlcmd -S localhost\SQLEXPRESS -E -i sql\QuanLyNhaHang_FULL.sql -f 65001
+sqlcmd -S localhost -E -C -i sql\01_CreateDatabase_Tables.sql -f 65001
+sqlcmd -S localhost -E -C -i sql\02_InsertData.sql -f 65001
+sqlcmd -S localhost -E -C -i sql\03_Index_Function_View.sql -f 65001
+sqlcmd -S localhost -E -C -i sql\04_StoredProcedures_Triggers.sql -f 65001
+sqlcmd -S localhost -E -C -i sql\05_Queries.sql -f 65001
+sqlcmd -S localhost -E -C -i sql\06_Test_Demo.sql -f 65001
 ```
-*(Tham số `-f 65001` đảm bảo nạp đúng bảng mã UTF-8 tiếng Việt có dấu).*
+> 💡 **Ghi chú về tham số dòng lệnh**:
+> - `-C` (*Trust Server Certificate*): Bắt buộc đối với ODBC Driver 18 và SQL Server 2022/2025 để tránh lỗi từ chối chứng chỉ tự ký (`The certificate chain was issued by an authority that is not trusted`).
+> - `-f 65001`: Thiết lập mã hóa UTF-8 để đảm bảo nạp chính xác tiếng Việt có dấu.
 
 ---
 
 ### 6.3. Nạp dữ liệu lớn 3.006 hóa đơn (2020 – 2026)
 Để phục vụ việc báo cáo doanh thu nhiều năm, đánh giá tải hoặc demo đồ án ấn tượng:
 ```bat
-sqlcmd -S localhost\SQLEXPRESS -E -d QuanLyNhaHang -i sql\02_InsertData_3000_2020_2025.sql -f 65001
+sqlcmd -S localhost -E -C -d QuanLyNhaHang -i sql\02_InsertData_3000_2020_2025.sql -f 65001
 ```
 *(Hoặc mở file `sql\02_InsertData_3000_2020_2025.sql` trong SSMS và nhấn **F5**).*
 
@@ -421,7 +427,7 @@ Mở trình duyệt web và truy cập:
 
 ### ❓ 2. Chữ tiếng Việt bị hiển thị thành dấu hỏi `???`
 * **Nguyên nhân**: File SQL được mở hoặc thực thi dưới bảng mã ANSI thay vì UTF-8.
-* **Cách xử lý**: Toàn bộ script đã được lưu dưới định dạng **UTF-8 with BOM**. Trong SSMS, chọn *File → Save As → Save with Encoding → UTF-8 with Signature*. Nếu dùng `sqlcmd`, luôn thêm cờ `-f 65001`.
+* **Cách xử lý**: Toàn bộ script đã được lưu dưới định dạng **UTF-8 with BOM**. Trong SSMS, chọn *File → Save As → Save with Encoding → UTF-8 with Signature*. Nếu dùng `sqlcmd`, luôn thêm cờ `-C -f 65001` để vừa tin cậy chứng chỉ vừa hiển thị đúng font tiếng Việt.
 
 ### ❓ 3. Ứng dụng Web báo lỗi `ECONNREFUSED` hoặc `ELOGIN`
 * **Nguyên nhân**: Chưa bật TCP/IP cho instance SQL Server hoặc sai tài khoản/mật khẩu trong file `.env`.
@@ -445,10 +451,15 @@ Mở trình duyệt web và truy cập:
 ## 9. TÀI LIỆU & BÁO CÁO ĐÍNH KÈM
 
 Bộ sản phẩm bàn giao đầy đủ của đồ án bao gồm:
-* 📄 **Báo cáo đồ án chi tiết (Word)**: [report/BaoCao_QuanLyNhaHang.docx](report/BaoCao_QuanLyNhaHang.docx)
-* 📑 **Bản in báo cáo hoàn chỉnh (PDF)**: [report/BaoCao_QuanLyNhaHang.pdf](report/BaoCao_QuanLyNhaHang.pdf)
-* 📊 **Slide thuyết trình bảo vệ đồ án**: [slides/Slides_QuanLyNhaHang.pptx](slides/Slides_QuanLyNhaHang.pptx)
-* 🗺️ **Sơ đồ thực thể ERD tương tác**: [erd/erd_viewer.html](erd/erd_viewer.html) & [erd/erd_chen_viewer.html](erd/erd_chen_viewer.html)
+* 📄 **Báo cáo đồ án chính thức (Word - đã cập nhật đầy đủ)**: [`báo cáo/Quản lý nhà hàng.docx`](<báo cáo/Quản lý nhà hàng.docx>)
+* 📑 **Bản in báo cáo chính thức hoàn chỉnh (PDF)**: [`báo cáo/Quản lý nhà hàng.pdf`](<báo cáo/Quản lý nhà hàng.pdf>)
+* 📋 **Hồ sơ kiểm toán độc lập đối chiếu đề bài (Word)**: [`báo cáo/BaoCao_KiemToanDocLap_QuanLyNhaHang.docx`](<báo cáo/BaoCao_KiemToanDocLap_QuanLyNhaHang.docx>)
+* 📑 **Bản in hồ sơ kiểm toán độc lập (PDF)**: [`báo cáo/BaoCao_KiemToanDocLap_QuanLyNhaHang.pdf`](<báo cáo/BaoCao_KiemToanDocLap_QuanLyNhaHang.pdf>)
+* 🔍 **Báo cáo kiểm toán độc lập chi tiết (Markdown)**: [`FINAL_REVIEW_REPORT.md`](FINAL_REVIEW_REPORT.md)
+* 🛠️ **Báo cáo kỹ thuật khắc phục lỗi & tối ưu hóa (Markdown)**: [`REMEDIATION_REPORT.md`](REMEDIATION_REPORT.md)
+* 📊 **Slide thuyết trình bảo vệ đồ án (PowerPoint 30 slides)**: [`slides/Slides_QuanLyNhaHang.pptx`](slides/Slides_QuanLyNhaHang.pptx)
+* 🖼️ **Ảnh kết xuất từng slide trình chiếu**: [`slides/renders/`](slides/renders/)
+* 🗺️ **Sơ đồ thực thể ERD tương tác**: [`erd/erd_viewer.html`](erd/erd_viewer.html) & [`erd/erd_chen_viewer.html`](erd/erd_chen_viewer.html)
 
 ---
 
