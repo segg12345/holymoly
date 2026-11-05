@@ -356,10 +356,6 @@ def build_chen_svg():
       </g>
     </g>
 
-    <g transform="translate(920, 48)">
-      <text x="0" y="22" fill="#1E3A5F" font-size="18.5" font-weight="700">SƠ ĐỒ ERD (MÔ HÌNH CHEN / ENTITY - ACTION - ATTRIBUTE)</text>
-      <text x="0" y="46" fill="#4A6583" font-size="13" font-weight="600">Hệ thống Quản lý Nhà hàng (QuanLyNhaHang) — 11 Thực thể &amp; 11 Quan hệ</text>
-    </g>
     ''')
 
     # 2. ATTRIBUTE LINES
@@ -489,9 +485,7 @@ def render_chen_png(output_path, scale=2):
     draw.line([((ox+13)*S, (oy+6)*S), (ox*S, (oy+12)*S)], fill=(34, 34, 34), width=int(1.5*S))
     draw.text(((ox+72)*S, (oy-2)*S), "= Many (Nhiều: 1..N)", font=font_legend, fill=(17, 17, 17))
 
-    # Title
-    draw.text((920*S, 50*S), "SƠ ĐỒ ERD (MÔ HÌNH CHEN / ENTITY - ACTION - ATTRIBUTE)", font=font_title, fill=(30, 58, 95))
-    draw.text((920*S, 78*S), "Hệ thống Quản lý Nhà hàng (QuanLyNhaHang) — 11 Thực thể & 11 Quan hệ", font=font_sub, fill=(74, 101, 131))
+
 
     # 2. Attribute lines
     for ename, edata in entities.items():

@@ -1,0 +1,741 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1680 1080" width="100%" height="100%" style="background: #0F172A; font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;">
+<defs>
+    <filter id="card-shadow" x="-8%" y="-8%" width="125%" height="125%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+    <marker id="arrow-crow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9" fill="none" stroke="#64748B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+    </marker>
+    <pattern id="grid-pattern" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#1E293B" stroke-width="0.6" stroke-opacity="0.6" />
+    </pattern>
+  </defs>
+<rect width="1680" height="1080" fill="url(#grid-pattern)" />
+
+    <g transform="translate(60, 24)">
+      <text x="0" y="20" fill="#F8FAFC" font-size="22" font-weight="700" letter-spacing="0.5">SƠ ĐỒ THỰC THỂ - QUAN HỆ (ERD) — CƠ SỞ DỮ LIỆU QUẢN LÝ NHÀ HÀNG</text>
+      <text x="0" y="40" fill="#94A3B8" font-size="13">Hệ thống SQL Server 2019+ | Chuẩn hóa 3NF | 10 Bảng Nghiệp vụ Chính + 1 Bảng Nhật ký Audit</text>
+    </g>
+    
+
+    <g transform="translate(450, 470)" filter="url(#card-shadow)">
+      <rect width="330" height="295" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5" />
+      <rect width="330" height="36" rx="8" fill="#334155" />
+      <text x="16" y="23" fill="#F8FAFC" font-size="14" font-weight="700">CHÚ THÍCH & QUY ƯỚC ERD</text>
+      
+      <!-- Phân hệ -->
+      <g transform="translate(16, 50)">
+        <text x="0" y="0" fill="#E2E8F0" font-size="12" font-weight="600">Phân hệ dữ liệu:</text>
+        <circle cx="10" cy="18" r="6" fill="#C93B2B" />
+        <text x="24" y="22" fill="#CBD5E1" font-size="11">Khách hàng & Nhân sự</text>
+        
+        <circle cx="10" cy="40" r="6" fill="#2E7D32" />
+        <text x="24" y="44" fill="#CBD5E1" font-size="11">Phòng bàn & Đặt chỗ trước</text>
+        
+        <circle cx="10" cy="62" r="6" fill="#EF6C00" />
+        <text x="24" y="66" fill="#CBD5E1" font-size="11">Thực đơn & Danh mục món</text>
+        
+        <circle cx="10" cy="84" r="6" fill="#5E35B1" />
+        <text x="24" y="88" fill="#CBD5E1" font-size="11">Kho nguyên liệu & Định lượng</text>
+        
+        <circle cx="10" cy="106" r="6" fill="#1565C0" />
+        <text x="24" y="110" fill="#CBD5E1" font-size="11">Đơn hàng & Thanh toán (Hóa đơn)</text>
+        
+        <circle cx="10" cy="128" r="6" fill="#546E7A" />
+        <text x="24" y="132" fill="#CBD5E1" font-size="11">Nhật ký hệ thống (Audit Log)</text>
+      </g>
+      
+      <!-- Ký hiệu Khóa & Quan hệ -->
+      <g transform="translate(16, 210)">
+        <text x="0" y="0" fill="#E2E8F0" font-size="12" font-weight="600">Ký hiệu & Ràng buộc:</text>
+        <rect x="0" y="10" width="28" height="16" rx="4" fill="#B45309" />
+        <text x="5" y="22" fill="#FEF3C7" font-size="10" font-weight="700">PK</text>
+        <text x="34" y="22" fill="#CBD5E1" font-size="11">Khóa chính</text>
+        
+        <rect x="110" y="10" width="28" height="16" rx="4" fill="#1D4ED8" />
+        <text x="116" y="22" fill="#DBEAFE" font-size="10" font-weight="700">FK</text>
+        <text x="144" y="22" fill="#CBD5E1" font-size="11">Khóa ngoại</text>
+        
+        <rect x="220" y="10" width="28" height="16" rx="4" fill="#7E22CE" />
+        <text x="225" y="22" fill="#F3E8FF" font-size="10" font-weight="700">UQ</text>
+        <text x="254" y="22" fill="#CBD5E1" font-size="11">Unique</text>
+        
+        <line x1="0" y1="44" x2="35" y2="44" stroke="#64748B" stroke-width="2" />
+        <text x="42" y="47" fill="#CBD5E1" font-size="11">Quan hệ 1 - N bắt buộc</text>
+        
+        <line x1="165" y1="44" x2="200" y2="44" stroke="#64748B" stroke-width="2" stroke-dasharray="4,3" />
+        <text x="207" y="47" fill="#CBD5E1" font-size="11">Quan hệ 0..1 - N (Tùy chọn)</text>
+      </g>
+    </g>
+    
+<g id="relations-group">
+
+        <g class="relation-item" id="rel_kh_datban" data-from="KhachHang" data-to="DatBan">
+          <path d="M 390 146 C 418 146, 420 193, 450 193" fill="none" stroke="#64748B" stroke-width="2.2"  marker-end="url(#arrow-crow)" />
+          <rect x="415" y="148" width="127.6" height="18" rx="4" fill="#0F172A" fill-opacity="0.88" stroke="#334155" stroke-width="0.8" />
+          <text x="420" y="161" fill="#94A3B8" font-size="9.5" font-weight="500">Đặt trước (1 - N)</text>
+        </g>
+        
+
+        <g class="relation-item" id="rel_banan_datban" data-from="BanAn" data-to="DatBan">
+          <path d="M 390 464 C 420 464, 420 217, 450 217" fill="none" stroke="#64748B" stroke-width="2.2"  marker-end="url(#arrow-crow)" />
+          <rect x="410" y="318" width="120.8" height="18" rx="4" fill="#0F172A" fill-opacity="0.88" stroke="#334155" stroke-width="0.8" />
+          <text x="415" y="331" fill="#94A3B8" font-size="9.5" font-weight="500">Được đặt (1 - N)</text>
+        </g>
+        
+
+        <g class="relation-item" id="rel_banan_hoadon" data-from="BanAn" data-to="HoaDon">
+          <path d="M 390 472 C 600 472, 650 438, 860 438" fill="none" stroke="#64748B" stroke-width="2.2"  marker-end="url(#arrow-crow)" />
+          <rect x="605" y="443" width="154.79999999999998" height="18" rx="4" fill="#0F172A" fill-opacity="0.88" stroke="#334155" stroke-width="0.8" />
+          <text x="610" y="456" fill="#94A3B8" font-size="9.5" font-weight="500">Phát sinh đơn (1 - N)</text>
+        </g>
+        
+
+        <g class="relation-item" id="rel_kh_hoadon" data-from="KhachHang" data-to="HoaDon">
+          <path d="M 390 122 C 430 80, 800 240, 860 462" fill="none" stroke="#64748B" stroke-width="2.2" stroke-dasharray="5,4" marker-end="url(#arrow-crow)" />
+          <rect x="615" y="228" width="209.2" height="18" rx="4" fill="#0F172A" fill-opacity="0.88" stroke="#334155" stroke-width="0.8" />
+          <text x="620" y="241" fill="#94A3B8" font-size="9.5" font-weight="500">Tích điểm (NULL nếu vãng lai)</text>
+        </g>
+        
+
+        <g class="relation-item" id="rel_nv_hoadon" data-from="NhanVien" data-to="HoaDon">
+          <path d="M 390 714 C 620 714, 660 486, 860 486" fill="none" stroke="#64748B" stroke-width="2.2"  marker-end="url(#arrow-crow)" />
+          <rect x="615" y="588" width="141.2" height="18" rx="4" fill="#0F172A" fill-opacity="0.88" stroke="#334155" stroke-width="0.8" />
+          <text x="620" y="601" fill="#94A3B8" font-size="9.5" font-weight="500">Lập hóa đơn (1 - N)</text>
+        </g>
+        
+
+        <g class="relation-item" id="rel_hoadon_nhatky" data-from="HoaDon" data-to="NhatKyHoaDon">
+          <path d="M 1030 360 L 1030 266" fill="none" stroke="#64748B" stroke-width="2.2" stroke-dasharray="5,4" marker-end="url(#arrow-crow)" />
+          <rect x="1035" y="303" width="168.4" height="18" rx="4" fill="#0F172A" fill-opacity="0.88" stroke="#334155" stroke-width="0.8" />
+          <text x="1040" y="316" fill="#94A3B8" font-size="9.5" font-weight="500">Ghi nhật ký log (Audit)</text>
+        </g>
+        
+
+        <g class="relation-item" id="rel_hoadon_cthd" data-from="HoaDon" data-to="ChiTietHoaDon">
+          <path d="M 1030 690 L 1030 800" fill="none" stroke="#64748B" stroke-width="2.2"  marker-end="url(#arrow-crow)" />
+          <rect x="1035" y="733" width="154.79999999999998" height="18" rx="4" fill="#0F172A" fill-opacity="0.88" stroke="#334155" stroke-width="0.8" />
+          <text x="1040" y="746" fill="#94A3B8" font-size="9.5" font-weight="500">Bao gồm món (CASCADE)</text>
+        </g>
+        
+
+        <g class="relation-item" id="rel_danhmuc_mon" data-from="DanhMucMon" data-to="MonAn">
+          <path d="M 1445 194 L 1445 270" fill="none" stroke="#64748B" stroke-width="2.2"  marker-end="url(#arrow-crow)" />
+          <rect x="1450" y="220" width="134.39999999999998" height="18" rx="4" fill="#0F172A" fill-opacity="0.88" stroke="#334155" stroke-width="0.8" />
+          <text x="1455" y="233" fill="#94A3B8" font-size="9.5" font-weight="500">Phân loại danh mục</text>
+        </g>
+        
+
+        <g class="relation-item" id="rel_mon_cthd" data-from="MonAn" data-to="ChiTietHoaDon">
+          <path d="M 1280 322 C 1210 322, 1250 864, 1200 864" fill="none" stroke="#64748B" stroke-width="2.2"  marker-end="url(#arrow-crow)" />
+          <rect x="1205" y="568" width="141.2" height="18" rx="4" fill="#0F172A" fill-opacity="0.88" stroke="#334155" stroke-width="0.8" />
+          <text x="1210" y="581" fill="#94A3B8" font-size="9.5" font-weight="500">Được bán ra (1 - N)</text>
+        </g>
+        
+
+        <g class="relation-item" id="rel_mon_congthuc" data-from="MonAn" data-to="CongThuc">
+          <path d="M 1445 480 L 1445 565" fill="none" stroke="#64748B" stroke-width="2.2"  marker-end="url(#arrow-crow)" />
+          <rect x="1450" y="510" width="154.79999999999998" height="18" rx="4" fill="#0F172A" fill-opacity="0.88" stroke="#334155" stroke-width="0.8" />
+          <text x="1455" y="523" fill="#94A3B8" font-size="9.5" font-weight="500">Định lượng thành phần</text>
+        </g>
+        
+
+        <g class="relation-item" id="rel_nguyenlieu_congthuc" data-from="NguyenLieu" data-to="CongThuc">
+          <path d="M 1445 760 L 1445 680" fill="none" stroke="#64748B" stroke-width="2.2"  marker-end="url(#arrow-crow)" />
+          <rect x="1450" y="708" width="148.0" height="18" rx="4" fill="#0F172A" fill-opacity="0.88" stroke="#334155" stroke-width="0.8" />
+          <text x="1455" y="721" fill="#94A3B8" font-size="9.5" font-weight="500">Tiêu hao nguyên liệu</text>
+        </g>
+        
+</g>
+<g id="tables-group">
+
+        <g class="table-card" id="tbl_KhachHang" transform="translate(60, 80)" filter="url(#card-shadow)" data-table="KhachHang" data-group="Khách hàng & Nhân sự">
+          <!-- Card Container -->
+          <rect width="330" height="234" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5" />
+          
+          <!-- Header Bar -->
+          <path d="M 0 8 Q 0 0 8 0 L 322 0 Q 330 0 330 8 L 330 42 L 0 42 Z" fill="#C93B2B" />
+          <text x="14" y="20" fill="#FFFFFF" font-size="14" font-weight="700">KhachHang</text>
+          <text x="14" y="34" fill="rgba(255,255,255,0.85)" font-size="11">Khách hàng thành viên</text>
+          <rect x="245" y="10" width="75" height="20" rx="4" fill="rgba(0,0,0,0.25)" />
+          <text x="282" y="24" text-anchor="middle" fill="#FFFFFF" font-size="9.5" font-weight="600">8 cột</text>
+          
+          <!-- Columns -->
+          <g transform="translate(0, 42)">
+        
+<rect x="0" y="0" width="330" height="24" fill="#1E293B" />
+<rect x="10" y="4" width="24" height="16" rx="3" fill="#B45309" />
+<text x="14" y="16" fill="#FEF3C7" font-size="9" font-weight="700">PK</text>
+<text x="48" y="16" fill="#F8FAFC" font-size="11.5" font-weight="600">MaKH</text>
+<text x="145" y="16" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="320" y="16" text-anchor="end" fill="#64748B" font-size="9.5">IDENTITY(1,1)</text>
+<rect x="0" y="24" width="330" height="24" fill="#243044" />
+<line x1="0" y1="24" x2="330" y2="24" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="40" fill="#F8FAFC" font-size="11.5" font-weight="600">HoTen</text>
+<text x="145" y="40" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(100)</text>
+<text x="320" y="40" text-anchor="end" fill="#64748B" font-size="9.5">NOT NULL</text>
+<rect x="0" y="48" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="48" x2="330" y2="48" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<rect x="10" y="52" width="24" height="16" rx="3" fill="#7E22CE" />
+<text x="14" y="64" fill="#F3E8FF" font-size="9" font-weight="700">UQ</text>
+<text x="48" y="64" fill="#F8FAFC" font-size="11.5" font-weight="600">SoDienThoai</text>
+<text x="145" y="64" fill="#94A3B8" font-size="10.5" font-family="monospace">VARCHAR(15)</text>
+<text x="320" y="64" text-anchor="end" fill="#64748B" font-size="9.5">9-11 số, NOT NULL</text>
+<rect x="0" y="72" width="330" height="24" fill="#243044" />
+<line x1="0" y1="72" x2="330" y2="72" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="88" fill="#F8FAFC" font-size="11.5" font-weight="600">Email</text>
+<text x="145" y="88" fill="#94A3B8" font-size="10.5" font-family="monospace">VARCHAR(100)</text>
+<text x="320" y="88" text-anchor="end" fill="#64748B" font-size="9.5">NULL (regex email)</text>
+<rect x="0" y="96" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="96" x2="330" y2="96" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="112" fill="#F8FAFC" font-size="11.5" font-weight="600">GioiTinh</text>
+<text x="145" y="112" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(5)</text>
+<text x="320" y="112" text-anchor="end" fill="#64748B" font-size="9.5">Nam | Nữ | Khác</text>
+<rect x="0" y="120" width="330" height="24" fill="#243044" />
+<line x1="0" y1="120" x2="330" y2="120" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="136" fill="#F8FAFC" font-size="11.5" font-weight="600">NgaySinh</text>
+<text x="145" y="136" fill="#94A3B8" font-size="10.5" font-family="monospace">DATE</text>
+<text x="320" y="136" text-anchor="end" fill="#64748B" font-size="9.5">NULL</text>
+<rect x="0" y="144" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="144" x2="330" y2="144" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="160" fill="#F8FAFC" font-size="11.5" font-weight="600">DiemTichLuy</text>
+<text x="145" y="160" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="320" y="160" text-anchor="end" fill="#64748B" font-size="9.5">DF 0, >= 0</text>
+<rect x="0" y="168" width="330" height="24" fill="#243044" />
+<line x1="0" y1="168" x2="330" y2="168" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="184" fill="#F8FAFC" font-size="11.5" font-weight="600">NgayDangKy</text>
+<text x="145" y="184" fill="#94A3B8" font-size="10.5" font-family="monospace">DATETIME</text>
+<text x="320" y="184" text-anchor="end" fill="#64748B" font-size="9.5">DF GETDATE()</text>
+</g></g>
+
+        <g class="table-card" id="tbl_DatBan" transform="translate(450, 140)" filter="url(#card-shadow)" data-table="DatBan" data-group="Không gian & Đặt chỗ">
+          <!-- Card Container -->
+          <rect width="330" height="234" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5" />
+          
+          <!-- Header Bar -->
+          <path d="M 0 8 Q 0 0 8 0 L 322 0 Q 330 0 330 8 L 330 42 L 0 42 Z" fill="#2E7D32" />
+          <text x="14" y="20" fill="#FFFFFF" font-size="14" font-weight="700">DatBan</text>
+          <text x="14" y="34" fill="rgba(255,255,255,0.85)" font-size="11">Lịch đặt bàn trước</text>
+          <rect x="245" y="10" width="75" height="20" rx="4" fill="rgba(0,0,0,0.25)" />
+          <text x="282" y="24" text-anchor="middle" fill="#FFFFFF" font-size="9.5" font-weight="600">8 cột</text>
+          
+          <!-- Columns -->
+          <g transform="translate(0, 42)">
+        
+<rect x="0" y="0" width="330" height="24" fill="#1E293B" />
+<rect x="10" y="4" width="24" height="16" rx="3" fill="#B45309" />
+<text x="14" y="16" fill="#FEF3C7" font-size="9" font-weight="700">PK</text>
+<text x="48" y="16" fill="#F8FAFC" font-size="11.5" font-weight="600">MaDatBan</text>
+<text x="145" y="16" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="320" y="16" text-anchor="end" fill="#64748B" font-size="9.5">IDENTITY(1,1)</text>
+<rect x="0" y="24" width="330" height="24" fill="#243044" />
+<line x1="0" y1="24" x2="330" y2="24" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<rect x="10" y="28" width="24" height="16" rx="3" fill="#1D4ED8" />
+<text x="15" y="40" fill="#DBEAFE" font-size="9" font-weight="700">FK</text>
+<text x="48" y="40" fill="#F8FAFC" font-size="11.5" font-weight="600">MaKH</text>
+<text x="145" y="40" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="320" y="40" text-anchor="end" fill="#64748B" font-size="9.5">-> KhachHang(MaKH)</text>
+<rect x="0" y="48" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="48" x2="330" y2="48" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<rect x="10" y="52" width="24" height="16" rx="3" fill="#1D4ED8" />
+<text x="15" y="64" fill="#DBEAFE" font-size="9" font-weight="700">FK</text>
+<text x="48" y="64" fill="#F8FAFC" font-size="11.5" font-weight="600">MaBan</text>
+<text x="145" y="64" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="320" y="64" text-anchor="end" fill="#64748B" font-size="9.5">-> BanAn(MaBan)</text>
+<rect x="0" y="72" width="330" height="24" fill="#243044" />
+<line x1="0" y1="72" x2="330" y2="72" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="88" fill="#F8FAFC" font-size="11.5" font-weight="600">ThoiGianDat</text>
+<text x="145" y="88" fill="#94A3B8" font-size="10.5" font-family="monospace">DATETIME</text>
+<text x="320" y="88" text-anchor="end" fill="#64748B" font-size="9.5">NOT NULL</text>
+<rect x="0" y="96" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="96" x2="330" y2="96" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="112" fill="#F8FAFC" font-size="11.5" font-weight="600">SoNguoi</text>
+<text x="145" y="112" fill="#94A3B8" font-size="10.5" font-family="monospace">TINYINT</text>
+<text x="320" y="112" text-anchor="end" fill="#64748B" font-size="9.5">1 .. 20 khách</text>
+<rect x="0" y="120" width="330" height="24" fill="#243044" />
+<line x1="0" y1="120" x2="330" y2="120" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="136" fill="#F8FAFC" font-size="11.5" font-weight="600">TrangThai</text>
+<text x="145" y="136" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(20)</text>
+<text x="320" y="136" text-anchor="end" fill="#64748B" font-size="9.5">Chờ XN|Đã XN|Đến|Hủy</text>
+<rect x="0" y="144" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="144" x2="330" y2="144" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="160" fill="#F8FAFC" font-size="11.5" font-weight="600">GhiChu</text>
+<text x="145" y="160" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(255)</text>
+<text x="320" y="160" text-anchor="end" fill="#64748B" font-size="9.5">NULL</text>
+<rect x="0" y="168" width="330" height="24" fill="#243044" />
+<line x1="0" y1="168" x2="330" y2="168" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="184" fill="#F8FAFC" font-size="11.5" font-weight="600">NgayTao</text>
+<text x="145" y="184" fill="#94A3B8" font-size="10.5" font-family="monospace">DATETIME</text>
+<text x="320" y="184" text-anchor="end" fill="#64748B" font-size="9.5">DF GETDATE()</text>
+</g></g>
+
+        <g class="table-card" id="tbl_BanAn" transform="translate(60, 410)" filter="url(#card-shadow)" data-table="BanAn" data-group="Không gian & Đặt chỗ">
+          <!-- Card Container -->
+          <rect width="330" height="162" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5" />
+          
+          <!-- Header Bar -->
+          <path d="M 0 8 Q 0 0 8 0 L 322 0 Q 330 0 330 8 L 330 42 L 0 42 Z" fill="#2E7D32" />
+          <text x="14" y="20" fill="#FFFFFF" font-size="14" font-weight="700">BanAn</text>
+          <text x="14" y="34" fill="rgba(255,255,255,0.85)" font-size="11">Quản lý bàn & khu vực</text>
+          <rect x="245" y="10" width="75" height="20" rx="4" fill="rgba(0,0,0,0.25)" />
+          <text x="282" y="24" text-anchor="middle" fill="#FFFFFF" font-size="9.5" font-weight="600">5 cột</text>
+          
+          <!-- Columns -->
+          <g transform="translate(0, 42)">
+        
+<rect x="0" y="0" width="330" height="24" fill="#1E293B" />
+<rect x="10" y="4" width="24" height="16" rx="3" fill="#B45309" />
+<text x="14" y="16" fill="#FEF3C7" font-size="9" font-weight="700">PK</text>
+<text x="48" y="16" fill="#F8FAFC" font-size="11.5" font-weight="600">MaBan</text>
+<text x="145" y="16" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="320" y="16" text-anchor="end" fill="#64748B" font-size="9.5">IDENTITY(1,1)</text>
+<rect x="0" y="24" width="330" height="24" fill="#243044" />
+<line x1="0" y1="24" x2="330" y2="24" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<rect x="10" y="28" width="24" height="16" rx="3" fill="#7E22CE" />
+<text x="14" y="40" fill="#F3E8FF" font-size="9" font-weight="700">UQ</text>
+<text x="48" y="40" fill="#F8FAFC" font-size="11.5" font-weight="600">TenBan</text>
+<text x="145" y="40" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(20)</text>
+<text x="320" y="40" text-anchor="end" fill="#64748B" font-size="9.5">NOT NULL (Bàn 01...)</text>
+<rect x="0" y="48" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="48" x2="330" y2="48" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="64" fill="#F8FAFC" font-size="11.5" font-weight="600">SoCho</text>
+<text x="145" y="64" fill="#94A3B8" font-size="10.5" font-family="monospace">TINYINT</text>
+<text x="320" y="64" text-anchor="end" fill="#64748B" font-size="9.5">1 .. 20 chỗ</text>
+<rect x="0" y="72" width="330" height="24" fill="#243044" />
+<line x1="0" y1="72" x2="330" y2="72" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="88" fill="#F8FAFC" font-size="11.5" font-weight="600">KhuVuc</text>
+<text x="145" y="88" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(30)</text>
+<text x="320" y="88" text-anchor="end" fill="#64748B" font-size="9.5">T1|T2|Sân vườn|VIP</text>
+<rect x="0" y="96" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="96" x2="330" y2="96" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="112" fill="#F8FAFC" font-size="11.5" font-weight="600">TrangThai</text>
+<text x="145" y="112" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(20)</text>
+<text x="320" y="112" text-anchor="end" fill="#64748B" font-size="9.5">Trống|Đang PV|Đã đặt</text>
+</g></g>
+
+        <g class="table-card" id="tbl_NhanVien" transform="translate(60, 660)" filter="url(#card-shadow)" data-table="NhanVien" data-group="Khách hàng & Nhân sự">
+          <!-- Card Container -->
+          <rect width="330" height="282" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5" />
+          
+          <!-- Header Bar -->
+          <path d="M 0 8 Q 0 0 8 0 L 322 0 Q 330 0 330 8 L 330 42 L 0 42 Z" fill="#C93B2B" />
+          <text x="14" y="20" fill="#FFFFFF" font-size="14" font-weight="700">NhanVien</text>
+          <text x="14" y="34" fill="rgba(255,255,255,0.85)" font-size="11">Hồ sơ nhân viên</text>
+          <rect x="245" y="10" width="75" height="20" rx="4" fill="rgba(0,0,0,0.25)" />
+          <text x="282" y="24" text-anchor="middle" fill="#FFFFFF" font-size="9.5" font-weight="600">10 cột</text>
+          
+          <!-- Columns -->
+          <g transform="translate(0, 42)">
+        
+<rect x="0" y="0" width="330" height="24" fill="#1E293B" />
+<rect x="10" y="4" width="24" height="16" rx="3" fill="#B45309" />
+<text x="14" y="16" fill="#FEF3C7" font-size="9" font-weight="700">PK</text>
+<text x="48" y="16" fill="#F8FAFC" font-size="11.5" font-weight="600">MaNV</text>
+<text x="145" y="16" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="320" y="16" text-anchor="end" fill="#64748B" font-size="9.5">IDENTITY(1,1)</text>
+<rect x="0" y="24" width="330" height="24" fill="#243044" />
+<line x1="0" y1="24" x2="330" y2="24" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="40" fill="#F8FAFC" font-size="11.5" font-weight="600">HoTen</text>
+<text x="145" y="40" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(100)</text>
+<text x="320" y="40" text-anchor="end" fill="#64748B" font-size="9.5">NOT NULL</text>
+<rect x="0" y="48" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="48" x2="330" y2="48" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="64" fill="#F8FAFC" font-size="11.5" font-weight="600">NgaySinh</text>
+<text x="145" y="64" fill="#94A3B8" font-size="10.5" font-family="monospace">DATE</text>
+<text x="320" y="64" text-anchor="end" fill="#64748B" font-size="9.5">Tuổi >= 18</text>
+<rect x="0" y="72" width="330" height="24" fill="#243044" />
+<line x1="0" y1="72" x2="330" y2="72" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="88" fill="#F8FAFC" font-size="11.5" font-weight="600">GioiTinh</text>
+<text x="145" y="88" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(5)</text>
+<text x="320" y="88" text-anchor="end" fill="#64748B" font-size="9.5">Nam | Nữ | Khác</text>
+<rect x="0" y="96" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="96" x2="330" y2="96" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="112" fill="#F8FAFC" font-size="11.5" font-weight="600">ChucVu</text>
+<text x="145" y="112" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(30)</text>
+<text x="320" y="112" text-anchor="end" fill="#64748B" font-size="9.5">Quản lý|Thu ngân|...</text>
+<rect x="0" y="120" width="330" height="24" fill="#243044" />
+<line x1="0" y1="120" x2="330" y2="120" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<rect x="10" y="124" width="24" height="16" rx="3" fill="#7E22CE" />
+<text x="14" y="136" fill="#F3E8FF" font-size="9" font-weight="700">UQ</text>
+<text x="48" y="136" fill="#F8FAFC" font-size="11.5" font-weight="600">SoDienThoai</text>
+<text x="145" y="136" fill="#94A3B8" font-size="10.5" font-family="monospace">VARCHAR(15)</text>
+<text x="320" y="136" text-anchor="end" fill="#64748B" font-size="9.5">NOT NULL</text>
+<rect x="0" y="144" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="144" x2="330" y2="144" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<rect x="10" y="148" width="24" height="16" rx="3" fill="#7E22CE" />
+<text x="14" y="160" fill="#F3E8FF" font-size="9" font-weight="700">UQ</text>
+<text x="48" y="160" fill="#F8FAFC" font-size="11.5" font-weight="600">Email</text>
+<text x="145" y="160" fill="#94A3B8" font-size="10.5" font-family="monospace">VARCHAR(100)</text>
+<text x="320" y="160" text-anchor="end" fill="#64748B" font-size="9.5">NULL</text>
+<rect x="0" y="168" width="330" height="24" fill="#243044" />
+<line x1="0" y1="168" x2="330" y2="168" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="184" fill="#F8FAFC" font-size="11.5" font-weight="600">LuongCoBan</text>
+<text x="145" y="184" fill="#94A3B8" font-size="10.5" font-family="monospace">DECIMAL(12,0)</text>
+<text x="320" y="184" text-anchor="end" fill="#64748B" font-size="9.5">>= 4.000.000</text>
+<rect x="0" y="192" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="192" x2="330" y2="192" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="208" fill="#F8FAFC" font-size="11.5" font-weight="600">NgayVaoLam</text>
+<text x="145" y="208" fill="#94A3B8" font-size="10.5" font-family="monospace">DATE</text>
+<text x="320" y="208" text-anchor="end" fill="#64748B" font-size="9.5">DF GETDATE()</text>
+<rect x="0" y="216" width="330" height="24" fill="#243044" />
+<line x1="0" y1="216" x2="330" y2="216" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="232" fill="#F8FAFC" font-size="11.5" font-weight="600">DangLamViec</text>
+<text x="145" y="232" fill="#94A3B8" font-size="10.5" font-family="monospace">BIT</text>
+<text x="320" y="232" text-anchor="end" fill="#64748B" font-size="9.5">DF 1 (Đang làm)</text>
+</g></g>
+
+        <g class="table-card" id="tbl_NhatKyHoaDon" transform="translate(860, 80)" filter="url(#card-shadow)" data-table="NhatKyHoaDon" data-group="Audit & Lịch sử">
+          <!-- Card Container -->
+          <rect width="340" height="186" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5" />
+          
+          <!-- Header Bar -->
+          <path d="M 0 8 Q 0 0 8 0 L 332 0 Q 340 0 340 8 L 340 42 L 0 42 Z" fill="#546E7A" />
+          <text x="14" y="20" fill="#FFFFFF" font-size="14" font-weight="700">NhatKyHoaDon</text>
+          <text x="14" y="34" fill="rgba(255,255,255,0.85)" font-size="11">Nhật ký audit hóa đơn</text>
+          <rect x="255" y="10" width="75" height="20" rx="4" fill="rgba(0,0,0,0.25)" />
+          <text x="292" y="24" text-anchor="middle" fill="#FFFFFF" font-size="9.5" font-weight="600">6 cột</text>
+          
+          <!-- Columns -->
+          <g transform="translate(0, 42)">
+        
+<rect x="0" y="0" width="340" height="24" fill="#1E293B" />
+<rect x="10" y="4" width="24" height="16" rx="3" fill="#B45309" />
+<text x="14" y="16" fill="#FEF3C7" font-size="9" font-weight="700">PK</text>
+<text x="48" y="16" fill="#F8FAFC" font-size="11.5" font-weight="600">MaNK</text>
+<text x="145" y="16" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="330" y="16" text-anchor="end" fill="#64748B" font-size="9.5">IDENTITY(1,1)</text>
+<rect x="0" y="24" width="340" height="24" fill="#243044" />
+<line x1="0" y1="24" x2="340" y2="24" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<rect x="10" y="28" width="24" height="16" rx="3" fill="#1D4ED8" />
+<text x="15" y="40" fill="#DBEAFE" font-size="9" font-weight="700">FK</text>
+<text x="48" y="40" fill="#F8FAFC" font-size="11.5" font-weight="600">MaHD</text>
+<text x="145" y="40" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="330" y="40" text-anchor="end" fill="#64748B" font-size="9.5">Logic -> HoaDon(MaHD)</text>
+<rect x="0" y="48" width="340" height="24" fill="#1E293B" />
+<line x1="0" y1="48" x2="340" y2="48" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="64" fill="#F8FAFC" font-size="11.5" font-weight="600">HanhDong</text>
+<text x="145" y="64" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(50)</text>
+<text x="330" y="64" text-anchor="end" fill="#64748B" font-size="9.5">NOT NULL</text>
+<rect x="0" y="72" width="340" height="24" fill="#243044" />
+<line x1="0" y1="72" x2="340" y2="72" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="88" fill="#F8FAFC" font-size="11.5" font-weight="600">NoiDung</text>
+<text x="145" y="88" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(500)</text>
+<text x="330" y="88" text-anchor="end" fill="#64748B" font-size="9.5">NULL</text>
+<rect x="0" y="96" width="340" height="24" fill="#1E293B" />
+<line x1="0" y1="96" x2="340" y2="96" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="112" fill="#F8FAFC" font-size="11.5" font-weight="600">NguoiThucHien</text>
+<text x="145" y="112" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(100)</text>
+<text x="330" y="112" text-anchor="end" fill="#64748B" font-size="9.5">DF SUSER_SNAME()</text>
+<rect x="0" y="120" width="340" height="24" fill="#243044" />
+<line x1="0" y1="120" x2="340" y2="120" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="136" fill="#F8FAFC" font-size="11.5" font-weight="600">ThoiGian</text>
+<text x="145" y="136" fill="#94A3B8" font-size="10.5" font-family="monospace">DATETIME</text>
+<text x="330" y="136" text-anchor="end" fill="#64748B" font-size="9.5">DF GETDATE()</text>
+</g></g>
+
+        <g class="table-card" id="tbl_HoaDon" transform="translate(860, 360)" filter="url(#card-shadow)" data-table="HoaDon" data-group="Đơn hàng & Thanh toán">
+          <!-- Card Container -->
+          <rect width="340" height="330" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5" />
+          
+          <!-- Header Bar -->
+          <path d="M 0 8 Q 0 0 8 0 L 332 0 Q 340 0 340 8 L 340 42 L 0 42 Z" fill="#1565C0" />
+          <text x="14" y="20" fill="#FFFFFF" font-size="14" font-weight="700">HoaDon</text>
+          <text x="14" y="34" fill="rgba(255,255,255,0.85)" font-size="11">Hóa đơn thanh toán</text>
+          <rect x="255" y="10" width="75" height="20" rx="4" fill="rgba(0,0,0,0.25)" />
+          <text x="292" y="24" text-anchor="middle" fill="#FFFFFF" font-size="9.5" font-weight="600">12 cột</text>
+          
+          <!-- Columns -->
+          <g transform="translate(0, 42)">
+        
+<rect x="0" y="0" width="340" height="24" fill="#1E293B" />
+<rect x="10" y="4" width="24" height="16" rx="3" fill="#B45309" />
+<text x="14" y="16" fill="#FEF3C7" font-size="9" font-weight="700">PK</text>
+<text x="48" y="16" fill="#F8FAFC" font-size="11.5" font-weight="600">MaHD</text>
+<text x="145" y="16" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="330" y="16" text-anchor="end" fill="#64748B" font-size="9.5">IDENTITY(1,1)</text>
+<rect x="0" y="24" width="340" height="24" fill="#243044" />
+<line x1="0" y1="24" x2="340" y2="24" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<rect x="10" y="28" width="24" height="16" rx="3" fill="#1D4ED8" />
+<text x="15" y="40" fill="#DBEAFE" font-size="9" font-weight="700">FK</text>
+<text x="48" y="40" fill="#F8FAFC" font-size="11.5" font-weight="600">MaBan</text>
+<text x="145" y="40" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="330" y="40" text-anchor="end" fill="#64748B" font-size="9.5">-> BanAn(MaBan)</text>
+<rect x="0" y="48" width="340" height="24" fill="#1E293B" />
+<line x1="0" y1="48" x2="340" y2="48" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<rect x="10" y="52" width="24" height="16" rx="3" fill="#1D4ED8" />
+<text x="15" y="64" fill="#DBEAFE" font-size="9" font-weight="700">FK</text>
+<text x="48" y="64" fill="#F8FAFC" font-size="11.5" font-weight="600">MaKH</text>
+<text x="145" y="64" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="330" y="64" text-anchor="end" fill="#64748B" font-size="9.5">NULL (Khách vãng lai)</text>
+<rect x="0" y="72" width="340" height="24" fill="#243044" />
+<line x1="0" y1="72" x2="340" y2="72" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<rect x="10" y="76" width="24" height="16" rx="3" fill="#1D4ED8" />
+<text x="15" y="88" fill="#DBEAFE" font-size="9" font-weight="700">FK</text>
+<text x="48" y="88" fill="#F8FAFC" font-size="11.5" font-weight="600">MaNV</text>
+<text x="145" y="88" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="330" y="88" text-anchor="end" fill="#64748B" font-size="9.5">-> NhanVien(MaNV)</text>
+<rect x="0" y="96" width="340" height="24" fill="#1E293B" />
+<line x1="0" y1="96" x2="340" y2="96" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="112" fill="#F8FAFC" font-size="11.5" font-weight="600">ThoiGianLap</text>
+<text x="145" y="112" fill="#94A3B8" font-size="10.5" font-family="monospace">DATETIME</text>
+<text x="330" y="112" text-anchor="end" fill="#64748B" font-size="9.5">DF GETDATE()</text>
+<rect x="0" y="120" width="340" height="24" fill="#243044" />
+<line x1="0" y1="120" x2="340" y2="120" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="136" fill="#F8FAFC" font-size="11.5" font-weight="600">ThoiGianThanhToan</text>
+<text x="145" y="136" fill="#94A3B8" font-size="10.5" font-family="monospace">DATETIME</text>
+<text x="330" y="136" text-anchor="end" fill="#64748B" font-size="9.5">NULL</text>
+<rect x="0" y="144" width="340" height="24" fill="#1E293B" />
+<line x1="0" y1="144" x2="340" y2="144" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="160" fill="#F8FAFC" font-size="11.5" font-weight="600">TongTien</text>
+<text x="145" y="160" fill="#94A3B8" font-size="10.5" font-family="monospace">DECIMAL(14,0)</text>
+<text x="330" y="160" text-anchor="end" fill="#64748B" font-size="9.5">DF 0, >= 0</text>
+<rect x="0" y="168" width="340" height="24" fill="#243044" />
+<line x1="0" y1="168" x2="340" y2="168" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="184" fill="#F8FAFC" font-size="11.5" font-weight="600">GiamGia</text>
+<text x="145" y="184" fill="#94A3B8" font-size="10.5" font-family="monospace">DECIMAL(5,2)</text>
+<text x="330" y="184" text-anchor="end" fill="#64748B" font-size="9.5">0 .. 100%</text>
+<rect x="0" y="192" width="340" height="24" fill="#1E293B" />
+<line x1="0" y1="192" x2="340" y2="192" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="208" fill="#F8FAFC" font-size="11.5" font-weight="600">ThanhToan</text>
+<text x="145" y="208" fill="#94A3B8" font-size="10.5" font-family="monospace">DECIMAL(14,0)</text>
+<text x="330" y="208" text-anchor="end" fill="#64748B" font-size="9.5">DF 0, >= 0</text>
+<rect x="0" y="216" width="340" height="24" fill="#243044" />
+<line x1="0" y1="216" x2="340" y2="216" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="232" fill="#F8FAFC" font-size="11.5" font-weight="600">PhuongThucTT</text>
+<text x="145" y="232" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(20)</text>
+<text x="330" y="232" text-anchor="end" fill="#64748B" font-size="9.5">Tiền mặt | CK | Thẻ</text>
+<rect x="0" y="240" width="340" height="24" fill="#1E293B" />
+<line x1="0" y1="240" x2="340" y2="240" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="256" fill="#F8FAFC" font-size="11.5" font-weight="600">TrangThai</text>
+<text x="145" y="256" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(20)</text>
+<text x="330" y="256" text-anchor="end" fill="#64748B" font-size="9.5">Đang PV | Đã TT | Đã hủy</text>
+<rect x="0" y="264" width="340" height="24" fill="#243044" />
+<line x1="0" y1="264" x2="340" y2="264" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="280" fill="#F8FAFC" font-size="11.5" font-weight="600">GhiChu</text>
+<text x="145" y="280" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(255)</text>
+<text x="330" y="280" text-anchor="end" fill="#64748B" font-size="9.5">NULL</text>
+</g></g>
+
+        <g class="table-card" id="tbl_ChiTietHoaDon" transform="translate(860, 800)" filter="url(#card-shadow)" data-table="ChiTietHoaDon" data-group="Đơn hàng & Thanh toán">
+          <!-- Card Container -->
+          <rect width="340" height="186" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5" />
+          
+          <!-- Header Bar -->
+          <path d="M 0 8 Q 0 0 8 0 L 332 0 Q 340 0 340 8 L 340 42 L 0 42 Z" fill="#1565C0" />
+          <text x="14" y="20" fill="#FFFFFF" font-size="14" font-weight="700">ChiTietHoaDon</text>
+          <text x="14" y="34" fill="rgba(255,255,255,0.85)" font-size="11">Chi tiết món ăn trong đơn</text>
+          <rect x="255" y="10" width="75" height="20" rx="4" fill="rgba(0,0,0,0.25)" />
+          <text x="292" y="24" text-anchor="middle" fill="#FFFFFF" font-size="9.5" font-weight="600">6 cột</text>
+          
+          <!-- Columns -->
+          <g transform="translate(0, 42)">
+        
+<rect x="0" y="0" width="340" height="24" fill="#1E293B" />
+<rect x="8" y="4" width="36" height="16" rx="3" fill="#C2410C" />
+<text x="10" y="16" fill="#FFEDD5" font-size="8.5" font-weight="700">PK,FK</text>
+<text x="48" y="16" fill="#F8FAFC" font-size="11.5" font-weight="600">MaHD</text>
+<text x="145" y="16" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="330" y="16" text-anchor="end" fill="#64748B" font-size="9.5">-> HoaDon (CASCADE)</text>
+<rect x="0" y="24" width="340" height="24" fill="#243044" />
+<line x1="0" y1="24" x2="340" y2="24" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<rect x="8" y="28" width="36" height="16" rx="3" fill="#C2410C" />
+<text x="10" y="40" fill="#FFEDD5" font-size="8.5" font-weight="700">PK,FK</text>
+<text x="48" y="40" fill="#F8FAFC" font-size="11.5" font-weight="600">MaMon</text>
+<text x="145" y="40" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="330" y="40" text-anchor="end" fill="#64748B" font-size="9.5">-> MonAn(MaMon)</text>
+<rect x="0" y="48" width="340" height="24" fill="#1E293B" />
+<line x1="0" y1="48" x2="340" y2="48" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="64" fill="#F8FAFC" font-size="11.5" font-weight="600">SoLuong</text>
+<text x="145" y="64" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="330" y="64" text-anchor="end" fill="#64748B" font-size="9.5">> 0</text>
+<rect x="0" y="72" width="340" height="24" fill="#243044" />
+<line x1="0" y1="72" x2="340" y2="72" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="88" fill="#F8FAFC" font-size="11.5" font-weight="600">DonGia</text>
+<text x="145" y="88" fill="#94A3B8" font-size="10.5" font-family="monospace">DECIMAL(12,0)</text>
+<text x="330" y="88" text-anchor="end" fill="#64748B" font-size="9.5">Giá lúc bán (>= 0)</text>
+<rect x="0" y="96" width="340" height="24" fill="#1E293B" />
+<line x1="0" y1="96" x2="340" y2="96" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="112" fill="#F8FAFC" font-size="11.5" font-weight="600">ThanhTien</text>
+<text x="145" y="112" fill="#94A3B8" font-size="10.5" font-family="monospace">DECIMAL(14,0)</text>
+<text x="330" y="112" text-anchor="end" fill="#64748B" font-size="9.5">PERSISTED = SL * DonGia</text>
+<rect x="0" y="120" width="340" height="24" fill="#243044" />
+<line x1="0" y1="120" x2="340" y2="120" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="136" fill="#F8FAFC" font-size="11.5" font-weight="600">GhiChu</text>
+<text x="145" y="136" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(255)</text>
+<text x="330" y="136" text-anchor="end" fill="#64748B" font-size="9.5">NULL</text>
+</g></g>
+
+        <g class="table-card" id="tbl_DanhMucMon" transform="translate(1280, 80)" filter="url(#card-shadow)" data-table="DanhMucMon" data-group="Thực đơn & Kho">
+          <!-- Card Container -->
+          <rect width="330" height="114" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5" />
+          
+          <!-- Header Bar -->
+          <path d="M 0 8 Q 0 0 8 0 L 322 0 Q 330 0 330 8 L 330 42 L 0 42 Z" fill="#EF6C00" />
+          <text x="14" y="20" fill="#FFFFFF" font-size="14" font-weight="700">DanhMucMon</text>
+          <text x="14" y="34" fill="rgba(255,255,255,0.85)" font-size="11">Danh mục thực đơn</text>
+          <rect x="245" y="10" width="75" height="20" rx="4" fill="rgba(0,0,0,0.25)" />
+          <text x="282" y="24" text-anchor="middle" fill="#FFFFFF" font-size="9.5" font-weight="600">3 cột</text>
+          
+          <!-- Columns -->
+          <g transform="translate(0, 42)">
+        
+<rect x="0" y="0" width="330" height="24" fill="#1E293B" />
+<rect x="10" y="4" width="24" height="16" rx="3" fill="#B45309" />
+<text x="14" y="16" fill="#FEF3C7" font-size="9" font-weight="700">PK</text>
+<text x="48" y="16" fill="#F8FAFC" font-size="11.5" font-weight="600">MaDM</text>
+<text x="145" y="16" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="320" y="16" text-anchor="end" fill="#64748B" font-size="9.5">IDENTITY(1,1)</text>
+<rect x="0" y="24" width="330" height="24" fill="#243044" />
+<line x1="0" y1="24" x2="330" y2="24" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<rect x="10" y="28" width="24" height="16" rx="3" fill="#7E22CE" />
+<text x="14" y="40" fill="#F3E8FF" font-size="9" font-weight="700">UQ</text>
+<text x="48" y="40" fill="#F8FAFC" font-size="11.5" font-weight="600">TenDM</text>
+<text x="145" y="40" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(50)</text>
+<text x="320" y="40" text-anchor="end" fill="#64748B" font-size="9.5">NOT NULL (Khai vị, Món chính...)</text>
+<rect x="0" y="48" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="48" x2="330" y2="48" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="64" fill="#F8FAFC" font-size="11.5" font-weight="600">MoTa</text>
+<text x="145" y="64" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(255)</text>
+<text x="320" y="64" text-anchor="end" fill="#64748B" font-size="9.5">NULL</text>
+</g></g>
+
+        <g class="table-card" id="tbl_MonAn" transform="translate(1280, 270)" filter="url(#card-shadow)" data-table="MonAn" data-group="Thực đơn & Kho">
+          <!-- Card Container -->
+          <rect width="330" height="210" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5" />
+          
+          <!-- Header Bar -->
+          <path d="M 0 8 Q 0 0 8 0 L 322 0 Q 330 0 330 8 L 330 42 L 0 42 Z" fill="#EF6C00" />
+          <text x="14" y="20" fill="#FFFFFF" font-size="14" font-weight="700">MonAn</text>
+          <text x="14" y="34" fill="rgba(255,255,255,0.85)" font-size="11">Danh sách món ăn & thức uống</text>
+          <rect x="245" y="10" width="75" height="20" rx="4" fill="rgba(0,0,0,0.25)" />
+          <text x="282" y="24" text-anchor="middle" fill="#FFFFFF" font-size="9.5" font-weight="600">7 cột</text>
+          
+          <!-- Columns -->
+          <g transform="translate(0, 42)">
+        
+<rect x="0" y="0" width="330" height="24" fill="#1E293B" />
+<rect x="10" y="4" width="24" height="16" rx="3" fill="#B45309" />
+<text x="14" y="16" fill="#FEF3C7" font-size="9" font-weight="700">PK</text>
+<text x="48" y="16" fill="#F8FAFC" font-size="11.5" font-weight="600">MaMon</text>
+<text x="145" y="16" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="320" y="16" text-anchor="end" fill="#64748B" font-size="9.5">IDENTITY(1,1)</text>
+<rect x="0" y="24" width="330" height="24" fill="#243044" />
+<line x1="0" y1="24" x2="330" y2="24" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<rect x="10" y="28" width="24" height="16" rx="3" fill="#7E22CE" />
+<text x="14" y="40" fill="#F3E8FF" font-size="9" font-weight="700">UQ</text>
+<text x="48" y="40" fill="#F8FAFC" font-size="11.5" font-weight="600">TenMon</text>
+<text x="145" y="40" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(100)</text>
+<text x="320" y="40" text-anchor="end" fill="#64748B" font-size="9.5">NOT NULL</text>
+<rect x="0" y="48" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="48" x2="330" y2="48" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<rect x="10" y="52" width="24" height="16" rx="3" fill="#1D4ED8" />
+<text x="15" y="64" fill="#DBEAFE" font-size="9" font-weight="700">FK</text>
+<text x="48" y="64" fill="#F8FAFC" font-size="11.5" font-weight="600">MaDM</text>
+<text x="145" y="64" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="320" y="64" text-anchor="end" fill="#64748B" font-size="9.5">-> DanhMucMon(MaDM)</text>
+<rect x="0" y="72" width="330" height="24" fill="#243044" />
+<line x1="0" y1="72" x2="330" y2="72" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="88" fill="#F8FAFC" font-size="11.5" font-weight="600">DonGia</text>
+<text x="145" y="88" fill="#94A3B8" font-size="10.5" font-family="monospace">DECIMAL(12,0)</text>
+<text x="320" y="88" text-anchor="end" fill="#64748B" font-size="9.5">> 0</text>
+<rect x="0" y="96" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="96" x2="330" y2="96" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="112" fill="#F8FAFC" font-size="11.5" font-weight="600">DonViTinh</text>
+<text x="145" y="112" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(20)</text>
+<text x="320" y="112" text-anchor="end" fill="#64748B" font-size="9.5">DF N'Phần'</text>
+<rect x="0" y="120" width="330" height="24" fill="#243044" />
+<line x1="0" y1="120" x2="330" y2="120" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="136" fill="#F8FAFC" font-size="11.5" font-weight="600">MoTa</text>
+<text x="145" y="136" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(255)</text>
+<text x="320" y="136" text-anchor="end" fill="#64748B" font-size="9.5">NULL</text>
+<rect x="0" y="144" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="144" x2="330" y2="144" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="160" fill="#F8FAFC" font-size="11.5" font-weight="600">ConKinhDoanh</text>
+<text x="145" y="160" fill="#94A3B8" font-size="10.5" font-family="monospace">BIT</text>
+<text x="320" y="160" text-anchor="end" fill="#64748B" font-size="9.5">DF 1 (Đang bán)</text>
+</g></g>
+
+        <g class="table-card" id="tbl_CongThuc" transform="translate(1280, 565)" filter="url(#card-shadow)" data-table="CongThuc" data-group="Thực đơn & Kho">
+          <!-- Card Container -->
+          <rect width="330" height="114" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5" />
+          
+          <!-- Header Bar -->
+          <path d="M 0 8 Q 0 0 8 0 L 322 0 Q 330 0 330 8 L 330 42 L 0 42 Z" fill="#5E35B1" />
+          <text x="14" y="20" fill="#FFFFFF" font-size="14" font-weight="700">CongThuc</text>
+          <text x="14" y="34" fill="rgba(255,255,255,0.85)" font-size="11">Định lượng nguyên liệu</text>
+          <rect x="245" y="10" width="75" height="20" rx="4" fill="rgba(0,0,0,0.25)" />
+          <text x="282" y="24" text-anchor="middle" fill="#FFFFFF" font-size="9.5" font-weight="600">3 cột</text>
+          
+          <!-- Columns -->
+          <g transform="translate(0, 42)">
+        
+<rect x="0" y="0" width="330" height="24" fill="#1E293B" />
+<rect x="8" y="4" width="36" height="16" rx="3" fill="#C2410C" />
+<text x="10" y="16" fill="#FFEDD5" font-size="8.5" font-weight="700">PK,FK</text>
+<text x="48" y="16" fill="#F8FAFC" font-size="11.5" font-weight="600">MaMon</text>
+<text x="145" y="16" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="320" y="16" text-anchor="end" fill="#64748B" font-size="9.5">-> MonAn(MaMon) ON CASCADE</text>
+<rect x="0" y="24" width="330" height="24" fill="#243044" />
+<line x1="0" y1="24" x2="330" y2="24" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<rect x="8" y="28" width="36" height="16" rx="3" fill="#C2410C" />
+<text x="10" y="40" fill="#FFEDD5" font-size="8.5" font-weight="700">PK,FK</text>
+<text x="48" y="40" fill="#F8FAFC" font-size="11.5" font-weight="600">MaNL</text>
+<text x="145" y="40" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="320" y="40" text-anchor="end" fill="#64748B" font-size="9.5">-> NguyenLieu(MaNL)</text>
+<rect x="0" y="48" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="48" x2="330" y2="48" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="64" fill="#F8FAFC" font-size="11.5" font-weight="600">DinhLuong</text>
+<text x="145" y="64" fill="#94A3B8" font-size="10.5" font-family="monospace">DECIMAL(10,3)</text>
+<text x="320" y="64" text-anchor="end" fill="#64748B" font-size="9.5">> 0</text>
+</g></g>
+
+        <g class="table-card" id="tbl_NguyenLieu" transform="translate(1280, 760)" filter="url(#card-shadow)" data-table="NguyenLieu" data-group="Thực đơn & Kho">
+          <!-- Card Container -->
+          <rect width="330" height="186" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1.5" />
+          
+          <!-- Header Bar -->
+          <path d="M 0 8 Q 0 0 8 0 L 322 0 Q 330 0 330 8 L 330 42 L 0 42 Z" fill="#5E35B1" />
+          <text x="14" y="20" fill="#FFFFFF" font-size="14" font-weight="700">NguyenLieu</text>
+          <text x="14" y="34" fill="rgba(255,255,255,0.85)" font-size="11">Kho nguyên liệu tồn kho</text>
+          <rect x="245" y="10" width="75" height="20" rx="4" fill="rgba(0,0,0,0.25)" />
+          <text x="282" y="24" text-anchor="middle" fill="#FFFFFF" font-size="9.5" font-weight="600">6 cột</text>
+          
+          <!-- Columns -->
+          <g transform="translate(0, 42)">
+        
+<rect x="0" y="0" width="330" height="24" fill="#1E293B" />
+<rect x="10" y="4" width="24" height="16" rx="3" fill="#B45309" />
+<text x="14" y="16" fill="#FEF3C7" font-size="9" font-weight="700">PK</text>
+<text x="48" y="16" fill="#F8FAFC" font-size="11.5" font-weight="600">MaNL</text>
+<text x="145" y="16" fill="#94A3B8" font-size="10.5" font-family="monospace">INT</text>
+<text x="320" y="16" text-anchor="end" fill="#64748B" font-size="9.5">IDENTITY(1,1)</text>
+<rect x="0" y="24" width="330" height="24" fill="#243044" />
+<line x1="0" y1="24" x2="330" y2="24" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<rect x="10" y="28" width="24" height="16" rx="3" fill="#7E22CE" />
+<text x="14" y="40" fill="#F3E8FF" font-size="9" font-weight="700">UQ</text>
+<text x="48" y="40" fill="#F8FAFC" font-size="11.5" font-weight="600">TenNL</text>
+<text x="145" y="40" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(100)</text>
+<text x="320" y="40" text-anchor="end" fill="#64748B" font-size="9.5">NOT NULL</text>
+<rect x="0" y="48" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="48" x2="330" y2="48" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="64" fill="#F8FAFC" font-size="11.5" font-weight="600">DonViTinh</text>
+<text x="145" y="64" fill="#94A3B8" font-size="10.5" font-family="monospace">NVARCHAR(20)</text>
+<text x="320" y="64" text-anchor="end" fill="#64748B" font-size="9.5">Kg | Lít | Gói...</text>
+<rect x="0" y="72" width="330" height="24" fill="#243044" />
+<line x1="0" y1="72" x2="330" y2="72" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="88" fill="#F8FAFC" font-size="11.5" font-weight="600">SoLuongTon</text>
+<text x="145" y="88" fill="#94A3B8" font-size="10.5" font-family="monospace">DECIMAL(10,2)</text>
+<text x="320" y="88" text-anchor="end" fill="#64748B" font-size="9.5">DF 0, >= 0</text>
+<rect x="0" y="96" width="330" height="24" fill="#1E293B" />
+<line x1="0" y1="96" x2="330" y2="96" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="112" fill="#F8FAFC" font-size="11.5" font-weight="600">MucToiThieu</text>
+<text x="145" y="112" fill="#94A3B8" font-size="10.5" font-family="monospace">DECIMAL(10,2)</text>
+<text x="320" y="112" text-anchor="end" fill="#64748B" font-size="9.5">DF 10 (mức an toàn)</text>
+<rect x="0" y="120" width="330" height="24" fill="#243044" />
+<line x1="0" y1="120" x2="330" y2="120" stroke="#334155" stroke-width="0.6" stroke-opacity="0.5" />
+<text x="48" y="136" fill="#F8FAFC" font-size="11.5" font-weight="600">DonGiaNhap</text>
+<text x="145" y="136" fill="#94A3B8" font-size="10.5" font-family="monospace">DECIMAL(12,0)</text>
+<text x="320" y="136" text-anchor="end" fill="#64748B" font-size="9.5">>= 0</text>
+</g></g>
+</g>
+</svg>
