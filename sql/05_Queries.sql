@@ -31,22 +31,27 @@ RIGHT JOIN dbo.MonAn m ON m.MaMon = ct.MaMon
 WHERE ct.MaHD IS NULL;
 
 -- Q5. FULL OUTER JOIN: Đối chiếu bàn và lượt đặt bàn hôm nay (bàn nào có đặt, lượt đặt nào không khớp bàn)
+DECLARE @NgayKiemTra DATE = '2025-12-24';
+
 SELECT b.TenBan, b.KhuVuc, b.TrangThai, d.MaDatBan, d.ThoiGianDat, d.SoNguoi
 FROM dbo.BanAn b
 FULL OUTER JOIN (
     SELECT * FROM dbo.DatBan
-    WHERE ThoiGianDat >= CAST(GETDATE() AS DATE)
-      AND ThoiGianDat < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))
+    WHERE CAST(ThoiGianDat AS DATE) = @NgayKiemTra
 ) d ON d.MaBan = b.MaBan
 ORDER BY b.TenBan;
 
 -- Q6. GROUP BY + HAVING: Nhân viên có doanh thu thanh toán > 10 triệu trong 30 ngày qua
-SELECT n.MaNV, n.HoTen, n.ChucVu, COUNT(h.MaHD) AS SoHoaDon, SUM(h.ThanhToan) AS DoanhThu
+SELECT n.MaNV, n.HoTen, n.ChucVu, 
+       COUNT(h.MaHD) AS SoHoaDon, 
+       SUM(h.ThanhToan) AS DoanhThu
 FROM dbo.HoaDon h
 JOIN dbo.NhanVien n ON n.MaNV = h.MaNV
-WHERE h.TrangThai = N'Đã thanh toán' AND h.ThoiGianThanhToan >= DATEADD(DAY, -30, GETDATE())
+WHERE h.TrangThai = N'Đã thanh toán' 
+  AND h.ThoiGianThanhToan >= '2025-01-01' 
+  AND h.ThoiGianThanhToan < '2026-01-01'
 GROUP BY n.MaNV, n.HoTen, n.ChucVu
-HAVING SUM(h.ThanhToan) > 10000000
+HAVING SUM(h.ThanhToan) > 50000000
 ORDER BY DoanhThu DESC;
 
 -- Q7. Subquery vô hướng (scalar): Món có giá cao hơn giá trung bình của toàn thực đơn

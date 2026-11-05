@@ -12,9 +12,6 @@
 ---
 
 ## 📌 MỤC LỤC
-1. [Giới thiệu tổng quan](#1-giới-thiệu-tổng-quan)
-2. [Bảng đối chiếu yêu cầu & kết quả đạt được](#2-bảng-đối-chiếu-yêu-cầu--kết-quả-đạt-được)
-3. [Kiến trúc & Thiết kế Cơ sở dữ liệu (ERD)](#3-kiến-trúc--thiết-kế-cơ-sở-dữ-liệu-erd)
 4. [Cấu trúc thư mục dự án](#4-cấu-trúc-thư-mục-dự-án)
 5. [Chi tiết các đối tượng CSDL & Nghiệp vụ](#5-chi-tiết-các-đối-tượng-csdl--nghiệp-vụ)
    - [Hệ thống 10 bảng thực thể + 1 bảng log](#51-hệ-thống-10-bảng-nghiệp-vụ--1-bảng-audit-log)
@@ -35,60 +32,6 @@
 10. [Danh sách API Endpoints](#10-danh-sách-api-endpoints)
 11. [Khắc phục sự cố thường gặp (FAQ)](#11-khắc-phục-sự-cố-thường-gặp-faq)
 12. [Tài liệu & Báo cáo đính kèm](#12-tài-liệu--báo-cáo-đính-kèm)
-
----
-
-## 1. GIỚI THIỆU TỔNG QUAN
-
-**Hệ thống Quản lý Nhà hàng "Sen Vàng"** là giải pháp toàn diện cho quy trình vận hành dịch vụ ăn uống F&B, bao gồm:
-* **Quản lý sơ đồ bàn & đặt bàn trước**: Quản lý đa khu vực (Tầng 1, Tầng 2, Phòng VIP, Sân vườn), hỗ trợ đặt bàn thông minh và chống trùng lịch.
-* **Quy trình Order & Bán hàng (POS)**: Mở bàn, gọi món, in tạm tính, áp dụng voucher/giảm giá, phân chia các hình thức thanh toán (Tiền mặt, Thẻ, Chuyển khoản QR).
-* **Quản trị định lượng & Kho nguyên liệu**: Tự động trừ tồn kho theo công thức (Bill of Materials) khi gọi món, tự động hoàn kho khi hủy đơn, cảnh báo nguyên liệu chạm ngưỡng an toàn.
-* **Chăm sóc khách hàng thân thiết (CRM)**: Tích lũy điểm tiêu dùng theo doanh số, tự động phân hạng thành viên (Đồng, Bạc, Vàng, Kim Cương).
-* **Nhật ký kiểm toán giao dịch (Audit Trail)**: Ghi vết toàn bộ hành vi mở bàn, thêm món, thanh toán, hủy đơn và người thực thi.
-* **Báo cáo & Phân tích chuyên sâu**: Thống kê doanh thu theo ngày/tháng/năm, phân tích cơ cấu món bán chạy, hiệu suất phục vụ nhân viên và khung giờ cao điểm.
-
-Hệ thống được xây dựng theo **kiến trúc hướng cơ sở dữ liệu (Database-Centric Architecture)**: mọi quy tắc nghiệp vụ cốt lõi, bảo toàn tính nhất quán và ràng buộc toàn vẹn được thực thi trực tiếp tại tầng CSDL thông qua T-SQL, Stored Procedures, Triggers và Transactions ACID, bảo đảm dữ liệu luôn an toàn trước mọi can thiệp từ tầng ứng dụng.
-
----
-
-## 2. BẢNG ĐỐI CHIẾU YÊU CẦU & KẾT QUẢ ĐẠT ĐƯỢC
-
-Dự án hoàn thành vượt mức toàn bộ các tiêu chí đánh giá của đề tài Bài tập lớn DBMS:
-
-| Hạng mục đánh giá | Yêu cầu tối thiểu đề tài | Kết quả hiện thực trong đồ án | Mức độ hoàn thành |
-|---|:---:|---|:---:|
-| **Số lượng bảng chính** | $\ge 6$ bảng | **10 bảng nghiệp vụ + 1 bảng Audit Log (`NhatKyHoaDon`)** | **183%** |
-| **Hệ thống ràng buộc** | Đầy đủ các loại cơ bản | **Đầy đủ 6 loại: PK, FK, UNIQUE, NOT NULL, DEFAULT, CHECK** (hơn 70 ràng buộc tường minh) | **Xuất sắc** |
-| **Quy mô dữ liệu mẫu** | 30 – 200 bản ghi | **3.006 hóa đơn, 15.775 dòng chi tiết** (2020–2026), 450 lượt đặt bàn; kiểm toán nhất quán dữ liệu 100% | **Vượt trội** |
-| **Mô hình hóa (ERD)** | 01 sơ đồ ERD | **Đầy đủ 2 dạng chuẩn quốc tế**: Mô hình Chen (Conceptual) & Lược đồ Crow's Foot (Physical), kèm bộ viewer HTML tương tác | **Xuất sắc** |
-| **Truy vấn dữ liệu** | 10 câu truy vấn | **16 câu truy vấn nâng cao**: Full/Left/Right/Inner Join, Subquery vô hướng & tập hợp, Set operators (UNION, INTERSECT, EXCEPT), Window Functions `RANK() OVER()`, GROUP BY phân cấp | **160%** |
-| **Stored Procedures** | 3 thủ tục | **7 thủ tục nghiệp vụ giao dịch**: Transaction ACID, kiểm soát lỗi `TRY...CATCH`, `THROW`, tham số `OUTPUT`, chống Race Condition với `UPDLOCK, HOLDLOCK`, tự động trừ/hoàn kho | **233%** |
-| **Functions (UDF)** | 2 hàm | **6 hàm (5 Scalar functions, 1 Inline Table-Valued function)** | **300%** |
-| **Views** | 3 khung nhìn | **8 khung nhìn nghiệp vụ & phân tích**, bao gồm View cập nhật với `WITH CHECK OPTION` | **267%** |
-| **Triggers** | Khuyến khích | **3 Triggers**: Tự động tính tổng tiền/thanh toán hóa đơn, khóa chi tiết hóa đơn đã tất toán và tự động đồng bộ trạng thái bàn khi đặt bàn | **Xuất sắc** |
-| **Tối ưu hóa hiệu năng** | Không bắt buộc | **10 Chỉ mục (8 Non-Clustered & 2 Filtered Unique Indexes)**, gồm Covering Index có `INCLUDE` giảm đọc I/O từ 47 xuống 26 Logical Reads (-44.7%), truy vấn SARGable giảm 60% Logical Reads | **Nâng cao** |
-| **Giao diện người dùng** | Gợi ý mở rộng | **Ứng dụng Web POS hoàn chỉnh**: SPA responsive, Glassmorphism UI, Anti-jiggle layout, tương tác trực tiếp với SQL Server qua Node.js REST API | **Chuyên nghiệp** |
-
----
-
-## 3. KIẾN TRÚC & THIẾT KẾ CƠ SỞ DỮ LIỆU (ERD)
-
-Hệ thống được chuẩn hóa đạt **Dạng chuẩn 3 (3NF / BCNF)**, triệt tiêu hoàn toàn dị thường dư thừa dữ liệu (insertion, deletion, update anomalies).
-
-### 3.1. Lược đồ vật lý (Physical Relational Schema - Crow's Foot Notation)
-Sơ đồ quan hệ thực thể thể hiện toàn bộ 10 bảng nghiệp vụ, 1 bảng nhật ký, các khóa chính (PK), khóa ngoại (FK) và bản số (cardinality $1 - N$, $N - N$).
-
-![Lược đồ ERD Crow's Foot](erd/erd.png)
-
-### 3.2. Mô hình quan niệm (Conceptual Model - Chen Notation)
-Mô hình thể hiện rõ ràng các tập thực thể mạnh/yếu, thuộc tính khóa, thuộc tính đa trị, thuộc tính suy diễn và các liên kết quan hệ nghiệp vụ.
-
-![Mô hình ERD Chen](erd/erd_chen.png)
-
-> 💡 **Trình xem tương tác trên trình duyệt**:
-> - Mở file [erd/erd_viewer.html](erd/erd_viewer.html) để xem và phóng to/thu nhỏ lược đồ vật lý.
-> - Mở file [erd/erd_chen_viewer.html](erd/erd_chen_viewer.html) để tương tác trực tiếp với mô hình Chen ERD.
 
 ---
 
