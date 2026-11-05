@@ -55,13 +55,9 @@ Quan-ly-nha-hang-master/
 │   ├── 07_DataIntegrity_Audit.sql      # Kịch bản kiểm toán toàn vẹn dữ liệu 10 nhóm nghiệp vụ (0 lỗi)
 │   └── fix some constraint.sql         # Script ALTER TABLE vá nhanh ràng buộc tuổi & SĐT cho DB đang chạy
 │
-├── báo cáo/                            # BÁO CÁO THUYẾT MINH BÀI TẬP LỚN & HỒ SƠ KIỂM TOÁN
+├── báo cáo/                            # BÁO CÁO THUYẾT MINH BÀI TẬP LỚN (ĐÃ HOÀN THIỆN)
 │   ├── Quản lý nhà hàng.docx           # ⭐ Báo cáo đồ án chính thức (Word - đã cập nhật đầy đủ số liệu mới nhất)
 │   ├── Quản lý nhà hàng.pdf            # ⭐ Bản in báo cáo chính thức hoàn chỉnh (PDF)
-│   ├── BaoCao_QuanLyNhaHang.docx       # Báo cáo đồ án (bản dự phòng chuẩn kỹ thuật)
-│   ├── BaoCao_QuanLyNhaHang.pdf        # Bản in PDF (bản dự phòng chuẩn kỹ thuật)
-│   ├── BaoCao_KiemToanDocLap_QuanLyNhaHang.docx # Hồ sơ kiểm toán độc lập đối chiếu đề bài (Word)
-│   └── BaoCao_KiemToanDocLap_QuanLyNhaHang.pdf  # Bản in hồ sơ kiểm toán độc lập (PDF)
 │
 ├── web/                                # ỨNG DỤNG WEB POS (FULL-STACK NODE.JS + EXPRESS)
 │   ├── server.js                       # Backend REST API (Validation, Error Masking, UTC+7, Locking)
@@ -262,7 +258,7 @@ Dự án cung cấp 2 bộ dữ liệu phục vụ mục đích kiểm thử và
 * **Script kiểm toán SQL ([sql/07_DataIntegrity_Audit.sql](sql/07_DataIntegrity_Audit.sql))**: Kiểm tra tự động 10 nhóm toàn vẹn dữ liệu: (1) hóa đơn trùng bàn & đồng bộ trạng thái bàn, (2) khớp tổng tiền & thành tiền chi tiết, (3) tính toán chiết khấu thanh toán, (4) đặt bàn trùng lịch $\pm 120$ phút & vượt sức chứa bàn, (5) nhất quán tồn kho & định lượng công thức BOM, (6) đối chiếu điểm tích lũy khách hàng `SUM(FLOOR(ThanhToan / 10000.0))`, (7) kiểm tra bản ghi mồ côi, (8) ràng buộc tuổi lao động `NgayVaoLam >= DATEADD(YEAR, 18, NgaySinh)`, (9) định dạng SĐT Việt Nam `0[0-9]%`, (10) lương tối thiểu nhân viên. Khi chạy với bảng mã UTF-8 (`-f 65001`), toàn bộ 10 nhóm kiểm toán đều trả về **0 lỗi**.
 * **Bộ kiểm thử tự động ([web/test/remediation.test.js](web/test/remediation.test.js))**: Chạy bằng lệnh `cd web && npm test`, bao gồm 13 test suites (100% PASS) kiểm thử Unit, API Integration, Transaction và Concurrency (10 luồng song song kiểm chứng chống race condition cho `sp_MoHoaDon`, `sp_ThanhToanHoaDon`, `sp_HuyHoaDon`, `sp_DatBan` trên SQL Server thực tế).
 * **Bản vá độc lập ([sql/fix some constraint.sql](sql/fix%20some%20constraint.sql))**: Cung cấp sẵn các câu lệnh `ALTER TABLE` cập nhật ngay các ràng buộc tuổi lao động và số điện thoại trên CSDL đang chạy mà không cần xóa database.
-* **Hồ sơ kiểm toán độc lập**: Chi tiết kết quả đối chiếu toàn bộ yêu cầu đề bài tập lớn tại [FINAL_REVIEW_REPORT.md](FINAL_REVIEW_REPORT.md) và [BaoCao_KiemToanDocLap_QuanLyNhaHang.pdf](<báo cáo/BaoCao_KiemToanDocLap_QuanLyNhaHang.pdf>).
+* **Hồ sơ kiểm toán độc lập**: Chi tiết kết quả đối chiếu toàn bộ yêu cầu đề bài tập lớn tại [FINAL_REVIEW_REPORT.md](FINAL_REVIEW_REPORT.md).
 
 ---
 
@@ -453,8 +449,6 @@ Mở trình duyệt web và truy cập:
 Bộ sản phẩm bàn giao đầy đủ của đồ án bao gồm:
 * 📄 **Báo cáo đồ án chính thức (Word - đã cập nhật đầy đủ)**: [`báo cáo/Quản lý nhà hàng.docx`](<báo cáo/Quản lý nhà hàng.docx>)
 * 📑 **Bản in báo cáo chính thức hoàn chỉnh (PDF)**: [`báo cáo/Quản lý nhà hàng.pdf`](<báo cáo/Quản lý nhà hàng.pdf>)
-* 📋 **Hồ sơ kiểm toán độc lập đối chiếu đề bài (Word)**: [`báo cáo/BaoCao_KiemToanDocLap_QuanLyNhaHang.docx`](<báo cáo/BaoCao_KiemToanDocLap_QuanLyNhaHang.docx>)
-* 📑 **Bản in hồ sơ kiểm toán độc lập (PDF)**: [`báo cáo/BaoCao_KiemToanDocLap_QuanLyNhaHang.pdf`](<báo cáo/BaoCao_KiemToanDocLap_QuanLyNhaHang.pdf>)
 * 🔍 **Báo cáo kiểm toán độc lập chi tiết (Markdown)**: [`FINAL_REVIEW_REPORT.md`](FINAL_REVIEW_REPORT.md)
 * 🛠️ **Báo cáo kỹ thuật khắc phục lỗi & tối ưu hóa (Markdown)**: [`REMEDIATION_REPORT.md`](REMEDIATION_REPORT.md)
 * 📊 **Slide thuyết trình bảo vệ đồ án (PowerPoint 30 slides)**: [`slides/Slides_QuanLyNhaHang.pptx`](slides/Slides_QuanLyNhaHang.pptx)
