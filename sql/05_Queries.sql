@@ -78,9 +78,16 @@ SELECT N'Nhân viên', HoTen, SoDienThoai, Email FROM dbo.NhanVien WHERE DangLam
 ORDER BY Loai, HoTen;
 
 -- Q10. INTERSECT: Khách vừa từng đặt bàn vừa từng có hóa đơn thanh toán
-SELECT MaKH FROM dbo.DatBan
-INTERSECT
-SELECT MaKH FROM dbo.HoaDon WHERE TrangThai = N'Đã thanh toán';
+WITH KhachGiaoThoa AS (
+    SELECT MaKH FROM dbo.DatBan
+    INTERSECT
+    SELECT MaKH FROM dbo.HoaDon WHERE TrangThai = N'Đã thanh toán'
+)
+SELECT k.MaKH, k.HoTen, k.SoDienThoai, k.Email, k.DiemTichLuy,
+       dbo.fn_XepHangKhachHang(k.DiemTichLuy) AS HangThanhVien
+FROM dbo.KhachHang k
+JOIN KhachGiaoThoa g ON g.MaKH = k.MaKH
+ORDER BY k.DiemTichLuy DESC;
 
 -- Q11. EXCEPT: Món đang kinh doanh nhưng không bán được trong 30 ngày qua
 SELECT MaMon, TenMon FROM dbo.MonAn WHERE ConKinhDoanh = 1
