@@ -31,17 +31,18 @@ RIGHT JOIN dbo.MonAn m ON m.MaMon = ct.MaMon
 WHERE ct.MaHD IS NULL;
 
 -- Q5. FULL OUTER JOIN: Đối chiếu bàn và lượt đặt bàn hôm nay (bàn nào có đặt, lượt đặt nào không khớp bàn)
-DECLARE @NgayKiemTra DATE = '2025-12-24';
-
-SELECT b.TenBan, b.KhuVuc, b.TrangThai, d.MaDatBan, d.ThoiGianDat, d.SoNguoi
+SELECT b.TenBan, b.KhuVuc, b.TrangThai AS TrangThaiBan, 
+       d.MaDatBan, d.ThoiGianDat, d.SoNguoi
 FROM dbo.BanAn b
 FULL OUTER JOIN (
     SELECT * FROM dbo.DatBan
-    WHERE CAST(ThoiGianDat AS DATE) = @NgayKiemTra
+    WHERE ThoiGianDat >= '2026-10-01' AND ThoiGianDat < '2026-11-01'
 ) d ON d.MaBan = b.MaBan
-ORDER BY b.TenBan;
+ORDER BY 
+    CASE WHEN d.MaDatBan IS NOT NULL THEN 0 ELSE 1 END,
+    b.TenBan;
 
--- Q6. GROUP BY + HAVING: Nhân viên có doanh thu thanh toán > 10 triệu trong 30 ngày qua
+-- Q6. GROUP BY + HAVING: Thống kê nhân viên đạt doanh số trên 50 triệu trong năm 2025
 SELECT n.MaNV, n.HoTen, n.ChucVu, 
        COUNT(h.MaHD) AS SoHoaDon, 
        SUM(h.ThanhToan) AS DoanhThu
@@ -124,8 +125,5 @@ GROUP BY b.KhuVuc,
             ELSE N'Tối (17h-22h)' END
 ORDER BY b.KhuVuc, XepHangTrongKhu;
 
--- Q16. Dùng VIEW: Top khách hàng thân thiết + nguyên liệu sắp hết + doanh thu 7 ngày gần nhất
+-- Q16. Dùng VIEW: Top khách hàng thân thiết
 SELECT TOP 10 * FROM dbo.vw_KhachHangThanThiet ORDER BY TongChiTieu DESC;
-SELECT * FROM dbo.vw_NguyenLieuSapHet;
-SELECT TOP 7 * FROM dbo.vw_DoanhThuTheoNgay ORDER BY Ngay DESC;
-GO
