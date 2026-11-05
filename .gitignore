@@ -28,6 +28,7 @@ __pycache__/
 *.bak
 *.bak.*
 *.original.*
+~$*
 
 # OS files
 .DS_Store
