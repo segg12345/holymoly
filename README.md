@@ -12,8 +12,8 @@
 ---
 
 ## 📌 MỤC LỤC
-4. [Cấu trúc thư mục dự án](#4-cấu-trúc-thư-mục-dự-án)
-5. [Chi tiết các đối tượng CSDL & Nghiệp vụ](#5-chi-tiết-các-đối-tượng-csdl--nghiệp-vụ)
+1. [Cấu trúc thư mục dự án](#4-cấu-trúc-thư-mục-dự-án)
+2. [Chi tiết các đối tượng CSDL & Nghiệp vụ](#5-chi-tiết-các-đối-tượng-csdl--nghiệp-vụ)
    - [Hệ thống 10 bảng thực thể + 1 bảng log](#51-hệ-thống-10-bảng-nghiệp-vụ--1-bảng-audit-log)
    - [10 Chỉ mục tối ưu hóa & Toàn vẹn](#52-10-chỉ-mục-tối-ưu-hóa--toàn-vẹn-non-clustered--filtered-unique-indexes)
    - [6 Hàm nghiệp vụ (User-Defined Functions)](#53-6-hàm-nghiệp-vụ-udfs)
@@ -21,21 +21,21 @@
    - [7 Thủ tục lưu trữ giao dịch (Stored Procedures)](#55-7-thủ-tục-lưu-trữ-stored-procedures)
    - [3 Trigger kiểm soát toàn vẹn](#56-3-trigger-kiểm-soát-toàn-vẹn--đồng-bộ-trạng-thái)
    - [16 Truy vấn nghiệp vụ nâng cao](#57-16-truy-vấn-nghiệp-vụ-nâng-cao)
-6. [Kịch bản kiểm thử & Toàn vẹn dữ liệu](#6-kịch-bản-kiểm-thử--toàn-vẹn-dữ-liệu)
-7. [Dữ liệu mẫu & Kiểm toán chất lượng](#7-dữ-liệu-mẫu--kiểm-toán-chất-lượng)
-8. [Giao diện Web POS ("Sen Vàng POS")](#8-giao-diện-web-pos-sen-vàng-pos)
-9. [Hướng dẫn cài đặt & Triển khai](#9-hướng-dẫn-cài-đặt--triển-khai)
+3. [Kịch bản kiểm thử & Toàn vẹn dữ liệu](#6-kịch-bản-kiểm-thử--toàn-vẹn-dữ-liệu)
+4. [Dữ liệu mẫu & Kiểm toán chất lượng](#7-dữ-liệu-mẫu--kiểm-toán-chất-lượng)
+5. [Giao diện Web POS ("Sen Vàng POS")](#8-giao-diện-web-pos-sen-vàng-pos)
+6. [Hướng dẫn cài đặt & Triển khai](#9-hướng-dẫn-cài-đặt--triển-khai)
    - [Yêu cầu môi trường](#91-yêu-cầu-môi-trường)
    - [Cài đặt Database (3 cách)](#92-cài-đặt-database)
    - [Nạp dữ liệu lớn 3.006 hóa đơn (2020-2026)](#93-nạp-dữ-liệu-lớn-3006-hóa-đơn-2020-2026)
    - [Khởi chạy ứng dụng Web POS](#94-khởi-chạy-ứng-dụng-web-pos)
-10. [Danh sách API Endpoints](#10-danh-sách-api-endpoints)
-11. [Khắc phục sự cố thường gặp (FAQ)](#11-khắc-phục-sự-cố-thường-gặp-faq)
-12. [Tài liệu & Báo cáo đính kèm](#12-tài-liệu--báo-cáo-đính-kèm)
+7. [Danh sách API Endpoints](#10-danh-sách-api-endpoints)
+8. [Khắc phục sự cố thường gặp (FAQ)](#11-khắc-phục-sự-cố-thường-gặp-faq)
+9. [Tài liệu & Báo cáo đính kèm](#12-tài-liệu--báo-cáo-đính-kèm)
 
 ---
 
-## 4. CẤU TRÚC THƯ MỤC DỰ ÁN
+## 1. CẤU TRÚC THƯ MỤC DỰ ÁN
 
 ```plaintext
 Quan-ly-nha-hang-master/
@@ -92,9 +92,9 @@ Quan-ly-nha-hang-master/
 
 ---
 
-## 5. CHI TIẾT CÁC ĐỐI TƯỢNG CSDL & NGHIỆP VỤ
+## 2. CHI TIẾT CÁC ĐỐI TƯỢNG CSDL & NGHIỆP VỤ
 
-### 5.1. Hệ thống 10 Bảng nghiệp vụ + 1 Bảng Audit Log
+### 2.1. Hệ thống 10 Bảng nghiệp vụ + 1 Bảng Audit Log
 
 | STT | Tên bảng | Chức năng nghiệp vụ | Khóa chính (PK) | Ràng buộc toàn vẹn tiêu biểu |
 |:---:|---|---|:---:|---|
@@ -112,7 +112,7 @@ Quan-ly-nha-hang-master/
 
 ---
 
-### 5.2. 10 Chỉ mục tối ưu hóa & Toàn vẹn (Non-Clustered & Filtered Unique Indexes)
+### 2.2. 10 Chỉ mục tối ưu hóa & Toàn vẹn (Non-Clustered & Filtered Unique Indexes)
 
 Được thiết kế dựa trên tần suất xuất hiện trong các mệnh đề `WHERE`, `JOIN` và `ORDER BY`, kết hợp kỹ thuật **Covering Index** (`INCLUDE`) và **Filtered Unique Index**:
 
@@ -129,7 +129,7 @@ Quan-ly-nha-hang-master/
 
 ---
 
-### 5.3. 6 Hàm nghiệp vụ (UDFs)
+### 2.3. 6 Hàm nghiệp vụ (UDFs)
 
 * `fn_TinhTuoi(@NgaySinh)`: Tính tuổi chính xác theo ngày tháng năm sinh thực tế.
 * `fn_TinhTienPhaiTra(@MaHD)`: Tính tổng tiền thực khách phải trả của hóa đơn sau khi trừ tỷ lệ chiết khấu giảm giá.
@@ -140,7 +140,7 @@ Quan-ly-nha-hang-master/
 
 ---
 
-### 5.4. 8 Khung nhìn (Views)
+### 2.4. 8 Khung nhìn (Views)
 
 * `vw_ThucDon`: Danh sách thực đơn đầy đủ kèm tên danh mục cho các món đang kinh doanh (`ConKinhDoanh = 1`).
 * `vw_MonDangKinhDoanh`: Khung nhìn cập nhật được với ràng buộc `WITH CHECK OPTION` nhằm ngăn chặn chèn hoặc sửa món đã ngừng kinh doanh.
@@ -153,7 +153,7 @@ Quan-ly-nha-hang-master/
 
 ---
 
-### 5.5. 7 Thủ tục lưu trữ (Stored Procedures)
+### 2.5. 7 Thủ tục lưu trữ (Stored Procedures)
 
 Mọi thủ tục đều tích hợp **Transaction ACID**, chỉ thị `SET XACT_ABORT ON`, bao trùm toàn bộ pha đọc-kiểm-tra và cập nhật trong `BEGIN TRANSACTION ... COMMIT` với gợi ý khóa `WITH (UPDLOCK, HOLDLOCK)`, khối bẫy lỗi `BEGIN TRY ... BEGIN CATCH`, thu hồi thao tác `ROLLBACK` và phát thông điệp lỗi chuẩn xác với `THROW`:
 
@@ -167,7 +167,7 @@ Mọi thủ tục đều tích hợp **Transaction ACID**, chỉ thị `SET XACT
 
 ---
 
-### 5.6. 3 Trigger kiểm soát toàn vẹn & đồng bộ trạng thái
+### 2.6. 3 Trigger kiểm soát toàn vẹn & đồng bộ trạng thái
 
 * `trg_ChiTietHoaDon_CapNhatTongTien`: Tự động tính toán lại `TongTien` và `ThanhToan` trên bảng `HoaDon` bất cứ khi nào bảng `ChiTietHoaDon` phát sinh thao tác `INSERT`, `UPDATE` hoặc `DELETE`.
 * `trg_ChiTietHoaDon_KhoaHoaDonDaThanhToan`: Tuyệt đối ngăn chặn thao tác sửa hoặc xóa món ăn trong các hóa đơn đã được thanh toán hoặc đã bị hủy (`ROLLBACK TRANSACTION` và phát thông báo lỗi).
@@ -175,7 +175,7 @@ Mọi thủ tục đều tích hợp **Transaction ACID**, chỉ thị `SET XACT
 
 ---
 
-### 5.7. 16 Truy vấn nghiệp vụ nâng cao
+### 2.7. 16 Truy vấn nghiệp vụ nâng cao
 
 File [sql/05_Queries.sql](sql/05_Queries.sql) bao phủ toàn bộ các kỹ thuật truy vấn dữ liệu từ cơ bản đến phức tạp:
 * **Q1**: `WHERE` + `ORDER BY` đa cột (danh sách bàn khu Sân vườn).
@@ -197,7 +197,7 @@ File [sql/05_Queries.sql](sql/05_Queries.sql) bao phủ toàn bộ các kỹ thu
 
 ---
 
-## 6. KỊCH BẢN KIỂM THỬ & TOÀN VẸN DỮ LIỆU
+## 3. KỊCH BẢN KIỂM THỬ & TOÀN VẸN DỮ LIỆU
 
 Hệ thống được kiểm thử tự động trong file [sql/06_Test_Demo.sql](sql/06_Test_Demo.sql) với 10 ca kiểm tra vi phạm ràng buộc có bẫy lỗi `TRY...CATCH`:
 
@@ -237,7 +237,7 @@ SELECT @tien AS SoTienKhachPhaiTra;
 
 ---
 
-## 7. DỮ LIỆU MẪU & KIỂM TOÁN CHẤT LƯỢNG
+## 4. DỮ LIỆU MẪU & KIỂM TOÁN CHẤT LƯỢNG
 
 Dự án cung cấp 2 bộ dữ liệu phục vụ mục đích kiểm thử và đánh giá:
 1. **Dữ liệu danh mục & thực thể chuẩn hóa ([sql/02_InsertData.sql](sql/02_InsertData.sql))**:
@@ -258,26 +258,26 @@ Dự án cung cấp 2 bộ dữ liệu phục vụ mục đích kiểm thử và
 
 ---
 
-## 8. GIAO DIỆN WEB POS ("SEN VÀNG POS")
+## 5 GIAO DIỆN WEB POS ("SEN VÀNG POS")
 
 Ứng dụng Web POS đi kèm được thiết kế theo phong cách hiện đại (Glassmorphism & Clean Typography), giao diện nhạy bén (Responsive) trên mọi kích thước màn hình từ Desktop đến Tablet và Smartphone.
 
-### 8.1. Bảng điều khiển Tổng quan điều hành (Executive Dashboard)
+### 5.1. Bảng điều khiển Tổng quan điều hành (Executive Dashboard)
 Theo dõi các chỉ số KPI thời gian thực: doanh thu trong ngày, số bàn đang phục vụ, tỷ lệ lấp đầy, biểu đồ doanh thu 14 ngày, top món bán chạy và cảnh báo kho.
 
 ![Dashboard Tổng quan](web/public/screenshots/refined_dashboard.png)
 
-### 8.2. Sơ đồ bàn tương tác & Quản lý đặt bàn
+### 5.2. Sơ đồ bàn tương tác & Quản lý đặt bàn
 Phân chia sơ đồ theo 4 khu vực trực quan với mã màu trạng thái thời gian thực (*Xanh lá: Bàn trống, Vàng: Đang có khách, Tím: Đã đặt trước*). Hỗ trợ mở bàn và tạo lịch đặt bàn mới.
 
 ![Sơ đồ bàn và Đặt bàn](web/public/screenshots/anti_jiggle_datban.png)
 
-### 8.3. Ngăn kéo gọi món thông minh & Thanh toán (POS Order Drawer)
+### 5.3. Ngăn kéo gọi món thông minh & Thanh toán (POS Order Drawer)
 Thao tác chọn món trực quan theo danh mục, thêm món kèm trừ kho nguyên liệu tức thời, chọn khách thành viên để hưởng ưu đãi và thanh toán đa phương thức.
 
 ![Ngăn kéo POS Drawer](web/public/screenshots/fixed_pos_drawer.png)
 
-### 8.4. Giao diện đáp ứng trên Mobile & Tablet (Responsive)
+### 5.4. Giao diện đáp ứng trên Mobile & Tablet (Responsive)
 Hỗ trợ nhân viên phục vụ cầm máy tính bảng hoặc điện thoại thông minh để order trực tiếp tại bàn của thực khách.
 
 <p align="center">
@@ -286,9 +286,9 @@ Hỗ trợ nhân viên phục vụ cầm máy tính bảng hoặc điện thoạ
 
 ---
 
-## 9. HƯỚNG DẪN CÀI ĐẶT & TRIỂN KHAI
+##6. HƯỚNG DẪN CÀI ĐẶT & TRIỂN KHAI
 
-### 9.1. Yêu cầu môi trường
+### 6.1. Yêu cầu môi trường
 
 | Thành phần | Phiên bản yêu cầu | Ghi chú |
 |---|---|---|
@@ -299,7 +299,7 @@ Hỗ trợ nhân viên phục vụ cầm máy tính bảng hoặc điện thoạ
 
 ---
 
-### 9.2. Cài đặt Database
+### 6.2. Cài đặt Database
 
 #### CÁCH 1 — Khuyến nghị: Chạy 1 file duy nhất qua SSMS
 1. Khởi động **SQL Server Management Studio (SSMS)** và kết nối tới server (ví dụ: `localhost` hoặc `.\SQLEXPRESS`).
@@ -332,7 +332,7 @@ sqlcmd -S localhost\SQLEXPRESS -E -i sql\QuanLyNhaHang_FULL.sql -f 65001
 
 ---
 
-### 9.3. Nạp dữ liệu lớn 3.006 hóa đơn (2020 – 2026)
+### 6.3. Nạp dữ liệu lớn 3.006 hóa đơn (2020 – 2026)
 Để phục vụ việc báo cáo doanh thu nhiều năm, đánh giá tải hoặc demo đồ án ấn tượng:
 ```bat
 sqlcmd -S localhost\SQLEXPRESS -E -d QuanLyNhaHang -i sql\02_InsertData_3000_2020_2025.sql -f 65001
@@ -341,7 +341,7 @@ sqlcmd -S localhost\SQLEXPRESS -E -d QuanLyNhaHang -i sql\02_InsertData_3000_202
 
 ---
 
-### 9.4. Khởi chạy ứng dụng Web POS
+### 6.4. Khởi chạy ứng dụng Web POS
 
 #### Bước 1: Kích hoạt giao thức TCP/IP trên SQL Server
 1. Mở **SQL Server Configuration Manager**.
@@ -381,7 +381,7 @@ Mở trình duyệt web và truy cập:
 
 ---
 
-## 10. DANH SÁCH API ENDPOINTS
+## 7. DANH SÁCH API ENDPOINTS
 
 Ứng dụng web giao tiếp với SQL Server thông qua các RESTful API chuẩn mực:
 
@@ -408,7 +408,7 @@ Mở trình duyệt web và truy cập:
 
 ---
 
-## 11. KHẮC PHỤC SỰ CỐ THƯỜNG GẶP (FAQ)
+## 8. KHẮC PHỤC SỰ CỐ THƯỜNG GẶP (FAQ)
 
 ### ❓ 1. Lỗi `Cannot drop database "QuanLyNhaHang" because it is currently in use`
 * **Nguyên nhân**: Đang có một kết nối khác (tab query khác trong SSMS hoặc server Node.js đang chạy) chiếm dụng database.
@@ -442,7 +442,7 @@ Mở trình duyệt web và truy cập:
 
 ---
 
-## 12. TÀI LIỆU & BÁO CÁO ĐÍNH KÈM
+## 9. TÀI LIỆU & BÁO CÁO ĐÍNH KÈM
 
 Bộ sản phẩm bàn giao đầy đủ của đồ án bao gồm:
 * 📄 **Báo cáo đồ án chi tiết (Word)**: [report/BaoCao_QuanLyNhaHang.docx](report/BaoCao_QuanLyNhaHang.docx)
